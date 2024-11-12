@@ -21,47 +21,62 @@ app.controller("BrandController", function ($scope, $http, $location) {
         );
       },
       function (error) {
-        $scope.showNotification("Không thể tải danh sách thương hiệu", "error");
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách thương hiệu"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
 
   $scope.addOrUpdateItem = function () {
-    const method = $scope.formData.id ? "PUT" : "POST";
-    const url = $scope.formData.id
-      ? `${API_BASE_URL}/update/${$scope.formData.id}`
-      : `${API_BASE_URL}/add`;
+    try {
+      const method = $scope.formData.id ? "PUT" : "POST";
+      const url = $scope.formData.id
+        ? `${API_BASE_URL}/update/${$scope.formData.id}`
+        : `${API_BASE_URL}/add`;
 
-    const data = {
-      milkbrandname: $scope.formData.milkbrandname,
-      description: $scope.formData.description,
-    };
-    $http({
-      method,
-      url,
-      data: data,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function (response) {
-        const message =
-          response.data.message ||
-          (method === "POST"
-            ? "Thêm thương hiệu thành công"
-            : "Cập nhật thương hiệu thành công");
-        $scope.showNotification(message, "success");
-        $scope.getBrands();
-      },
-      function (error) {
-        const message =
-          error.data.message ||
-          (method === "POST"
-            ? "Không thể thêm thương hiệu"
-            : "Không thể cập nhật thương hiệu");
-        $scope.showNotification(message, "error");
-      }
-    );
+      const data = {
+        milkbrandname: $scope.formData.milkbrandname,
+        description: $scope.formData.description,
+      };
+
+      $http({
+        method,
+        url,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message ||
+            (method === "POST"
+              ? "Thêm thương hiệu thành công"
+              : "Cập nhật thương hiệu thành công");
+          $scope.showNotification(message, "success");
+          $scope.getBrands();
+          $scope.resetForm(); // Clear form after success
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            method === "POST"
+              ? "Không thể thêm thương hiệu"
+              : "Không thể cập nhật thương hiệu"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    } catch (exception) {
+      console.error("Unexpected error:", exception);
+      $scope.showNotification(
+        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+        "error"
+      );
+    }
   };
 
   $scope.deleteItem = function (id) {
@@ -79,7 +94,11 @@ app.controller("BrandController", function ($scope, $http, $location) {
           $scope.getBrands();
         },
         function (error) {
-          $scope.showNotification("Không thể xóa thương hiệu", "error");
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa thương hiệu"
+          );
+          $scope.showNotification(errorMessage, "error");
         }
       );
     }
@@ -97,7 +116,11 @@ app.controller("BrandController", function ($scope, $http, $location) {
         $scope.formData = response.data;
       },
       function (error) {
-        $scope.showNotification("Không thể tải dữ liệu thương hiệu", "error");
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu thương hiệu"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
@@ -116,10 +139,11 @@ app.controller("BrandController", function ($scope, $http, $location) {
         );
       },
       function (error) {
-        $scope.showNotification(
-          "Không thể tải danh sách thương hiệu đã xóa",
-          "error"
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách thương hiệu đã xóa"
         );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
@@ -139,6 +163,14 @@ app.controller("BrandController", function ($scope, $http, $location) {
       timerProgressBar: true,
     });
   };
+
+  // Helper function to parse error messages
+  function parseErrorMessages(error, defaultMessage) {
+    if (error.data && error.data.errors && Array.isArray(error.data.errors)) {
+      return error.data.errors.map((err) => err.message).join("\n");
+    }
+    return defaultMessage;
+  }
 
   $scope.getBrands();
 });
