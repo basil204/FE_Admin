@@ -40,47 +40,47 @@ app.config(function ($routeProvider) {
     })
     .when("/home", {
       templateUrl: "/views/home.html",
-      controller: "HomeController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/form-add-don-hang", {
       templateUrl: "/views/form-add-don-hang.html",
-      controller: "AddOrderController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/form-add-nhan-vien", {
       templateUrl: "/views/form-add-nhan-vien.html",
-      controller: "AddEmployeeController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/form-add-san-pham", {
       templateUrl: "/views/form-add-san-pham.html",
-      controller: "AddProductController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/quan-ly-bao-cao", {
       templateUrl: "/views/quan-ly-bao-cao.html",
-      controller: "ReportManagementController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/table-data-khach-hang", {
       templateUrl: "/views/table-data-khach-hang.html",
-      controller: "CustomerDataController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/table-data-oder", {
       templateUrl: "/views/table-data-oder.html",
-      controller: "OrderDataController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/table-data-product", {
       templateUrl: "/views/table-data-product.html",
-      controller: "ProductDataController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .when("/table-data-table", {
       templateUrl: "/views/table-data-table.html",
-      controller: "TableDataController",
+      controller: "",
       resolve: { auth: requireAuth },
     })
     .otherwise({
