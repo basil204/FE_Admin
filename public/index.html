@@ -27,7 +27,7 @@
 </head>
 
     <body class="app sidebar-mini rtl">
-        <div id="myApp">
+        <div ng-app="myApp">
           <header ng-if="isLoggedIn" ng-include="'/layout/header.html'"></header>
           <div ng-view>
           </div>
@@ -46,6 +46,7 @@
     <script src="/controller/TypeController.js"></script>
     <script src="/controller/UsagecapacityController.js"></script>
     <script src="/controller/UsagecapacityController.js"></script>
+    <script src="/controller/MilkDetailController.js"></script>
     <script src="https://unpkg.com/boxicons@latest/dist/boxicons.js"></script>
     <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
     <script src="/vendor/bootstrap/js/popper.js"></script>
