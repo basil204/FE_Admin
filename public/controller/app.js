@@ -18,9 +18,20 @@ app.run(function ($rootScope, $location) {
     $rootScope.isLoggedIn = false;
   }
 
+  // Logout function
+  $rootScope.logout = function () {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userInfo");
+    $rootScope.isLoggedIn = false;
+    $location.path("/login");
+  };
+
   // Redirect to login if not authenticated and trying to access protected routes
   $rootScope.$on("$routeChangeStart", function (event, next) {
-    if (next.resolve && !localStorage.getItem("authToken")) {
+    // Check if the user navigates to /login to perform a logout
+    if (next.originalPath === "/login") {
+      $rootScope.logout(); // Perform logout if /login is accessed
+    } else if (next.resolve && !localStorage.getItem("authToken")) {
       $location.path("/login");
     }
   });
