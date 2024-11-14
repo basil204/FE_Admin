@@ -1,4 +1,4 @@
-<div ng-app="myApp1" ng-controller="MasterController">
+<div ng-controller="OrderController">
   <main class="app-content">
     <div class="app-title">
       <ul class="app-breadcrumb breadcrumb side">
@@ -12,7 +12,6 @@
           <div class="tile-body">
             <div class="row element-button">
               <div class="col-sm-2">
-  
                 <a class="btn btn-add btn-sm" href="/form-add-don-hang" title="Thêm"><i class="fas fa-plus"></i>
                   Tạo mới đơn hàng</a>
               </div>
@@ -20,7 +19,6 @@
                 <a class="btn btn-delete btn-sm nhap-tu-file" type="button" title="Nhập" onclick="myFunction(this)"><i
                     class="fas fa-file-upload"></i> Tải từ file</a>
               </div>
-  
               <div class="col-sm-2">
                 <a class="btn btn-delete btn-sm print-file" type="button" title="In" onclick="myApp.printTable()"><i
                     class="fas fa-print"></i> In dữ liệu</a>
@@ -29,7 +27,6 @@
                 <a class="btn btn-delete btn-sm print-file js-textareacopybtn" type="button" title="Sao chép"><i
                     class="fas fa-copy"></i> Sao chép</a>
               </div>
-  
               <div class="col-sm-2">
                 <a class="btn btn-excel btn-sm" href="" title="In"><i class="fas fa-file-excel"></i> Xuất Excel</a>
               </div>
@@ -42,39 +39,106 @@
                     class="fas fa-trash-alt"></i> Xóa tất cả </a>
               </div>
             </div>
-            <div style="overflow-x: auto; margin-top: 10px;">
-              <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%;">
+            <div style="overflow-x: auto;max-height: 600px; margin-top: 10px;">
+              <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%; table-layout: auto;">
                 <thead>
                   <tr>
-                    <th>ID đơn hàng</th>
-                    <th>Khách hàng</th>
-                    <th>Đơn hàng</th>
-                    <th>Số lượng</th>
+                    <th>Số thứ tự</th>
+                    <th>Mã hóa đơn</th>
+                    <th>Địa chỉ giao hàng</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày tạo</th>
+                    <th>Số tiền giảm giá</th>
                     <th>Tổng tiền</th>
                     <th>Tình trạng</th>
                     <th>Tính năng</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="invoice in data.invoices">
-                    <td>{{ invoice.id }}</td>
-                    <td>{{ invoice.customerName }}</td>
-                    <td>{{ invoice.order }}</td>
-                    <td>{{ invoice.quantity }}</td>
-                    <td>{{ invoice.total }}</td>
-                    <td>{{ invoice.status }}</td>
+                  <tr ng-repeat="invoice in invoices track by $index">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ invoice.invoicecode }}</td> <!-- Mã hóa đơn -->
+                    <td>{{ invoice.deliveryaddress }}</td> <!-- Địa chỉ giao hàng -->
+                    <td>{{ invoice.paymentmethod }}</td> <!-- Phương thức thanh toán -->
+                    <td>{{ invoice.phonenumber }}</td> <!-- Số điện thoại -->
+                    <td>{{ invoice.creationdate | date:'yyyy-MM-dd HH:mm:ss' }}</td> <!-- Ngày tạo -->
+                    <td>{{ invoice.discountamount | currency }}</td> <!-- Số tiền giảm giá -->
+                    <td>{{ invoice.totalamount | number:''}} VNĐ</td> <!-- Tổng tiền -->
+                    <td>{{ invoice.status }}</td> <!-- Tình trạng hóa đơn -->
                     <td>
                       <button ng-click="deleteOrRollbackItem('Invoice', invoice.id)" class="btn btn-danger btn-sm">Xóa</button>
-                      <button ng-click="getItemById('Product', invoice.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
+                      <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" data-toggle="modal" data-target="#ModalUP" ng-click="getInvoiceDetailById(invoice.id)">
+                        <i class="fas fa-edit"></i>
+                      </button>                    
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            
           </div>
         </div>
       </div>
     </div>
   </main>
+  
+  <!-- Modal Structure -->
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true" ng-controller="OrderController">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalUPLabel">Cập nhật thông tin đơn hàng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="updateForm">
+            <div class="form-group">
+              <label for="invoicecode">Mã hóa đơn</label>
+              <input type="text" class="form-control" id="invoicecode" ng-model="invoiceCode" disabled>
+            </div>
+            <div class="form-group">
+              <label for="deliveryaddress">Địa chỉ giao hàng</label>
+              <input type="text" class="form-control" id="deliveryaddress" ng-model="deliveryAddress">
+            </div>
+            <div class="form-group">
+              <label for="phonenumber">Số điện thoại</label>
+              <input type="text" class="form-control" id="phonenumber" ng-model="phoneNumber">
+            </div>
+        
+            <h6>Chi tiết sản phẩm:</h6>
+            <div class="table-responsive">
+              <div class="table-responsive" style="max-height: 400px; overflow-x: auto;">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Vị</th>
+                      <th>Mô tả</th>
+                      <th>Số lượng</th>
+                      <th>Đơn giá</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="item in items">
+                      <td>{{ item.milkTasteName }}</td>
+                      <td>{{ item.milkDetailDescription }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td>{{ item.totalAmount | currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary" ng-click="updateInvoice()">Lưu thay đổi</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
