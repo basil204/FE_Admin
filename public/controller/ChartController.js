@@ -3,7 +3,7 @@ app.controller("ChartController", [
   "$http", // Thêm $http để gọi API
   function ($scope, $http) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://localhost:1234/api/Invoicedetail/monthly-sales-growth";
+    const API_BASE_URL = "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
 
     // Dữ liệu mặc định của chart
     $scope.chartData = {
