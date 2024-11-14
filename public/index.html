@@ -27,13 +27,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-    <body class="app sidebar-mini rtl">
-        <div ng-app="myApp">
-          <header ng-if="isLoggedIn" ng-include="'/layout/header.html'"></header>
-          <div ng-view>
-          </div>
-          <footer ng-if="isLoggedIn" ng-include="'/layout/footer.html'"></footer>
-        </div>
+<body ng-class="{'app sidebar-mini rtl': isLoggedIn}">
+    <div ng-app="myApp">
+        <header ng-if="isLoggedIn" ng-include="'/layout/header.html'"></header>
+        <div ng-view></div>
+        <footer ng-if="isLoggedIn" ng-include="'/layout/footer.html'"></footer>
+    </div>
+</body>
+
       
     
     <!--Javascript-->

@@ -2,6 +2,7 @@ app.controller(
   "LoginController",
   function ($scope, $http, $rootScope, $location) {
     $scope.user = {}; // Initialize user object
+    $scope.loading = false; // Initialize loading state
 
     function parseJwt(token) {
       const base64Url = token.split(".")[1];
@@ -20,6 +21,9 @@ app.controller(
         });
         return;
       }
+
+      // Disable the login button while logging in
+      $scope.loading = true;
 
       $http
         .post("http://160.30.21.47:1234/api/user/authenticate", {
@@ -79,7 +83,11 @@ app.controller(
               confirmButtonText: "OK",
             });
           }
-        );
+        )
+        .finally(function () {
+          // Re-enable the login button after login attempt (either success or failure)
+          $scope.loading = false;
+        });
     };
 
     // Logout function
