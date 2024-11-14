@@ -1,154 +1,152 @@
 app.controller("UsagecapacityController", function ($scope, $http, $location) {
-  const token = localStorage.getItem("token");
-  const API_BASE_URL = "http://localhost:3000/api/Usagecapacity";
+  const token = localStorage.getItem("authToken");
+  const API_BASE_URL = "http://160.30.21.47:1234/api/Usagecapacity";
 
-  $scope.usagecapacitys = [];
-  $scope.deletedUsagecapacitys = [];
+  $scope.usages = [];
+  $scope.deletedusages = [];
   $scope.formData = {};
-  $scope.notification = { message: "", type: "" };
 
-  $scope.showNotification = function (message, type) {
-    $scope.notification.message = message;
-    $scope.notification.type = type;
-    setTimeout(() => {
-      $scope.clearNotification();
-      $scope.$apply();
-    }, 3000);
-  };
-
-  $scope.clearNotification = function () {
-    $scope.notification.message = "";
-    $scope.notification.type = "";
-  };
-
-  $scope.getUsagecapacitys = function () {
+  $scope.getUsages = function () {
     $http({
       method: "GET",
       url: `${API_BASE_URL}/lst`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
-        $scope.usagecapacitys = response.data.filter(
-          (usagecapacity) => usagecapacity.status === 1
+        $scope.usages = response.data.filter((usage) => usage.status === 1);
+        console.log($scope.usages);
+        $scope.deletedusages = response.data.filter(
+          (usage) => usage.status === 0
         );
       },
       function (error) {
-        $scope.showNotification("Không thể tải danh sách công xuất", "error");
-        handleError(error);
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách đơn vị đóng gói"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
 
-  $scope.getDeletedUsagecapacitys = function () {
-    $http({
-      method: "GET",
-      url: `${API_BASE_URL}/lst`,
-    }).then(
-      function (response) {
-        $scope.deletedUsagecapacitys = response.data.filter(
-          (usagecapacity) => usagecapacity.status === 0
-        );
-      },
-      function (error) {
-        $scope.showNotification(
-          "Không thể tải danh sách công xuất đã xóa",
-          "error"
-        );
-        handleError(error);
-      }
-    );
+  $scope.addOrUpdateItem = function () {
+    try {
+      const method = $scope.formData.id ? "PUT" : "POST";
+      const url = $scope.formData.id
+        ? `${API_BASE_URL}/update/${$scope.formData.id}`
+        : `${API_BASE_URL}/add`;
+
+      const data = {
+        capacity: $scope.formData.capacity,
+        unit: $scope.formData.unit,
+      };
+
+      $http({
+        method,
+        url,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message ||
+            (method === "POST"
+              ? "Thêm đơn vị đóng gói thành công"
+              : "Cập nhật đơn vị đóng gói thành công");
+          $scope.showNotification(message, "success");
+          $scope.getUsages();
+          $scope.resetForm(); // Clear form after success
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            method === "POST"
+              ? "Không thể thêm đơn vị đóng gói"
+              : "Không thể cập nhật đơn vị đóng gói"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    } catch (exception) {
+      console.error("Unexpected error:", exception);
+      $scope.showNotification(
+        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+        "error"
+      );
+    }
   };
 
-  $scope.getUsagecapacityById = function (id) {
+  $scope.deleteItem = function (id) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+      $http({
+        method: "DELETE",
+        url: `${API_BASE_URL}/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message || "Xóa đơn vị đóng gói thành công";
+          $scope.showNotification(message, "success");
+          $scope.getUsages();
+          $scope.getDeletedUsages();
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa đơn vị đóng gói"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    }
+  };
+
+  $scope.getItemById = function (id) {
     $http({
       method: "GET",
-      url: `${API_BASE_URL}/${id}`,
+      url: `${API_BASE_URL}/lst/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
         $scope.formData = response.data;
       },
       function (error) {
-        $scope.showNotification("Không thể tải dữ liệu công xuất", "error");
-        handleError(error);
-      }
-    );
-  };
-
-  $scope.deleteUsagecapacity = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification("Xóa công xuất thành công", "success");
-        $scope.getUsagecapacitys();
-        $scope.getDeletedUsagecapacitys();
-      },
-      function (error) {
-        $scope.showNotification("Không thể xóa công xuất sử dụng", "error");
-        handleError(error);
-      }
-    );
-  };
-  $scope.RollbackUsagecapacity = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification(
-          "khôi phục loại người dùng thành công",
-          "success"
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu đơn vị đóng gói"
         );
-        $scope.getUsagecapacitys();
-        $scope.getDeletedUsagecapacitys();
-      },
-      function (error) {
-        $scope.showNotification("Không thể khôi phục loại người dùng", "error");
-        handleError(error);
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
-  $scope.addUsagecapacity = function () {
-    const isUpdating = !!$scope.formData.id;
-    const apiUrl = isUpdating
-      ? `${API_BASE_URL}/update/${$scope.formData.id}`
-      : `${API_BASE_URL}/add`;
 
-    const usagecapacityData = {
-      capacity: $scope.formData.capacity,
-      unit: $scope.formData.unit,
-    };
-    console.log(usagecapacityData);
-    const config = {
+  $scope.getDeletedUsages = function () {
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/lst`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    };
-
-    const request = isUpdating
-      ? $http.put(apiUrl, usagecapacityData, config)
-      : $http.post(apiUrl, usagecapacityData, config);
-
-    request.then(
+    }).then(
       function (response) {
-        $scope.showNotification(
-          isUpdating
-            ? "Cập nhật công xuất thành công"
-            : "Thêm công xuất mới thành công",
-          "success"
+        $scope.deletedusages = response.data.filter(
+          (usage) => usage.status === 0
         );
-        $scope.getUsagecapacitys();
-        $scope.formData = {};
       },
       function (error) {
-        $scope.showNotification("Không thể thêm/cập nhật công xuất", "error");
-        handleError(error);
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách đơn vị đóng gói đã xóa"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
@@ -157,13 +155,26 @@ app.controller("UsagecapacityController", function ($scope, $http, $location) {
     $scope.formData = {};
   };
 
-  function handleError(error) {
-    console.error("Error:", error);
-    if (error.status === 401) {
-      $location.path("/login");
+  // SweetAlert2 notification function
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+
+  // Helper function to parse error messages
+  function parseErrorMessages(error, defaultMessage) {
+    if (error.data && error.data.errors && Array.isArray(error.data.errors)) {
+      return error.data.errors.map((err) => err.message).join("\n");
     }
+    return defaultMessage;
   }
 
-  $scope.getUsagecapacitys();
-  $scope.getDeletedUsagecapacitys();
+  $scope.getUsages();
+  $scope.getDeletedUsages();
 });

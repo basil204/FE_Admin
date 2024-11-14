@@ -1,156 +1,151 @@
 app.controller("PackagingunitController", function ($scope, $http, $location) {
-  const token = localStorage.getItem("token");
-  const API_BASE_URL = "http://localhost:3000/api/Packagingunit";
+  const token = localStorage.getItem("authToken");
+  const API_BASE_URL = "http://160.30.21.47:1234/api/Packagingunit";
 
-  $scope.packagingunits = [];
-  $scope.deletedPackagingunits = [];
+  $scope.packas = [];
+  $scope.deletedpackas = [];
   $scope.formData = {};
-  $scope.notification = { message: "", type: "" };
 
-  $scope.showNotification = function (message, type) {
-    $scope.notification.message = message;
-    $scope.notification.type = type;
-    setTimeout(() => {
-      $scope.clearNotification();
-      $scope.$apply();
-    }, 3000);
-  };
-
-  $scope.clearNotification = function () {
-    $scope.notification.message = "";
-    $scope.notification.type = "";
-  };
-
-  $scope.getPackagingunits = function () {
+  $scope.getPackas = function () {
     $http({
       method: "GET",
       url: `${API_BASE_URL}/lst`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
-        $scope.packagingunits = response.data.filter(
-          (packagingunit) => packagingunit.status === 1
+        $scope.packas = response.data.filter((packa) => packa.status === 1);
+        console.log($scope.packas);
+        $scope.deletedpackas = response.data.filter(
+          (packa) => packa.status === 0
         );
       },
       function (error) {
-        $scope.showNotification("Không thể tải danh sách loại sữa", "error");
-        handleError(error);
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách loại đóng gói"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
 
-  $scope.getDeletedPackagingunits = function () {
-    $http({
-      method: "GET",
-      url: `${API_BASE_URL}/lst`,
-    }).then(
-      function (response) {
-        $scope.deletedPackagingunits = response.data.filter(
-          (packagingunit) => packagingunit.status === 0
-        );
-      },
-      function (error) {
-        $scope.showNotification(
-          "Không thể tải danh sách loại sữa đã xóa",
-          "error"
-        );
-        handleError(error);
-      }
-    );
+  $scope.addOrUpdateItem = function () {
+    try {
+      const method = $scope.formData.id ? "PUT" : "POST";
+      const url = $scope.formData.id
+        ? `${API_BASE_URL}/update/${$scope.formData.id}`
+        : `${API_BASE_URL}/add`;
+
+      const data = {
+        packagingunitname: $scope.formData.packagingunitname,
+      };
+
+      $http({
+        method,
+        url,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message ||
+            (method === "POST"
+              ? "Thêm loại đóng gói thành công"
+              : "Cập nhật loại đóng gói thành công");
+          $scope.showNotification(message, "success");
+          $scope.getPackas();
+          $scope.resetForm(); // Clear form after success
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            method === "POST"
+              ? "Không thể thêm loại đóng gói"
+              : "Không thể cập nhật loại đóng gói"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    } catch (exception) {
+      console.error("Unexpected error:", exception);
+      $scope.showNotification(
+        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+        "error"
+      );
+    }
   };
 
-  $scope.getPackagingunitById = function (id) {
+  $scope.deleteItem = function (id) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+      $http({
+        method: "DELETE",
+        url: `${API_BASE_URL}/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message || "Xóa loại đóng gói thành công";
+          $scope.showNotification(message, "success");
+          $scope.getPackas();
+          $scope.getDeletedPackas();
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa loại đóng gói"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    }
+  };
+
+  $scope.getItemById = function (id) {
     $http({
       method: "GET",
-      url: `${API_BASE_URL}/${id}`,
+      url: `${API_BASE_URL}/lst/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
         $scope.formData = response.data;
       },
       function (error) {
-        $scope.showNotification("Không thể tải dữ liệu loại sữa", "error");
-        handleError(error);
-      }
-    );
-  };
-
-  $scope.deletePackagingunit = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification("Xóa loại đóng gói thành công", "success");
-        $scope.getPackagingunits();
-        $scope.getDeletedPackagingunits();
-      },
-      function (error) {
-        $scope.showNotification("Không thể xóa loại đóng gói", "error");
-        handleError(error);
-      }
-    );
-  };
-  $scope.RollbackPackagingunit = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification(
-          "khôi phục loại đóng gói thành công",
-          "success"
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu loại đóng gói"
         );
-        $scope.getPackagingunits();
-        $scope.getDeletedPackagingunits();
-      },
-      function (error) {
-        $scope.showNotification("Không thể khôi phục loại đóng gói", "error");
-        handleError(error);
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
-  $scope.addPackagingunit = function () {
-    const isUpdating = !!$scope.formData.id;
-    const apiUrl = isUpdating
-      ? `${API_BASE_URL}/update/${$scope.formData.id}`
-      : `${API_BASE_URL}/add`;
 
-    const packagingunitData = {
-      packagingunitname: $scope.formData.packagingunitname,
-    };
-    console.log(packagingunitData);
-    const config = {
+  $scope.getDeletedPackas = function () {
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/lst`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    };
-
-    const request = isUpdating
-      ? $http.put(apiUrl, packagingunitData, config)
-      : $http.post(apiUrl, packagingunitData, config);
-
-    request.then(
+    }).then(
       function (response) {
-        $scope.showNotification(
-          isUpdating
-            ? "Cập nhật loại đóng gói thành công"
-            : "Thêm loại đóng gói mới thành công",
-          "success"
+        $scope.deletedpackas = response.data.filter(
+          (packa) => packa.status === 0
         );
-        $scope.getPackagingunits();
-        $scope.formData = {};
       },
       function (error) {
-        $scope.showNotification(
-          "Không thể thêm/cập nhật loại đóng gói",
-          "error"
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách loại đóng gói đã xóa"
         );
-        handleError(error);
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
@@ -159,13 +154,26 @@ app.controller("PackagingunitController", function ($scope, $http, $location) {
     $scope.formData = {};
   };
 
-  function handleError(error) {
-    console.error("Error:", error);
-    if (error.status === 401) {
-      $location.path("/login");
+  // SweetAlert2 notification function
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+
+  // Helper function to parse error messages
+  function parseErrorMessages(error, defaultMessage) {
+    if (error.data && error.data.errors && Array.isArray(error.data.errors)) {
+      return error.data.errors.map((err) => err.message).join("\n");
     }
+    return defaultMessage;
   }
 
-  $scope.getPackagingunits();
-  $scope.getDeletedPackagingunits();
+  $scope.getPackas();
+  $scope.getDeletedPackas();
 });

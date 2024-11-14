@@ -1,148 +1,152 @@
 app.controller("MilktasteController", function ($scope, $http, $location) {
-  const token = localStorage.getItem("token");
-  const API_BASE_URL = "http://localhost:3000/api/Milktaste";
+  const token = localStorage.getItem("authToken");
+  const API_BASE_URL = "http://160.30.21.47:1234/api/Milktaste";
 
-  $scope.Tastes = [];
-  $scope.deletedTastes = [];
+  $scope.milktastes = [];
+  $scope.deletedMilktastes = [];
   $scope.formData = {};
-  $scope.notification = { message: "", type: "" };
 
-  $scope.showNotification = function (message, type) {
-    $scope.notification.message = message;
-    $scope.notification.type = type;
-    setTimeout(() => {
-      $scope.clearNotification();
-      $scope.$apply();
-    }, 3000);
-  };
-
-  $scope.clearNotification = function () {
-    $scope.notification.message = "";
-    $scope.notification.type = "";
-  };
-
-  $scope.getTastes = function () {
+  $scope.getMilktastes = function () {
     $http({
       method: "GET",
       url: `${API_BASE_URL}/lst`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
-        $scope.tastes = response.data.filter((taste) => taste.status === 1);
+        $scope.milktastes = response.data.filter(
+          (milktaste) => milktaste.status === 1
+        );
+        console.log($scope.milktastes);
+        $scope.deletedmilktastes = response.data.filter(
+          (milktaste) => milktaste.status === 0
+        );
       },
       function (error) {
-        $scope.showNotification("Không thể tải danh sách thương hiệu", "error");
-        handleError(error);
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách thương hiệu"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
 
-  $scope.getDeletedTastes = function () {
-    $http({
-      method: "GET",
-      url: `${API_BASE_URL}/lst`,
-    }).then(
-      function (response) {
-        $scope.deletedTastes = response.data.filter(
-          (Taste) => Taste.status === 0
-        );
-      },
-      function (error) {
-        $scope.showNotification(
-          "Không thể tải danh sách thương hiệu đã xóa",
-          "error"
-        );
-        handleError(error);
-      }
-    );
+  $scope.addOrUpdateItem = function () {
+    try {
+      const method = $scope.formData.id ? "PUT" : "POST";
+      const url = $scope.formData.id
+        ? `${API_BASE_URL}/update/${$scope.formData.id}`
+        : `${API_BASE_URL}/add`;
+
+      const data = {
+        milktastename: $scope.formData.milktastename,
+      };
+
+      $http({
+        method,
+        url,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message ||
+            (method === "POST"
+              ? "Thêm vị sữa thành công"
+              : "Cập nhật vị sữa thành công");
+          $scope.showNotification(message, "success");
+          $scope.getMilktastes();
+          $scope.resetForm(); // Clear form after success
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            method === "POST"
+              ? "Không thể thêm vị sữa"
+              : "Không thể cập nhật vị sữa"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    } catch (exception) {
+      console.error("Unexpected error:", exception);
+      $scope.showNotification(
+        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+        "error"
+      );
+    }
   };
 
-  $scope.getTasteById = function (id) {
+  $scope.deleteItem = function (id) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+      $http({
+        method: "DELETE",
+        url: `${API_BASE_URL}/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message = response.data.message || "Xóa vị sữa thành công";
+          $scope.showNotification(message, "success");
+          $scope.getMilktastes();
+          $scope.getDeletedMilktastes();
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa vị sữa"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    }
+  };
+
+  $scope.getItemById = function (id) {
     $http({
       method: "GET",
-      url: `${API_BASE_URL}/${id}`,
+      url: `${API_BASE_URL}/lst/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(
       function (response) {
         $scope.formData = response.data;
       },
       function (error) {
-        $scope.showNotification("Không thể tải dữ liệu thương hiệu", "error");
-        handleError(error);
-      }
-    );
-  };
-
-  $scope.deleteTaste = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification("Xóa vị sữa thành công", "success");
-        $scope.getTastes();
-        $scope.getDeletedTastes();
-      },
-      function (error) {
-        $scope.showNotification("Không thể xóa vị sữa", "error");
-        handleError(error);
-      }
-    );
-  };
-  $scope.RollbackTaste = function (id) {
-    $http({
-      method: "DELETE",
-      url: `${API_BASE_URL}/${id}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function () {
-        $scope.showNotification("khôi phục vị sữa thành công", "success");
-        $scope.getTastes();
-        $scope.getDeletedTastes();
-      },
-      function (error) {
-        $scope.showNotification("Không thể khôi phục vị sữa", "error");
-        handleError(error);
-      }
-    );
-  };
-  $scope.addTaste = function () {
-    const isUpdating = !!$scope.formData.id;
-    const apiUrl = isUpdating
-      ? `${API_BASE_URL}/update/${$scope.formData.id}`
-      : `${API_BASE_URL}/add`;
-
-    const TasteData = {
-      milktastename: $scope.formData.milktastename,
-    };
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    const request = isUpdating
-      ? $http.put(apiUrl, TasteData, config)
-      : $http.post(apiUrl, TasteData, config);
-
-    request.then(
-      function (response) {
-        $scope.showNotification(
-          isUpdating
-            ? "Cập nhật vị sữa thành công"
-            : "Thêm vị sữa mới thành công",
-          "success"
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu vị sữa"
         );
-        $scope.getTastes();
-        $scope.formData = {};
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+
+  $scope.getDeletedMilktastes = function () {
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/lst`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.deletedMilktastes = response.data.filter(
+          (milktaste) => milktaste.status === 0
+        );
       },
       function (error) {
-        $scope.showNotification("Không thể thêm/cập nhật vị sữa", "error");
-        handleError(error);
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách vị sữa đã xóa"
+        );
+        $scope.showNotification(errorMessage, "error");
       }
     );
   };
@@ -151,13 +155,26 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
     $scope.formData = {};
   };
 
-  function handleError(error) {
-    console.error("Error:", error);
-    if (error.status === 401) {
-      $location.path("/login");
+  // SweetAlert2 notification function
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+
+  // Helper function to parse error messages
+  function parseErrorMessages(error, defaultMessage) {
+    if (error.data && error.data.errors && Array.isArray(error.data.errors)) {
+      return error.data.errors.map((err) => err.message).join("\n");
     }
+    return defaultMessage;
   }
 
-  $scope.getTastes();
-  $scope.getDeletedTastes();
+  $scope.getMilktastes();
+  $scope.getDeletedMilktastes();
 });
