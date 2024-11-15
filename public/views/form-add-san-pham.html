@@ -775,4 +775,139 @@ data-backdrop="static" data-keyboard="false">
 </div>
 </div>
 
+<div ng-controller="VoucherController" class="modal fade" id="addVoucher" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+data-backdrop="static" data-keyboard="false">
+<div class="modal-dialog modal-dialog-centered" role="document">
+ <div class="modal-content">
+   <div class="modal-body">
+     <div class="row">
+       <div class="form-group col-md-12">
+         <span class="thong-tin-thanh-toan">
+           <h5>Thêm mới voucher</h5>
+         </span>
+       </div>
+       <div ng-if="notification.message" class="form-group col-md-12">
+         <div class="alert" ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}">
+           {{ notification.message }}
+         </div>
+       </div>
+       <div class="form-group col-md-12">
+        <label class="control-label">Nhập mã Voucher </label>
+        <input class="form-control" type="text" ng-model="formData.vouchercode" required>
+      </div>
+      <div class="form-group col-md-12">
+        <label class="control-label">Chọn ngày bắt đầu</label>
+        <input class="form-control" type="date" ng-model="formData.startdate" ng-value="formData.startdate | date:'yyyy-MM-dd'" required>
+      </div>
+      <div class="form-group col-md-12">
+        <label class="control-label">Chọn ngày kết thúc</label>
+        <input class="form-control" type="date" ng-model="formData.enddate" ng-value="formData.enddate | date:'yyyy-MM-dd'" required>
+      </div>          
+      <div class="form-group col-md-12">
+        <label class="control-label">Phần trăm giảm giá</label>
+        <input class="form-control" type="text" ng-model="formData.discountpercentage" required>
+      </div>
+      <div class="form-group col-md-12">
+        <label class="control-label">Số tiền tối đa</label>
+        <input class="form-control" type="text" ng-model="formData.maxamount" required>
+      </div>
+      <div class="form-group col-md-12">
+        <label class="control-label">Số lần sử dung</label>
+        <input class="form-control" type="text" ng-model="formData.usagecount" required>
+      </div>
+     </div>
+
+     <!-- Tab navigation -->
+     <ul class="nav nav-tabs" role="tablist">
+       <li class="nav-item">
+         <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeVoucher" role="tab" aria-controls="activeVoucher" aria-selected="true">Voucher</a>
+     </li>
+     <li class="nav-item">
+         <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedVoucher" role="tab" aria-controls="deletedVoucher" aria-selected="false">Không hoạt động</a>
+     </li>
+     </ul>
+
+     <!-- Tab panes -->
+     <div class="tab-content">
+       <!-- Active Tastes Tab -->
+       <div class="tab-pane active" id="activeVoucher" role="tabpanel">
+         <div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+           <table class="table table-bordered">
+             <thead>
+              <tr>
+                <th>ID</th>
+                <th>Mã code</th>
+                <th>Ngày bắt đầu</th>
+                <th>Ngày kết thúc</th>
+                <th>Phần trăm giảm giá</th>
+                <th>Số tiền tối đa khi giảm giá</th>
+                <th>Số ần sử dụng</th>
+                <th>Chức năng</th>
+              </tr>
+             </thead>
+             <tbody>
+               <tr ng-repeat="voucher in vouchers">
+                <td>{{ voucher.id }}</td>
+                <td>{{ voucher.vouchercode }}</td>
+                <td>{{ voucher.startdate }}</td>
+                <td>{{ voucher.enddate }}</td>
+                <td>{{ voucher.discountpercentage }}</td>
+                <td>{{ voucher.maxamount }}</td>
+                <td>{{ voucher.usagecount }}</td>
+                 <td>
+                   <button ng-click="deleteItem(voucher.id)" class="btn btn-danger btn-sm">Xóa</button>
+                   <button ng-click="getItemById(voucher.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
+                 </td>
+               </tr>
+             </tbody>
+           </table>
+         </div>
+       </div>
+
+       <!-- Deleted Tastes Tab -->
+       <div class="tab-pane fade" id="deletedVoucher" role="tabpanel" aria-labelledby="inactive-tab">
+         <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+             <table class="table table-bordered">
+                 <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Mã code</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Phần trăm giảm giá</th>
+                    <th>Số tiền tối đa khi giảm giá</th>
+                    <th>Số ần sử dụng</th>
+                    <th>Chức năng</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                   <tr ng-repeat="voucher in deletedvouchers">
+                    <td>{{ voucher.id }}</td>
+                    <td>{{ voucher.vouchercode }}</td>
+                    <td>{{ voucher.startdate }}</td>
+                    <td>{{ voucher.enddate }}</td>
+                    <td>{{ voucher.discountpercentage }}</td>
+                    <td>{{ voucher.maxamount }}</td>
+                    <td>{{ voucher.usagecount }}</td>
+                         <td>
+                             <button ng-click="deleteItem(voucher.id)" class="btn btn-success btn-sm">Kích hoạt</button>
+                         </td>
+                     </tr>
+                 </tbody>
+             </table>
+         </div>
+     </div>
+     </div>
+
+     <br>
+     <button class="btn btn-success" type="button" ng-click="addOrUpdateItem('voucher')">Lưu lại</button>
+     <a class="btn btn-secondary" data-dismiss="modal" href="#">Hủy bỏ</a>
+     <button class="btn btn-warning" type="button" ng-click="resetForm()">Reset Form</button>
+     <br>
+   </div>
+   <div class="modal-footer"></div>
+ </div>
+</div>
+</div>
+
 </div>
