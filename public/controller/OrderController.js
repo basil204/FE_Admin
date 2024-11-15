@@ -72,7 +72,6 @@ app.controller("OrderController", function ($scope, $http) {
   // Hàm cập nhật trạng thái hóa đơn
   $scope.updateInvoiceStatus = function (invoice) {
     const updatedStatus = { status: invoice.status };
-    console.log(invoice);
 
     // Gửi yêu cầu PUT để cập nhật trạng thái hóa đơn
     $http({
@@ -88,7 +87,7 @@ app.controller("OrderController", function ($scope, $http) {
       // Show success notification
       $scope.showNotification("Cập nhật trạng thái hóa đơn thành công!", "success");
 
-      // Reload invoices list
+      // Reload invoices list after update
       $scope.loadInvoices();
     }, function (error) {
       console.error("Có lỗi khi cập nhật trạng thái hóa đơn:", error);
@@ -117,6 +116,8 @@ app.controller("OrderController", function ($scope, $http) {
       console.log("Cập nhật hóa đơn thành công:", response);
       $scope.showNotification("Cập nhật hóa đơn thành công!", "success");
       $('#ModalUP').modal('hide');
+
+      // Reload invoices list after update
       $scope.loadInvoices();
     }, function (error) {
       console.error("Có lỗi khi cập nhật hóa đơn:", error);
@@ -169,4 +170,26 @@ app.controller("OrderController", function ($scope, $http) {
     );
   };
 
+  // Hàm tải lại danh sách hóa đơn
+  $scope.loadInvoices = function () {
+    // Gửi yêu cầu GET lại để lấy danh sách hóa đơn
+    $http({
+      method: "GET",
+      url: `${baseUrl}/Invoice/lst`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+        function (response) {
+          // Lọc các hóa đơn có status khác 334 và 336
+          $scope.invoices = response.data.filter(function (invoice) {
+            return invoice.status !== 336;
+          });
+        },
+        function (error) {
+          console.error("Có lỗi khi tải lại danh sách hóa đơn:", error);
+          $scope.showNotification("Có lỗi khi tải lại danh sách hóa đơn. Vui lòng thử lại!", "error");
+        }
+    );
+  };
 });
