@@ -3,19 +3,7 @@ app.controller("indexController", [
   "$http",
   function ($scope, $http) {
     const token = localStorage.getItem("authToken");
-    $scope.showWarning = true;
 
-    // Thời gian để ẩn cảnh báo tự động sau 5 giây
-    setTimeout(function () {
-      $scope.$apply(function () {
-        $scope.showWarning = false;
-      });
-    }, 5000);
-
-    // Hàm để đóng cảnh báo khi người dùng nhấn vào nút "Đóng"
-    $scope.closeWarning = function () {
-      $scope.showWarning = false;
-    };
     // Set up the headers with the token
     const config = {
       headers: {

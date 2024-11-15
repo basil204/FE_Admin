@@ -196,7 +196,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     }).then(
       function (response) {
         const data = response.data;
-        console.log("data milkdetail"+data);
+        console.log("data milkdetail" + data);
         $scope.pageInfo = data.message.page;
 
         if (data.status === "success" && data.message && data.message.content) {

@@ -3,7 +3,8 @@ app.controller("ChartController", [
   "$http", // Thêm $http để gọi API
   function ($scope, $http) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
+    const API_BASE_URL =
+      "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
 
     // Dữ liệu mặc định của chart
     $scope.chartData = {
@@ -28,39 +29,49 @@ app.controller("ChartController", [
 
     // Hàm gọi API và cập nhật biểu đồ
     $scope.getSalesGrowthData = function () {
-      $http.get(API_BASE_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Thêm token nếu cần
-        },
-      }).then(function (response) {
-        const data = response.data;
+      $http
+        .get(API_BASE_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Thêm token nếu cần
+          },
+        })
+        .then(function (response) {
+          const data = response.data;
 
-        // Xử lý dữ liệu API để cập nhật labels và datasets
-        $scope.chartData.labels = data.map(function (item) {
-          return `${item.month}-${item.year}`;
+          // Xử lý dữ liệu API để cập nhật labels và datasets
+          $scope.chartData.labels = data.map(function (item) {
+            return `${item.month}-${item.year}`;
+          });
+
+          // Dữ liệu cho Tổng Giá Trị Doanh Thu (VNĐ)
+          $scope.chartData.datasets[0].data = data.map(function (item) {
+            return item.total_sales_value;
+          });
+
+          // Dữ liệu cho Tỷ Lệ Tăng Trưởng
+          $scope.chartData.datasets[1].data = data.map(function (item) {
+            if (
+              item.previous_month_sales !== null &&
+              item.previous_month_sales !== 0
+            ) {
+              return (
+                ((item.total_sales_value - item.previous_month_sales) /
+                  item.previous_month_sales) *
+                100
+              );
+            } else {
+              return null; // Nếu previous_month_sales là null, ta trả về null hoặc có thể thay bằng 0
+            }
+          });
+
+          // Vẽ lại các biểu đồ sau khi dữ liệu được cập nhật
+          $scope.initPieChart();
+          $scope.initBarChart();
+          $scope.initDoughnutChart();
+        })
+        .catch(function (error) {
+          console.error("API call failed", error);
         });
-
-        // Dữ liệu cho Tổng Giá Trị Doanh Thu (VNĐ)
-        $scope.chartData.datasets[0].data = data.map(function (item) {
-          return item.total_sales_value;
-        });
-
-        // Dữ liệu cho Tỷ Lệ Tăng Trưởng
-        $scope.chartData.datasets[1].data = data.map(function (item) {
-          if (item.previous_month_sales !== null && item.previous_month_sales !== 0) {
-            return ((item.total_sales_value - item.previous_month_sales) / item.previous_month_sales) * 100;
-          } else {
-            return null; // Nếu previous_month_sales là null, ta trả về null hoặc có thể thay bằng 0
-          }
-        });
-
-        // Vẽ lại các biểu đồ sau khi dữ liệu được cập nhật
-        $scope.initPieChart();
-        $scope.initBarChart();
-        $scope.initDoughnutChart();
-      }).catch(function (error) {
-        console.error("API call failed", error);
-      });
     };
 
     // Hàm để khởi tạo pie chart
