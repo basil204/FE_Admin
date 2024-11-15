@@ -170,9 +170,9 @@
         </div>
         <div class="row">
           <div class="form-group col-md-12 text-center">
-            <img ng-src="{{formData.imgUrl}}" id="productImage" 
-                 class="img-thumbnail" 
-                 alt="Product Image" 
+            <img ng-src="{{formData.imgUrl}}" id="productImage"
+                 class="img-thumbnail"
+                 alt="Product Image"
                  ng-click="changeImage()"
                  style="width: 100px; height: 100px; object-fit: cover;">
           </div>
@@ -229,9 +229,9 @@
           <div class="form-group col-md-6">
             <label for="imageUpload" class="control-label">Hình ảnh sản phẩm</label>
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="imageUpload" 
+              <input type="file" class="custom-file-input" id="imageUpload"
                      accept=".jpg, .jpeg, .png, .webp"
-                     ng-model="file" 
+                     ng-model="file"
                      onchange="angular.element(this).scope().uploadImage(this.files)">
               <label class="custom-file-label" for="imageUpload">Chọn ảnh...</label>
             </div>
