@@ -91,7 +91,6 @@
                             <tr>
                                 <th>Mã sản phẩm</th>
                                 <th>Tên sản phẩm</th>
-                                <th>Giá tiền</th>
 
                                 <th>Vị sữa</th>
                                 <th>Đơn vị bao bì</th>
@@ -105,7 +104,6 @@
                             <tr ng-repeat="item in milkSalesDetails">
                                 <td>{{ item.id }}</td>
                                 <td>{{ item.productName }}</td>
-                                <td>{{ item.totalSalesValue | currency }}</td>
                                 <td>{{ item.milkTasteName }}</td>
                                 <td>{{ item.packagingUnitName }}</td>
                                 <td>{{ item.capacity }}</td>
