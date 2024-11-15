@@ -41,46 +41,46 @@
   --shadow_login:0px 0px 20px 0px #0000003b;
 }
 * {
-	margin: var(--margin_0); 
-	padding: var(--padding_0); 
-	box-sizing: border-box;
+  margin: var(--margin_0);
+  padding: var(--padding_0);
+  box-sizing: border-box;
 }
 body, html {
-	height: var(--onehundred_percent);
+  height: var(--onehundred_percent);
   font-family: var(--font_family);
   background: var(--white_bg);
 }
 /*---------------------------------------------*/
 a {
- font-family: var(--font_family);
-	font-size: var(--font_14);
-	color: var(--black_color);
-	margin: var(--margin_0); 
+  font-family: var(--font_family);
+  font-size: var(--font_14);
+  color: var(--black_color);
+  margin: var(--margin_0);
 }
 a:focus {
-	outline: var(--none) !important;
+  outline: var(--none) !important;
 }
 a:hover {
-	text-decoration: var(--none);
+  text-decoration: var(--none);
 }
 /*---------------------------------------------*/
 h1,h2,h3,h4,h5,h6 {
-	margin: var(--margin_0); 
+  margin: var(--margin_0);
 }
 p {
- font-family: var(--font_family);
-	font-size: var(--font_14);
-	color: var(--black_color);
-	margin: var(--margin_0); 
+  font-family: var(--font_family);
+  font-size: var(--font_14);
+  color: var(--black_color);
+  margin: var(--margin_0);
 }
 ul, li {
-	margin: var(--margin_0); 
-	list-style-type: var(--none);
+  margin: var(--margin_0);
+  list-style-type: var(--none);
 }
 /*---------------------------------------------*/
 input {
-	outline: var(--none);
-	border: var(--none);
+  outline: var(--none);
+  border: var(--none);
 }
 textarea:focus, input:focus {
   border-color: var(--transparent) !important;
@@ -103,15 +103,15 @@ textarea::-moz-placeholder { color: var(--black_color); }
 textarea:-ms-input-placeholder { color: var(--black_color); }
 /*---------------------------------------------*/
 button {
-	outline: var(--none) !important;
-	border: var(--none);
-	background: var(--transparent);
+  outline: var(--none) !important;
+  border: var(--none);
+  background: var(--transparent);
 }
 button:hover {
-	cursor:var(--cursor_pointer);
+  cursor:var(--cursor_pointer);
 }
 iframe {
-	border: var(--none) !important;
+  border: var(--none) !important;
 }
 /*////////////////////////////////////////////////////////////////// */
 .txt1 {
@@ -211,7 +211,7 @@ iframe {
   border: 1px solid #d4d4d4;
 }
 .input100:active , .input100:focus{
-   background: var(--white_bg);
+  background: var(--white_bg);
   border: var(--px_1) solid var(--main_bg) !important;
 }
 .bx {
@@ -270,7 +270,7 @@ iframe {
   .swal-modal{
     width: 70%;
   }
-} 
+}
 /*------------------------------------------------------------------
 [ Button ]*/
 .container-login100-form-btn {
@@ -291,19 +291,19 @@ input[type=submit]{
   border-radius: var(--radius_5px);
   padding: 10px 0;
   outline:none;
-  }
-  input[type=button] {
-    font-size: var(--font_17);
-    background: var(--main_bg);
-    border: var(--px_1) solid var(--main_bg);
-    color: var(--black_color);
-    font-weight: var(--w_500);
-    cursor: var(--cursor_pointer);
-    width: var(--onehundred_percent);
-    border-radius: var(--radius_5px);
-    padding: 10px 0;
-    outline: var(--none);
-    font-family: var(--font_family);
+}
+input[type=button] {
+  font-size: var(--font_17);
+  background: var(--main_bg);
+  border: var(--px_1) solid var(--main_bg);
+  color: var(--black_color);
+  font-weight: var(--w_500);
+  cursor: var(--cursor_pointer);
+  width: var(--onehundred_percent);
+  border-radius: var(--radius_5px);
+  padding: 10px 0;
+  outline: var(--none);
+  font-family: var(--font_family);
 }
 
 .login100-form-btn {
@@ -434,9 +434,9 @@ input[type=submit]{
   border-radius: var(--radius_5px);
 }
 .swal-overlay {
- 
+
   background-color: rgb(0 0 0 / 88%) !important;
- 
+
 }
 .swal-icon--error {
   border-color: #d20303 !important;
@@ -483,4 +483,49 @@ input[type=submit]{
   top: 16%;
   padding-bottom:5px;
   font-weight: 900;
+}
+
+/* CSS cho popup alert */
+.popup-alert {
+  position: fixed;
+  top: 20px;
+  right: -300px; /* Bắt đầu ngoài màn hình */
+  background-color: #ff0000;
+  color: #000;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 9999;
+  animation: slideIn 3s forwards; /* Chạy animation */
+}
+
+.popup-alert p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.popup-alert .btn-close {
+  background: none;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.popup-alert .btn-close:hover {
+  text-decoration: underline;
+}
+
+/* Animation cho popup chạy vào */
+@keyframes slideIn {
+  0% {
+    right: -300px; /* Vị trí bắt đầu ngoài màn hình */
+  }
+  50% {
+    right: 20px; /* Vị trí cuối cùng */
+  }
+  100% {
+    right: 20px; /* Giữ nguyên vị trí */
+  }
 }

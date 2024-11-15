@@ -1,77 +1,87 @@
-<main class="app-content" >
-  <div class="row">
-    <div class="col-md-12">
-      <div class="app-title">
-        <ul class="app-breadcrumb breadcrumb">
-          <li class="breadcrumb-item"><a href="#"><b>Bảng điều khiển</b></a></li>
-        </ul>
-        <div id="clock"></div>
+<div ng-controller="indexController">
+  <main class="app-content">
+    <!-- Cảnh báo -->
+    <div class="popup-alert" ng-if="showWarning" role="alert">
+      <strong>Cảnh báo!</strong> Đây là một thông báo cảnh báo quan trọng.
+      <p>Thông tin chi tiết: Vui lòng kiểm tra lại các sản phẩm trong kho và cập nhật ngay khi có thay đổi.</p>
+      <button class="btn-close" ng-click="closeWarning()">Đóng</button>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="app-title">
+          <ul class="app-breadcrumb breadcrumb">
+            <li class="breadcrumb-item"><a href="#"><b>Bảng điều khiển</b></a></li>
+          </ul>
+          <div id="clock"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="row" ng-controller="indexController">
-    <!-- Left Column -->
-    <div class="col-lg-6">
-      <div class="row">
-        <!-- Widget 1 -->
-        <div class="col-md-6">
-          <div class="widget-small primary coloured-icon">
-            <i class='icon bx bxs-user-account fa-3x'></i>
-            <div class="info">
-              <h4>Tổng khách hàng</h4>
-              <p><b>{{countuser}} khách hàng</b></p>
-              <p class="info-tong">Tổng số khách hàng được quản lý.</p>
+
+    <div class="row">
+      <!-- Left Column -->
+      <div class="col-lg-6">
+        <div class="row">
+          <!-- Widget 1 -->
+          <div class="col-md-6">
+            <div class="widget-small primary coloured-icon">
+              <i class='icon bx bxs-user-account fa-3x'></i>
+              <div class="info">
+                <h4>Tổng khách hàng</h4>
+                <p><b>{{countuser}} khách hàng</b></p>
+                <p class="info-tong">Tổng số khách hàng được quản lý.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Widget 2 -->
-        <div class="col-md-6">
-          <div class="widget-small info coloured-icon">
-            <i class='icon bx bxs-data fa-3x'></i>
-            <div class="info">
-              <h4>Tổng sản phẩm</h4>
-              <p><b>{{countmilkdetail}} sản phẩm</b></p>
-              <p class="info-tong">Tổng số sản phẩm được quản lý.</p>
+          <!-- Widget 2 -->
+          <div class="col-md-6">
+            <div class="widget-small info coloured-icon">
+              <i class='icon bx bxs-data fa-3x'></i>
+              <div class="info">
+                <h4>Tổng sản phẩm</h4>
+                <p><b>{{countmilkdetail}} sản phẩm</b></p>
+                <p class="info-tong">Tổng số sản phẩm được quản lý.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Widget 3 -->
-        <div class="col-md-6">
-          <div class="widget-small warning coloured-icon">
-            <i class='icon bx bxs-shopping-bags fa-3x'></i>
-            <div class="info">
-              <h4>Tổng đơn hàng</h4>
-              <p><b>{{countinvoice}} đơn hàng</b></p>
-              <p class="info-tong">Tổng số hóa đơn bán hàng trong tháng.</p>
+          <!-- Widget 3 -->
+          <div class="col-md-6">
+            <div class="widget-small warning coloured-icon">
+              <i class='icon bx bxs-shopping-bags fa-3x'></i>
+              <div class="info">
+                <h4>Tổng đơn hàng</h4>
+                <p><b>{{countinvoice}} đơn hàng</b></p>
+                <p class="info-tong">Tổng số hóa đơn bán hàng trong tháng.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Widget 4 -->
-        <div class="col-md-6">
-          <div class="widget-small danger coloured-icon">
-            <i class='icon bx bxs-error-alt fa-3x'></i>
-            <div class="info">
-              <h4>Sắp hết hàng</h4>
-              <p><b>{{countend}} sản phẩm</b></p>
-              <p class="info-tong">Số sản phẩm cảnh báo hết cần nhập thêm.</p>
+          <!-- Widget 4 -->
+          <div class="col-md-6">
+            <div class="widget-small danger coloured-icon">
+              <i class='icon bx bxs-error-alt fa-3x'></i>
+              <div class="info">
+                <h4>Sắp hết hàng</h4>
+                <p><b>{{countend}} sản phẩm</b></p>
+                <p class="info-tong">Số sản phẩm cảnh báo hết cần nhập thêm.</p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Order Status Table -->
-        <div class="col-md-12">
-          <div class="tile">
-            <h3 class="tile-title">Tình trạng đơn hàng</h3>
-            <div>
-              <table class="table table-bordered">
-                <thead>
+          <!-- Order Status Table -->
+          <div class="col-md-12">
+            <div class="tile">
+              <h3 class="tile-title">Tình trạng đơn hàng</h3>
+              <div>
+                <table class="table table-bordered">
+                  <thead>
                   <tr>
                     <th>ID đơn hàng</th>
                     <th>Tên khách hàng</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                   </tr>
-                </thead>
-                <tbody>
+                  </thead>
+                  <tbody>
                   <tr>
                     <td>AL3947</td>
                     <td>Phạm Thị Ngọc</td>
@@ -96,72 +106,65 @@
                     <td>40.650.000 đ</td>
                     <td><span class="badge bg-danger">Đã hủy</span></td>
                   </tr>
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- New Customers Table -->
-        <div class="col-md-12">
-          <div class="tile" >
-            <h3 class="tile-title">Khách hàng mới</h3>
-            <div>
-              <table class="table table-hover">
-                <thead>
+          <!-- New Customers Table -->
+          <div class="col-md-12">
+            <div class="tile">
+              <h3 class="tile-title">Khách hàng mới</h3>
+              <div>
+                <table class="table table-hover">
+                  <thead>
                   <tr>
                     <th>ID</th>
                     <th>Tên khách hàng</th>
-              
                   </tr>
-                </thead>
-                <tbody>
+                  </thead>
+                  <tbody>
                   <tr ng-repeat="customer in customers track by $index">
-                      <td>{{ $index + 1 }}</td> <!-- Displaying the index, with +1 for human-readable format -->
-                      <td>{{ customer }}</td> <!-- Displaying the customer data -->
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ customer }}</td>
                   </tr>
-              </tbody>
-              
-              
-              </table>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-lg-6" ng-controller="ChartController">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="tile">
+              <h3 class="tile-title">Thống kê doanh thu năm</h3>
+              <div class="embed-responsive-16by9">
+                <canvas id="barChart" class="embed-responsive-item"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="tile">
+              <h3 class="tile-title">Dữ liệu 6 tháng đầu vào</h3>
+              <div class="embed-responsive-16by9">
+                <canvas id="doughnutChart" class="embed-responsive-item"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="tile">
+              <h3 class="tile-title">Dữ liệu 6 tháng đầu vào</h3>
+              <div class="embed-responsive-16by9">
+                <canvas id="pieChart" class="embed-responsive-item"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- End Left Column -->
-
-    <!-- Right Column -->
-    <div class="col-lg-6" ng-controller="ChartController">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="tile">
-            <h3 class="tile-title">Thống kê doanh thu năm</h3>
-            <div class="embed-responsive-16by9">
-              <canvas id="barChart" class="embed-responsive-item"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="tile">
-            <h3 class="tile-title">Dữ liệu 6 tháng đầu vào</h3>
-            <div class="embed-responsive-16by9">
-              <canvas id="doughnutChart" class="embed-responsive-item"></canvas>
-            </div>
-          </div>
-          
-        </div>
-        <div class="col-md-6">
-          <div class="tile">
-            <h3 class="tile-title">Dữ liệu 6 tháng đầu vào</h3>
-            <div class="embed-responsive-16by9">
-              <canvas id="pieChart" class="embed-responsive-item"></canvas>
-            </div>
-          </div>
-          
-        </div>
-      </div>
-
-    </div>
-    <!-- End Right Column -->
-  </div>
-</main>
+  </main>
+</div>
