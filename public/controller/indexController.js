@@ -80,5 +80,25 @@ app.controller("indexController", [
             .catch(function (error) {
                 console.error("Error fetching user invoices:", error);
             });
+
+        // Fetch milk sales details
+        $http
+            .get("http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details", config)
+            .then(function (response) {
+                $scope.milkSalesDetails = response.data;
+            })
+            .catch(function (error) {
+                console.error("Error fetching milk sales details:", error);
+            });
+
+        // Fetch the invoice summary
+        $http
+            .get("http://160.30.21.47:1234/api/Invoicedetail/invoice-summary", config)
+            .then(function (response) {
+                $scope.invoiceSummary = response.data;
+            })
+            .catch(function (error) {
+                console.error("Error fetching invoice summary:", error);
+            });
     }
 ]);

@@ -86,7 +86,7 @@
                   <tr ng-repeat="order in orders">
                     <td>{{ order.invoicecode }}</td>
                     <td>{{ order.username }}</td>
-                    <td>{{ order.totalAmount | currency:"" }}</td>
+                    <td>{{ order.totalAmount | number:''}} VNĐ</td>
                     <td>
                              <span class="badge"
                                    ng-class="{
