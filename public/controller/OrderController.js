@@ -39,6 +39,7 @@ app.controller("OrderController", function ($scope, $http) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
+      //
       function (response) {
         // Lưu thông tin chi tiết hóa đơn vào $scope
         $scope.invoiceDetails = response.data;
