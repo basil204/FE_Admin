@@ -73,7 +73,7 @@ app.controller("indexController", [
 
         // Fetch user invoices and their status
         $http
-            .get("http://localhost:1234/api/Userinvoice/user-invoices", config)
+            .get("http://160.30.21.47:1234/api/Userinvoice/user-invoices", config)
             .then(function (response) {
                 $scope.orders = response.data;  // Lưu dữ liệu đơn hàng vào $scope.orders
             })
