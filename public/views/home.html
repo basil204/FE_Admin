@@ -71,7 +71,7 @@
           <div class="col-md-12">
             <div class="tile">
               <h3 class="tile-title">Tình trạng đơn hàng</h3>
-              <div>
+              <div class="table-responsive" style="height: 400px; overflow-x: auto;"> <!-- Bảng có thể cuộn ngang -->
                 <table class="table table-bordered">
                   <thead>
                   <tr>
@@ -82,35 +82,32 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                    <td>AL3947</td>
-                    <td>Phạm Thị Ngọc</td>
-                    <td>19.770.000 đ</td>
-                    <td><span class="badge bg-info">Chờ xử lý</span></td>
-                  </tr>
-                  <tr>
-                    <td>ER3835</td>
-                    <td>Nguyễn Thị Mỹ Yến</td>
-                    <td>16.770.000 đ</td>
-                    <td><span class="badge bg-warning">Đang vận chuyển</span></td>
-                  </tr>
-                  <tr>
-                    <td>MD0837</td>
-                    <td>Triệu Thanh Phú</td>
-                    <td>9.400.000 đ</td>
-                    <td><span class="badge bg-success">Đã hoàn thành</span></td>
-                  </tr>
-                  <tr>
-                    <td>MT9835</td>
-                    <td>Đặng Hoàng Phúc</td>
-                    <td>40.650.000 đ</td>
-                    <td><span class="badge bg-danger">Đã hủy</span></td>
+                  <!-- Lặp qua danh sách đơn hàng -->
+                  <tr ng-repeat="order in orders">
+                    <td>{{ order.invoicecode }}</td>
+                    <td>{{ order.username }}</td>
+                    <td>{{ order.totalAmount | currency:"" }}</td>
+                    <td>
+                             <span class="badge"
+                                   ng-class="{
+            'bg-success': order.status === 'Hoàn thành',
+            'bg-warning': order.status === 'Đã xử lý',
+            'bg-danger': order.status === 'Đã hủy',
+            'bg-warnings': order.status === 'Chờ thanh toán',
+            'bg-info': order.status === 'Đang chờ xử lý'
+        }">
+        {{ order.status }}
+    </span>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
+
+
+
           <!-- New Customers Table -->
           <div class="col-md-12">
             <div class="tile">

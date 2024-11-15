@@ -6508,7 +6508,10 @@ button.bg-danger:focus {
 .bg-light {
   background-color: #f8f9fa !important;
 }
-
+.bg-warnings{
+  background-color: #f8d7da !important; /* Màu đỏ nhạt */
+  color: #721c24 !important; /* Màu chữ đỏ đậm */
+}
 a.bg-light:hover, a.bg-light:focus,
 button.bg-light:hover,
 button.bg-light:focus {
