@@ -1,6 +1,9 @@
 app.controller("OrderController", function ($scope, $http) {
   const token = localStorage.getItem("authToken");
 
+  // Định nghĩa URL gốc của API
+  const baseUrl = "http://160.30.21.47:1234/api";
+
   // List of possible order statuses
   $scope.availableStatuses = [
     { code: 333, name: 'Giỏ hàng' },
@@ -46,7 +49,7 @@ app.controller("OrderController", function ($scope, $http) {
     // Gửi yêu cầu GET đến API để lấy danh sách hóa đơn
     $http({
       method: "GET",
-      url: "http://localhost:1234/api/Invoice/lst",
+      url: `${baseUrl}/Invoice/lst`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -69,11 +72,12 @@ app.controller("OrderController", function ($scope, $http) {
   // Hàm cập nhật trạng thái hóa đơn
   $scope.updateInvoiceStatus = function (invoice) {
     const updatedStatus = { status: invoice.status };
-console.log(invoice);
+    console.log(invoice);
+
     // Gửi yêu cầu PUT để cập nhật trạng thái hóa đơn
     $http({
       method: "PUT",
-      url: `http://localhost:1234/api/Invoice/update/${invoice.id}`,
+      url: `${baseUrl}/Invoice/update/${invoice.id}`,
       data: updatedStatus,
       headers: {
         Authorization: `Bearer ${token}`
@@ -104,7 +108,7 @@ console.log(invoice);
     // Gửi yêu cầu PUT để cập nhật hóa đơn
     $http({
       method: "PUT",
-      url: `http://localhost:1234/api/Invoice/update/${$scope.id}`, // Sử dụng 'id' thay vì 'invoiceCode'
+      url: `${baseUrl}/Invoice/update/${$scope.id}`, // Sử dụng 'id' thay vì 'invoiceCode'
       data: updatedInvoice,
       headers: {
         Authorization: `Bearer ${token}`
@@ -124,7 +128,7 @@ console.log(invoice);
   $scope.getInvoiceDetailById = function (invoiceId) {
     $http({
       method: "GET",
-      url: `http://localhost:1234/api/Invoicedetail/${invoiceId}/details`,
+      url: `${baseUrl}/Invoicedetail/${invoiceId}/details`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
