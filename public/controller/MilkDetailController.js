@@ -98,6 +98,38 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       }
     );
   };
+  $scope.updateStock = function (id) {
+    // Lấy số lượng mới từ người dùng (ví dụ có thể mở một modal để người dùng nhập vào)
+    const newQuantity = prompt("Nhập số lượng mới:");
+
+    if (newQuantity !== null && !isNaN(newQuantity) && newQuantity >= 0) {
+      const url = `http://localhost:1234/api/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
+
+      $http({
+        method: "PUT",
+        url: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      }).then(
+          function (response) {
+            if (response.status === 200) {
+              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
+              $scope.getMilkdetails(); // Refresh danh sách sản phẩm
+            } else {
+              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
+            }
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
+            showNotification(errorMessage, "error");
+          }
+      );
+    } else {
+      showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
+    }
+  };
 
   $scope.getMilktastes = function () {
     $http({
@@ -217,6 +249,55 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       }
     );
   };
+  $scope.deleteOrRestoreMilkdetail = function (id, status) {
+    let confirmMessage;
+    let data = null;
+
+    if (status === 1) {
+      confirmMessage = "Bạn có chắc chắn muốn xóa sản phẩm này?";  // Xóa khi sản phẩm đang bán
+    } else {
+      confirmMessage = "Bạn có chắc chắn muốn khôi phục sản phẩm này?";  // Khôi phục khi sản phẩm đã ngừng bán
+      data = { status: 1 };  // Cập nhật trạng thái sản phẩm thành "Đang bán"
+    }
+
+    const confirmAction = confirm(confirmMessage);
+    if (confirmAction) {
+      $http({
+        method: 'DELETE',  // Chỉ sử dụng DELETE cho cả xóa và khôi phục
+        url: `http://localhost:1234/api/Milkdetail/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        data: data  // Gửi dữ liệu (chỉ khi khôi phục)
+      }).then(
+          function (response) {
+            if (response.status === 200) {
+              let message = status === 1
+                  ? "Sản phẩm đã được xóa thành công."
+                  : "Sản phẩm đã được khôi phục thành công.";
+              showNotification(message, "success");
+              $scope.getMilkdetails(); // Refresh danh sách sản phẩm
+            } else {
+              let message = status === 1
+                  ? "Không thể xóa sản phẩm. Vui lòng thử lại."
+                  : "Không thể khôi phục sản phẩm. Vui lòng thử lại.";
+              showNotification(message, "error");
+            }
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(
+                error,
+                status === 1
+                    ? "Không thể xóa sản phẩm. Vui lòng thử lại."
+                    : "Không thể khôi phục sản phẩm. Vui lòng thử lại."
+            );
+            showNotification(errorMessage, "error");
+          }
+      );
+    }
+  };
+
   $scope.saveMilkdetail = function (formData) {
     const isUpdate = !!formData.id;
     const url = `${API_BASE_URL}/Milkdetail/${

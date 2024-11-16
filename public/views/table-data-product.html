@@ -92,52 +92,65 @@
             <div style="overflow-x: auto; margin-top: 10px;">
               <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%;">
                 <thead>
-                  <tr>
-                    <th width="10"><input type="checkbox" id="all"></th>
-                    <th>Mã sản phẩm</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Loại Sản Phẩm</th>
-                    <th>Hãng</th>
-                    <th>Độ Tuổi</th>
-                    <th>Hương Vị</th>
-                    <th>Loại</th>
-                    <th>Giá Tiền</th>
-                    <th>Dung tích</th>
-                    <th>Số lượng</th>
-                    <th>Hình ảnh</th>
-                    <th>Trạng thái</th>
-                    <th>Chức Năng</th>
-                  </tr>
+                <tr>
+                  <th width="10"><input type="checkbox" id="all"></th>
+                  <th>Mã sản phẩm</th>
+                  <th>Tên sản phẩm</th>
+                  <th>Loại Sản Phẩm</th>
+                  <th>Hãng</th>
+                  <th>Độ Tuổi</th>
+                  <th>Hương Vị</th>
+                  <th>Loại</th>
+                  <th>Giá Tiền</th>
+                  <th>Dung tích</th>
+                  <th>Số lượng</th>
+                  <th>Hình ảnh</th>
+                  <th>Trạng thái</th>
+                  <th>Chức Năng</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter}" 
-                      ng-class="{'out-of-stock': milkdetail.stockquantity === 0}">
-                    <td width="10"><input type="checkbox" name="check1" value="1"></td>
-                    <td>{{milkdetail.milkdetailcode}}</td>
-                    <td>{{milkdetail.product.productname}}</td>
-                    <td>{{milkdetail.product.milkType.milkTypename}}</td>
-                    <td>{{milkdetail.product.milkBrand.milkbrandname}}</td>
-                    <td>{{milkdetail.product.targetUser.targetuser}}</td>
-                    <td>{{milkdetail.milkTaste.milktastename}}</td>
-                    <td>{{milkdetail.packagingunit.packagingunitname}}</td>
-                    <td>{{milkdetail.price | currency:"VNĐ "}}</td>
-                    <td>{{milkdetail.usageCapacity.capacity + " " + milkdetail.usageCapacity.unit}}</td>
-                    <td>{{milkdetail.stockquantity}}</td>
-                    <td><img ng-src="{{milkdetail.imgUrl}}" alt="Milk Image" style="width: 50px; height: 50px;" /></td>
-                    <td>{{ milkdetail.status == 1 ? "Đang bán" : "Ngừng bán" }}</td>
-                    <td>
-                      <button class="btn btn-primary btn-sm trash" type="button" title="Xóa" ng-click="deleteMilkdetail(milkdetail.id)">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                      <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" data-toggle="modal" data-target="#ModalUP" ng-click="getMilkdetailById(milkdetail.id)">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                    </td>
-                  </tr>
+                <tr ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter}">
+                  <td width="10"><input type="checkbox" name="check1" value="1"></td>
+                  <td>{{milkdetail.milkdetailcode}}</td>
+                  <td>{{milkdetail.product.productname}}</td>
+                  <td>{{milkdetail.product.milkType.milkTypename}}</td>
+                  <td>{{milkdetail.product.milkBrand.milkbrandname}}</td>
+                  <td>{{milkdetail.product.targetUser.targetuser}}</td>
+                  <td>{{milkdetail.milkTaste.milktastename}}</td>
+                  <td>{{milkdetail.packagingunit.packagingunitname}}</td>
+                  <td>{{milkdetail.price | currency:"VNĐ "}}</td>
+                  <td>{{milkdetail.usageCapacity.capacity + " " + milkdetail.usageCapacity.unit}}</td>
+                  <td>{{milkdetail.stockquantity}}</td>
+                  <td><img ng-src="{{milkdetail.imgUrl}}" alt="Milk Image" style="width: 50px; height: 50px;" /></td>
+                  <td>{{ milkdetail.status == 1 ? "Đang bán" : "Ngừng bán" }}</td>
+                  <td>
+                    <!-- Nút xóa hoặc khôi phục tùy thuộc vào trạng thái với chỉ icon -->
+                    <!-- Nút xóa hoặc khôi phục -->
+                    <button class="btn btn-sm" type="button" title="{{milkdetail.status == 1 ? 'Xóa' : 'Khôi phục'}}"
+                            ng-click="deleteOrRestoreMilkdetail(milkdetail.id, milkdetail.status)"
+                            ng-class="{'btn-danger': milkdetail.status == 1, 'btn-success': milkdetail.status != 1}">
+                      <i class="fas" ng-class="milkdetail.status == 1 ? 'fa-trash-alt' : 'fa-sync-alt'"></i>
+                    </button>
+
+                    <!-- Nút chỉnh sửa -->
+                    <button class="btn btn-sm btn-warning" type="button" title="Sửa" data-toggle="modal" data-target="#ModalUP" ng-click="getMilkdetailById(milkdetail.id)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+
+                    <!-- Nút cập nhật số lượng -->
+                    <button class="btn btn-sm btn-info" type="button" ng-click="updateStock(milkdetail.id)">
+                      <i class="fas fa-pen"></i>
+                    </button>
+
+
+                  </td>
+                </tr>
                 </tbody>
               </table>
             </div>
-            
+
+
             <!-- Pagination Controls -->
             <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
               <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
