@@ -236,6 +236,46 @@
                 </div>
             </div>
         </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div>
+                    <h3 class="tile-title">Lịch sử giao dịch</h3>
+                </div>
+                <div class="tile-body">
+                    <table class="table table-hover table-bordered" id="transactionTable">
+                        <thead>
+                        <tr>
+<!--                            <th>Ngày đăng</th>-->
+                            <th>Ngày giao dịch</th>
+                            <th>Số tài khoản</th>
+                            <th>Số tiền ghi có</th>
+<!--                            <th>Số tiền ghi nợ</th>-->
+                            <th>Tiền tệ</th>
+                            <th>Diễn giải</th>
+<!--                            <th>Số dư khả dụng</th>-->
+                            <th>Mã giao dịch</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="transaction in transactionHistoryList">
+<!--                            <td>{{ transaction.postingDate }}</td>-->
+                            <td>{{ transaction.transactionDate }}</td>
+                            <td>{{ transaction.accountNo }}</td>
+                            <td>{{ transaction.creditAmount }}</td>
+<!--                            <td>{{ transaction.debitAmount }}</td>-->
+                            <td>{{ transaction.currency }}</td>
+                            <td>{{ transaction.description }}</td>
+<!--                            <td>{{ transaction.availableBalance }}</td>-->
+                            <td>{{ transaction.refNo }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <div class="row">
             <div class="col-md-12">
                 <div class="app-title">

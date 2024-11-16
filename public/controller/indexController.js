@@ -100,5 +100,15 @@ app.controller("indexController", [
             .catch(function (error) {
                 console.error("Error fetching invoice summary:", error);
             });
+
+        // Fetch the transaction history from the new API
+        $http
+            .get("http://160.30.21.47:1234/api/payment/historyBank", config)
+            .then(function (response) {
+                $scope.transactionHistoryList = response.data.transactionHistoryList;
+            })
+            .catch(function (error) {
+                console.error("Error fetching transaction history:", error);
+            });
     }
 ]);
