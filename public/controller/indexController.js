@@ -1,7 +1,8 @@
 app.controller("indexController", [
     "$scope",
     "$http",
-    function ($scope, $http) {
+    "$location", // Inject $location to handle page redirection
+    function ($scope, $http, $location) {
         const token = localStorage.getItem("authToken");
         $scope.showWarning = true;
 
@@ -24,15 +25,23 @@ app.controller("indexController", [
             },
         };
 
+        // Function to handle 403 error and redirect to login
+        function handleForbiddenError(error) {
+            if (error.status === 403) {
+                // Redirect to login page if status is 403
+                $location.path('/login');
+            } else {
+                console.error("Error:", error);
+            }
+        }
+
         // Fetch top 5 users with authorization token
         $http
             .get("http://160.30.21.47:1234/api/user/findTop5", config)
             .then(function (response) {
                 $scope.customers = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching top 5 users:", error);
-            });
+            .catch(handleForbiddenError);
 
         // Fetch the count of Milkdetail items with low stock with authorization token
         $http
@@ -40,36 +49,31 @@ app.controller("indexController", [
             .then(function (response) {
                 $scope.countend = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching low stock count:", error);
-            });
+            .catch(handleForbiddenError);
 
+        // Fetch the count of Milkdetail items
         $http
             .get("http://160.30.21.47:1234/api/Milkdetail/count-milkdetail", config)
             .then(function (response) {
                 $scope.countmilkdetail = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching milkdetail count:", error);
-            });
+            .catch(handleForbiddenError);
 
+        // Fetch the count of invoices
         $http
             .get("http://160.30.21.47:1234/api/Invoice/count/current", config)
             .then(function (response) {
                 $scope.countinvoice = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching invoice count:", error);
-            });
+            .catch(handleForbiddenError);
 
+        // Fetch the count of users
         $http
             .get("http://160.30.21.47:1234/api/user/count", config)
             .then(function (response) {
                 $scope.countuser = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching user count:", error);
-            });
+            .catch(handleForbiddenError);
 
         // Fetch user invoices and their status
         $http
@@ -77,9 +81,7 @@ app.controller("indexController", [
             .then(function (response) {
                 $scope.orders = response.data;  // Lưu dữ liệu đơn hàng vào $scope.orders
             })
-            .catch(function (error) {
-                console.error("Error fetching user invoices:", error);
-            });
+            .catch(handleForbiddenError);
 
         // Fetch milk sales details
         $http
@@ -87,9 +89,7 @@ app.controller("indexController", [
             .then(function (response) {
                 $scope.milkSalesDetails = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching milk sales details:", error);
-            });
+            .catch(handleForbiddenError);
 
         // Fetch the invoice summary
         $http
@@ -97,9 +97,7 @@ app.controller("indexController", [
             .then(function (response) {
                 $scope.invoiceSummary = response.data;
             })
-            .catch(function (error) {
-                console.error("Error fetching invoice summary:", error);
-            });
+            .catch(handleForbiddenError);
 
         // Fetch the transaction history from the new API
         $http
@@ -107,8 +105,6 @@ app.controller("indexController", [
             .then(function (response) {
                 $scope.transactionHistoryList = response.data.transactionHistoryList;
             })
-            .catch(function (error) {
-                console.error("Error fetching transaction history:", error);
-            });
+            .catch(handleForbiddenError);
     }
 ]);

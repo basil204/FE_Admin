@@ -38,7 +38,10 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
 
   // Function to reset formData
   $scope.resetForm = function () {
-    $scope.formData = {};
+    $scope.formData.imgUrl = ""; // Reset ảnh khi reset form
+    $scope.formData = {
+
+    };
   };
   $scope.uploadImage = function (files) {
     const imgbbApiKey = "588779c93c7187148b4fa9b7e9815da9";
@@ -99,8 +102,16 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     );
   };
   $scope.updateStock = function (id) {
-    // Lấy số lượng mới từ người dùng (ví dụ có thể mở một modal để người dùng nhập vào)
-    const newQuantity = prompt("Nhập số lượng mới:");
+    // Set the product ID in the form to use later in the save function
+    $scope.formData = { newStockQuantity: null, productId: id };
+
+    // Open the modal to enter the new stock quantity
+    $('#ModalStockUpdate').modal('show');
+  };
+
+  $scope.saveStockUpdate = function (formData) {
+    const newQuantity = formData.newStockQuantity;
+    const id = formData.productId;
 
     if (newQuantity !== null && !isNaN(newQuantity) && newQuantity >= 0) {
       const url = `http://localhost:1234/api/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
@@ -117,6 +128,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
             if (response.status === 200) {
               showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
               $scope.getMilkdetails(); // Refresh danh sách sản phẩm
+              $('#ModalStockUpdate').modal('hide'); // Close the modal after success
             } else {
               showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
             }
@@ -130,6 +142,8 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
     }
   };
+
+
 
   $scope.getMilktastes = function () {
     $http({

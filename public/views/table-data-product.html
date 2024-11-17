@@ -35,49 +35,50 @@
             </div>
             <div class="row element-button">
               <div class="col-sm-2">
-                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#ModalUP"><i class="fas fa-folder-plus"></i> Thêm thương hiệu</a>
+
+                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#ModalUP"><i class="fas fa-folder-plus"></i> Thêm Sản phẩm</a>
               </div>
-               <div class="col-md-2">
-                <label for="statusFilter1">Trạng thái sản phẩm 1</label>
-                <select class="form-control" id="statusFilter1" ng-model="statusFilter1">
-                    <option value="">Tất cả</option>
-                    <option value="1">Đang bán</option>
-                    <option value="0">Ngừng bán</option>
-                </select>
+<!--               <div class="col-md-2">-->
+<!--                <label for="statusFilter1">Trạng thái sản phẩm 1</label>-->
+<!--                <select class="form-control" id="statusFilter1" ng-model="statusFilter1">-->
+<!--                    <option value="">Tất cả</option>-->
+<!--                    <option value="1">Đang bán</option>-->
+<!--                    <option value="0">Ngừng bán</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="col-md-2">-->
+<!--                <label for="statusFilter2">Trạng thái sản phẩm 2</label>-->
+<!--                <select class="form-control" id="statusFilter2" ng-model="statusFilter2">-->
+<!--                    <option value="">Tất cả</option>-->
+<!--                    <option value="1">Đang bán</option>-->
+<!--                    <option value="0">Ngừng bán</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="col-md-2">-->
+<!--                <label for="statusFilter3">Trạng thái sản phẩm 3</label>-->
+<!--                <select class="form-control" id="statusFilter3" ng-model="statusFilter3">-->
+<!--                    <option value="">Tất cả</option>-->
+<!--                    <option value="1">Đang bán</option>-->
+<!--                    <option value="0">Ngừng bán</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="col-md-2">-->
+<!--                <label for="statusFilter4">Trạng thái sản phẩm 4</label>-->
+<!--                <select class="form-control" id="statusFilter4" ng-model="statusFilter4">-->
+<!--                    <option value="">Tất cả</option>-->
+<!--                    <option value="1">Đang bán</option>-->
+<!--                    <option value="0">Ngừng bán</option>-->
+<!--                </select>-->
+<!--            </div>-->
             </div>
-            <div class="col-md-2">
-                <label for="statusFilter2">Trạng thái sản phẩm 2</label>
-                <select class="form-control" id="statusFilter2" ng-model="statusFilter2">
-                    <option value="">Tất cả</option>
-                    <option value="1">Đang bán</option>
-                    <option value="0">Ngừng bán</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="statusFilter3">Trạng thái sản phẩm 3</label>
-                <select class="form-control" id="statusFilter3" ng-model="statusFilter3">
-                    <option value="">Tất cả</option>
-                    <option value="1">Đang bán</option>
-                    <option value="0">Ngừng bán</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="statusFilter4">Trạng thái sản phẩm 4</label>
-                <select class="form-control" id="statusFilter4" ng-model="statusFilter4">
-                    <option value="">Tất cả</option>
-                    <option value="1">Đang bán</option>
-                    <option value="0">Ngừng bán</option>
-                </select>
-            </div>
-            </div>
-            
+
             <!-- Search and Filter Controls -->
             <div class="row mb-2">
               <!-- Search Box -->
               <div class="col-md-4">
                 <input type="text" class="form-control" ng-model="searchQuery" placeholder="Tìm kiếm sản phẩm...">
               </div>
-              
+
               <!-- Status Filter Dropdown -->
               <div class="col-md-2">
                 <select class="form-control" ng-model="statusFilter">
@@ -87,7 +88,7 @@
                 </select>
               </div>
             </div>
-            
+
             <!-- Table of Products -->
             <div style="overflow-x: auto; margin-top: 10px;">
               <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%;">
@@ -139,7 +140,7 @@
                     </button>
 
                     <!-- Nút cập nhật số lượng -->
-                    <button class="btn btn-sm btn-info" type="button" ng-click="updateStock(milkdetail.id)">
+                    <button class="btn btn-sm btn-info" type="button"  data-toggle="modal" data-target="#ModalStockUpdate" ng-click="updateStock(milkdetail.id)">
                       <i class="fas fa-pen"></i>
                     </button>
 
@@ -159,7 +160,7 @@
               <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
               <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -182,18 +183,18 @@
           </div>
         </div>
         <div class="row">
-          <div class="form-group col-md-12 text-center">
-            <img ng-src="{{formData.imgUrl}}" id="productImage" 
-                 class="img-thumbnail" 
-                 alt="Product Image" 
+          <div ng-if="formData.imgUrl" class="form-group col-md-12 text-center">
+            <img ng-src="{{formData.imgUrl}}" id="productImage"
+                 class="img-thumbnail"
+                 alt="Product Image"
                  ng-click="changeImage()"
                  style="width: 100px; height: 100px; object-fit: cover;">
           </div>
 
           <!-- Product Selection -->
           <div class="form-group col-md-6">
-            <label for="productStatus" class="control-label">Sản Phẩm</label>
-            <select class="form-control" id="milkTaste" ng-model="formData.product">
+            <label  class="control-label">Sản Phẩm</label>
+            <select class="form-control" ng-model="formData.product">
               <option ng-repeat="product in products" ng-value="product.id">{{product.productname}}</option>
             </select>
           </div>
@@ -242,9 +243,9 @@
           <div class="form-group col-md-6">
             <label for="imageUpload" class="control-label">Hình ảnh sản phẩm</label>
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="imageUpload" 
+              <input type="file" class="custom-file-input" id="imageUpload"
                      accept=".jpg, .jpeg, .png, .webp"
-                     ng-model="file" 
+                     ng-model="file"
                      onchange="angular.element(this).scope().uploadImage(this.files)">
               <label class="custom-file-label" for="imageUpload">Chọn ảnh...</label>
             </div>
@@ -254,11 +255,15 @@
 
         <br>
         <!-- Save Button with Dynamic Label -->
-        <button class="btn btn-save" type="button" ng-click="saveMilkdetail(formData)">
-          {{ formData.id ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới" }}
-        </button>
-        <button class="btn btn-save" type="button" ng-click="resetForm()">Làm mới</button>
-        <a class="btn btn-cancel" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
+        <!-- Save and Reset buttons -->
+        <div class="form-group col-md-12 text-center">
+          <button class="btn btn-success btn-lg mx-2" type="button" ng-click="saveMilkdetail(formData)">
+            {{ formData.id ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới" }}
+          </button>
+          <button class="btn btn-secondary btn-lg mx-2" type="button" ng-click="resetForm()">Làm mới</button>
+          <a class="btn btn-danger btn-lg mx-2" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
+        </div>
+
         <br>
       </div>
       <div class="modal-footer"></div>
@@ -266,5 +271,32 @@
   </div>
 </div>
 
+  <!-- New Modal for Updating Stock -->
+  <div class="modal fade" id="ModalStockUpdate" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <h5>Cập nhật số lượng sản phẩm</h5>
+            </div>
+          </div>
+          <!-- Stock Quantity -->
+          <div class="form-group col-md-12">
+            <label  class="control-label">Số lượng mới</label>
+            <input class="form-control" type="number" ng-model="formData.newStockQuantity" required>
+          </div>
+
+          <!-- Save Button for Updating Stock -->
+          <button class="btn btn-save" type="button" ng-click="saveStockUpdate(formData)">
+            Cập nhật số lượng
+          </button>
+          <button class="btn btn-save" type="button" ng-click="resetForm()">Làm mới</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
 
 </div>

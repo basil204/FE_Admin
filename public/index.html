@@ -22,12 +22,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.js"></script>
 </head>
 
-    <body class="app sidebar-mini rtl">
+    <body ng-class="{'app sidebar-mini rtl': isLoggedIn}">
         <div id="myApp">
           <header ng-if="isLoggedIn" ng-include="'/layout/header.html'"></header>
           <div ng-view>

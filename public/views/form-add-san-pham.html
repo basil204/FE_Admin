@@ -8,7 +8,6 @@
         </ul>
       </div>
       <div class="row">
-       <div>
          <div class="col-md-12">
           <div class="tile">
             <h3 class="tile-title">Tạo mới sản phẩm</h3>
@@ -95,13 +94,16 @@
                   </div>
 
                   <!-- Nút lưu sản phẩm -->
-                  <div class="col-md-12 text-center mt-3">
-                      <button ng-click="saveProduct()" class="btn btn-primary">
+                  <div class="col-md-12 text-center mt-4">
+                      <button ng-click="saveProduct()" class="btn btn-success mx-2">
                           {{ formData.id ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm' }}
                       </button>
-                  </div>
+                      <button ng-click="resetForm()" class="btn btn-secondary mx-2">
+                          Reset Form
+                      </button>
 
-                </div>
+                  </div>
+                </form>
                 <div class="form-group col-12">
                   <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
@@ -145,7 +147,7 @@
                         </table>
                       </div>
                     </div>
-                  </form>
+
                     <!-- Deleted Usage Capacities Tab -->
                     <div class="tab-pane" id="deletedUProduct" role="tabpanel">
                       <div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
@@ -179,10 +181,8 @@
                     </div>
                   </div> 
                 </div>
-
        </div>
-  
-    </main>
+        </div>
     
     
     <!--

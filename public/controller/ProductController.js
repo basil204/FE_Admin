@@ -243,7 +243,31 @@ app.controller("ProductController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
-
+    $scope.deleteItem = function (id) {
+        if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+            $http({
+                method: "DELETE",
+                url: `${API_BASE_URL}/Product/delete/${id}`,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(
+                function (response) {
+                    const message =
+                        response.data.message || "Xóa đối tượng sử dụng thành công";
+                    $scope.showNotification(message, "success");
+                    $scope.getProducts();
+                },
+                function (error) {
+                    const errorMessage = parseErrorMessages(
+                        error,
+                        "Không thể xóa đối tượng sử dụng"
+                    );
+                    $scope.showNotification(errorMessage, "error");
+                }
+            );
+        }
+    };
   // Gọi các hàm lấy dữ liệu ban đầu
   $scope.getTargets();
   $scope.getBrands();
