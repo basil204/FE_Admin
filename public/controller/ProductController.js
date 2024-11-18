@@ -223,7 +223,7 @@ app.controller("ProductController", function ($scope, $http, $location) {
     $scope.formData = {};
     $scope.formData.imgUrl = ""; // Reset ảnh khi reset form
   };
-
+    
   // Hiển thị thông báo
   $scope.showNotification = function (message, type) {
     Swal.fire({

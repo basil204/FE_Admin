@@ -114,7 +114,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     const id = formData.productId;
 
     if (newQuantity !== null && !isNaN(newQuantity) && newQuantity >= 0) {
-      const url = `http://localhost:1234/api/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
+      const url = `${API_BASE_URL}/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
 
       $http({
         method: "PUT",
