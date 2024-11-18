@@ -278,7 +278,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     if (confirmAction) {
       $http({
         method: 'DELETE',  // Chỉ sử dụng DELETE cho cả xóa và khôi phục
-        url: `http://localhost:1234/api/Milkdetail/delete/${id}`,
+        url: `${API_BASE_URL}/Milkdetail/delete/${id}`,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
