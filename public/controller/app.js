@@ -36,6 +36,7 @@ app.run(function ($rootScope, $location) {
     } else if ($rootScope.isLoggedIn) {
       // Define allowed routes for each role
       const adminRoutes = [
+          "/",
         "/home",
         "/form-add-don-hang",
         "/form-add-nhan-vien",
@@ -48,6 +49,7 @@ app.run(function ($rootScope, $location) {
       ];
 
       const staffRoutes = [
+        "/",
         "/home",
         "/table-data-khach-hang",
         "/table-data-oder",
