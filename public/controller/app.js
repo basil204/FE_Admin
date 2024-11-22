@@ -8,7 +8,8 @@ app.run(function ($rootScope, $location) {
         atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
     );
 
-    $rootScope.isLoggedIn = userInfo.role === "Admin" || userInfo.role === "Staff";
+    $rootScope.isLoggedIn =
+        userInfo.role === "Admin" || userInfo.role === "Staff";
     $rootScope.userRole = userInfo.role; // Save user role for access control
 
     if (!$rootScope.isLoggedIn) {
@@ -36,7 +37,6 @@ app.run(function ($rootScope, $location) {
     } else if ($rootScope.isLoggedIn) {
       // Define allowed routes for each role
       const adminRoutes = [
-          "/",
         "/home",
         "/form-add-don-hang",
         "/form-add-nhan-vien",
@@ -49,12 +49,11 @@ app.run(function ($rootScope, $location) {
       ];
 
       const staffRoutes = [
-        "/",
         "/home",
-        "/table-data-khach-hang",
-        "/table-data-oder",
         "/form-add-don-hang",
         "/form-add-san-pham",
+        "/table-data-khach-hang",
+        "/table-data-oder",
         "/table-data-product",
       ];
 
@@ -68,10 +67,13 @@ app.run(function ($rootScope, $location) {
           text: "Bạn không có quyền truy cập vào trang này.",
           confirmButtonText: "OK",
         }).then(() => {
-          $location.path("/home");
+          $rootScope.$apply(() => {
+            $location.path("/home");
+          });
         });
         event.preventDefault();
       }
+
     }
   });
 });
@@ -86,6 +88,9 @@ app.config(function ($routeProvider, $locationProvider) {
   }
 
   $routeProvider
+      .when("/", { // Khi URL là trống
+        redirectTo: "/home", // Chuyển hướng đến /home
+      })
       .when("/login", {
         templateUrl: "/views/login.html",
         controller: "LoginController",
