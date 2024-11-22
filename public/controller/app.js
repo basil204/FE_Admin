@@ -1,16 +1,18 @@
 var app = angular.module("myApp", ["ngRoute"]);
 
 app.run(function ($rootScope, $location) {
-  // Check if user is already logged in on app load
   const token = localStorage.getItem("authToken");
+
   if (token) {
     const userInfo = JSON.parse(
-      atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+        atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
     );
-    if (userInfo.role === "Admin") {
-      $rootScope.isLoggedIn = true;
-    } else {
-      $rootScope.isLoggedIn = false;
+
+    $rootScope.isLoggedIn =
+        userInfo.role === "Admin" || userInfo.role === "Staff";
+    $rootScope.userRole = userInfo.role; // Save user role for access control
+
+    if (!$rootScope.isLoggedIn) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("userInfo");
     }
@@ -26,19 +28,57 @@ app.run(function ($rootScope, $location) {
     $location.path("/login");
   };
 
-  // Redirect to login if not authenticated and trying to access protected routes
+  // Route access control
   $rootScope.$on("$routeChangeStart", function (event, next) {
-    // Check if the user navigates to /login to perform a logout
     if (next.originalPath === "/login") {
-      $rootScope.logout(); // Perform logout if /login is accessed
+      $rootScope.logout();
     } else if (next.resolve && !localStorage.getItem("authToken")) {
       $location.path("/login");
+    } else if ($rootScope.isLoggedIn) {
+      // Define allowed routes for each role
+      const adminRoutes = [
+        "/home",
+        "/form-add-don-hang",
+        "/form-add-nhan-vien",
+        "/form-add-san-pham",
+        "/quan-ly-bao-cao",
+        "/table-data-khach-hang",
+        "/table-data-oder",
+        "/table-data-product",
+        "/table-data-table",
+      ];
+
+      const staffRoutes = [
+        "/home",
+        "/form-add-don-hang",
+        "/form-add-san-pham",
+        "/table-data-khach-hang",
+        "/table-data-oder",
+        "/table-data-product",
+      ];
+
+      const userRoutes =
+          $rootScope.userRole === "Admin" ? adminRoutes : staffRoutes;
+
+      if (!userRoutes.includes(next.originalPath)) {
+        Swal.fire({
+          icon: "error",
+          title: "Quyền truy cập bị từ chối",
+          text: "Bạn không có quyền truy cập vào trang này.",
+          confirmButtonText: "OK",
+        }).then(() => {
+          $rootScope.$apply(() => {
+            $location.path("/home");
+          });
+        });
+        event.preventDefault();
+      }
+
     }
   });
 });
 
 app.config(function ($routeProvider, $locationProvider) {
-  // Require authentication function that checks token from localStorage
   function requireAuth($location) {
     return function () {
       if (!localStorage.getItem("authToken")) {
@@ -47,50 +87,53 @@ app.config(function ($routeProvider, $locationProvider) {
     };
   }
 
-  // Define routes with authentication requirements
   $routeProvider
-    .when("/login", {
-      templateUrl: "/views/login.html",
-      controller: "LoginController",
-    })
-    .when("/home", {
-      templateUrl: "/views/home.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/form-add-don-hang", {
-      templateUrl: "/views/form-add-don-hang.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/form-add-nhan-vien", {
-      templateUrl: "/views/form-add-nhan-vien.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/form-add-san-pham", {
-      templateUrl: "/views/form-add-san-pham.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/quan-ly-bao-cao", {
-      templateUrl: "/views/quan-ly-bao-cao.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/table-data-khach-hang", {
-      templateUrl: "/views/table-data-khach-hang.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/table-data-oder", {
-      templateUrl: "/views/table-data-oder.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/table-data-product", {
-      templateUrl: "/views/table-data-product.html",
-      resolve: { auth: requireAuth },
-    })
-    .when("/table-data-table", {
-      templateUrl: "/views/table-data-table.html",
-      resolve: { auth: requireAuth },
-    })
-    .otherwise({
-      redirectTo: "/home",
-    });
+      .when("/", { // Khi URL là trống
+        redirectTo: "/home", // Chuyển hướng đến /home
+      })
+      .when("/login", {
+        templateUrl: "/views/login.html",
+        controller: "LoginController",
+      })
+      .when("/home", {
+        templateUrl: "/views/home.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/form-add-don-hang", {
+        templateUrl: "/views/form-add-don-hang.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/form-add-nhan-vien", {
+        templateUrl: "/views/form-add-nhan-vien.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/form-add-san-pham", {
+        templateUrl: "/views/form-add-san-pham.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/quan-ly-bao-cao", {
+        templateUrl: "/views/quan-ly-bao-cao.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/table-data-khach-hang", {
+        templateUrl: "/views/table-data-khach-hang.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/table-data-oder", {
+        templateUrl: "/views/table-data-oder.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/table-data-product", {
+        templateUrl: "/views/table-data-product.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/table-data-table", {
+        templateUrl: "/views/table-data-table.html",
+        resolve: { auth: requireAuth },
+      })
+      .otherwise({
+        redirectTo: "/home",
+      });
+
   $locationProvider.html5Mode(true);
 });
