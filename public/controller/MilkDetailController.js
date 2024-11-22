@@ -39,9 +39,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
   // Function to reset formData
   $scope.resetForm = function () {
     $scope.formData.imgUrl = ""; // Reset ảnh khi reset form
-    $scope.formData = {
-
-    };
+    $scope.formData = {};
   };
   $scope.uploadImage = function (files) {
     const imgbbApiKey = "588779c93c7187148b4fa9b7e9815da9";
@@ -106,7 +104,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     $scope.formData = { newStockQuantity: null, productId: id };
 
     // Open the modal to enter the new stock quantity
-    $('#ModalStockUpdate').modal('show');
+    $("#ModalStockUpdate").modal("show");
   };
 
   $scope.saveStockUpdate = function (formData) {
@@ -121,29 +119,36 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
         url: url,
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }).then(
-          function (response) {
-            if (response.status === 200) {
-              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
-              $scope.getMilkdetails(); // Refresh danh sách sản phẩm
-              $('#ModalStockUpdate').modal('hide'); // Close the modal after success
-            } else {
-              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
-            }
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
-            showNotification(errorMessage, "error");
+        function (response) {
+          if (response.status === 200) {
+            showNotification(
+              "Số lượng sản phẩm đã được cập nhật thành công.",
+              "success"
+            );
+            $scope.getMilkdetails(); // Refresh danh sách sản phẩm
+            $("#ModalStockUpdate").modal("hide"); // Close the modal after success
+          } else {
+            showNotification(
+              "Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.",
+              "error"
+            );
           }
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể cập nhật số lượng. Vui lòng thử lại."
+          );
+          showNotification(errorMessage, "error");
+        }
       );
     } else {
       showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
     }
   };
-
-
 
   $scope.getMilktastes = function () {
     $http({
@@ -268,46 +273,48 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     let data = null;
 
     if (status === 1) {
-      confirmMessage = "Bạn có chắc chắn muốn xóa sản phẩm này?";  // Xóa khi sản phẩm đang bán
+      confirmMessage = "Bạn có chắc chắn muốn xóa sản phẩm này?"; // Xóa khi sản phẩm đang bán
     } else {
-      confirmMessage = "Bạn có chắc chắn muốn khôi phục sản phẩm này?";  // Khôi phục khi sản phẩm đã ngừng bán
-      data = { status: 1 };  // Cập nhật trạng thái sản phẩm thành "Đang bán"
+      confirmMessage = "Bạn có chắc chắn muốn khôi phục sản phẩm này?"; // Khôi phục khi sản phẩm đã ngừng bán
+      data = { status: 1 }; // Cập nhật trạng thái sản phẩm thành "Đang bán"
     }
 
     const confirmAction = confirm(confirmMessage);
     if (confirmAction) {
       $http({
-        method: 'DELETE',  // Chỉ sử dụng DELETE cho cả xóa và khôi phục
+        method: "DELETE", // Chỉ sử dụng DELETE cho cả xóa và khôi phục
         url: `${API_BASE_URL}/Milkdetail/delete/${id}`,
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        data: data  // Gửi dữ liệu (chỉ khi khôi phục)
+        data: data, // Gửi dữ liệu (chỉ khi khôi phục)
       }).then(
-          function (response) {
-            if (response.status === 200) {
-              let message = status === 1
-                  ? "Sản phẩm đã được xóa thành công."
-                  : "Sản phẩm đã được khôi phục thành công.";
-              showNotification(message, "success");
-              $scope.getMilkdetails(); // Refresh danh sách sản phẩm
-            } else {
-              let message = status === 1
-                  ? "Không thể xóa sản phẩm. Vui lòng thử lại."
-                  : "Không thể khôi phục sản phẩm. Vui lòng thử lại.";
-              showNotification(message, "error");
-            }
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(
-                error,
-                status === 1
-                    ? "Không thể xóa sản phẩm. Vui lòng thử lại."
-                    : "Không thể khôi phục sản phẩm. Vui lòng thử lại."
-            );
-            showNotification(errorMessage, "error");
+        function (response) {
+          if (response.status === 200) {
+            let message =
+              status === 1
+                ? "Sản phẩm đã được xóa thành công."
+                : "Sản phẩm đã được khôi phục thành công.";
+            showNotification(message, "success");
+            $scope.getMilkdetails(); // Refresh danh sách sản phẩm
+          } else {
+            let message =
+              status === 1
+                ? "Không thể xóa sản phẩm. Vui lòng thử lại."
+                : "Không thể khôi phục sản phẩm. Vui lòng thử lại.";
+            showNotification(message, "error");
           }
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            status === 1
+              ? "Không thể xóa sản phẩm. Vui lòng thử lại."
+              : "Không thể khôi phục sản phẩm. Vui lòng thử lại."
+          );
+          showNotification(errorMessage, "error");
+        }
       );
     }
   };
