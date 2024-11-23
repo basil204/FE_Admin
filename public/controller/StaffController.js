@@ -1,6 +1,6 @@
 app.controller("StaffController", function ($scope, $http, $location) {
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://localhost:1234/api/user";
+  const API_BASE_URL = "http://localhost:1234/api";
 
   // Authorization Header
   const config = {
@@ -8,21 +8,14 @@ app.controller("StaffController", function ($scope, $http, $location) {
       Authorization: `Bearer ${token}`,
     },
   };
-
+  $scope.formData = {};
   // Fetch staff list
   $scope.GetStaffs = function () {
-    $http.get(`${API_BASE_URL}/lst`, config).then(
+    $http.get(`${API_BASE_URL}/user/lst`, config).then(
       function (response) {
-        // Filter out staff with id === 1 from the active staff list
-        $scope.staffs = response.data.filter(
-          (staff) => staff.status === 1 && staff.id !== 1
-        );
+        console.log(response.data);
+        $scope.staffs = response.data.filter((staff) => staff.role.id !== 1);
         console.log($scope.staffs);
-
-        // Filter out staff with id === 1 from the deleted staff list
-        $scope.deletedstaffs = response.data.filter(
-          (staff) => staff.status === 0 && staff.id !== 1
-        );
       },
       function (error) {
         const errorMessage = parseErrorMessages(
@@ -34,6 +27,127 @@ app.controller("StaffController", function ($scope, $http, $location) {
     );
   };
 
-  // Call the GetStaffs function to load the staff list
+  $scope.deleteItem = function (id) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+      $http({
+        method: "DELETE",
+        url: `${API_BASE_URL}/user/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message = response.data.message || "Xóa nguoi dung thành công";
+          $scope.showNotification(message, "success");
+          $scope.GetStaffs();
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa nguoi dung"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    }
+  };
+
+  $scope.getItemById = function (id) {
+    $http.get(`${API_BASE_URL}/user/lst/${id}`, config).then(
+      function (response) {
+        $scope.formData = response.data;
+        console.log($scope.formData);
+        $scope.formData.role = response.data.role.id;
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu người dùng"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+  $scope.resetForm = function () {
+    $scope.formData = {};
+  };
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+
+  // Helper function to parse error messages
+  function parseErrorMessages(error, defaultMessage) {
+    if (error.data && error.data.errors && Array.isArray(error.data.errors)) {
+      return error.data.errors.map((err) => err.message).join("\n");
+    }
+    return defaultMessage;
+  }
+  $scope.getRoles = function () {
+    $http.get(`${API_BASE_URL}/role/lst`, config).then(
+      function (response) {
+        $scope.roles = response.data.filter((role) => role.id !== 1);
+        console.log($scope.roles);
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách chức vụ"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+
+  $scope.updateItem = function () {
+    try {
+      console.log($scope.formData);
+      const url = `${API_BASE_URL}/user/update/${$scope.formData.id}`;
+      const data = {
+        fullname: $scope.formData.fullname,
+        phonenumber: $scope.formData.phonenumber,
+        email: $scope.formData.email,
+        role: { id: $scope.formData.role },
+      };
+
+      $http({
+        method: "PUT",
+        url: url,
+        data: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message || "Cập nhật tài khoản thành công";
+          $scope.showNotification(message, "success");
+          $scope.GetStaffs();
+          $scope.resetForm(); // Clear form after success
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể cập nhật tài khoản"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+    } catch (exception) {
+      console.error("Unexpected error:", exception);
+      $scope.showNotification(
+        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+        "error"
+      );
+    }
+  };
+
+  $scope.getRoles();
   $scope.GetStaffs();
 });

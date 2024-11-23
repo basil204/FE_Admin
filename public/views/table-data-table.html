@@ -15,7 +15,7 @@
             <div class="row element-button">
               <div class="col-sm-2">
 
-                <a class="btn btn-add btn-sm" href="#!/form-add-nhan-vien" title="Thêm"><i class="fas fa-plus"></i>
+                <a class="btn btn-add btn-sm" href="/form-add-nhan-vien" title="Thêm"><i class="fas fa-plus"></i>
                   Tạo mới nhân viên</a>
               </div>
               <div class="col-sm-2">
@@ -44,7 +44,13 @@
                         class="fas fa-trash-alt"></i> Xóa tất cả </a>
               </div>
             </div>
+            
             <div style="overflow-x: auto; margin-top: 10px;">
+              <div ng-if="notification.message" class="form-group col-md-12">
+                <div class="alert" ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}">
+                  {{ notification.message }}
+                </div>
+              </div>
               <table class="table table-hover table-bordered js-copytextarea" cellpadding="0" cellspacing="0" border="0" id="sampleTable" style="width: 100%;">
                 <thead>
                 <tr>
@@ -57,6 +63,7 @@
                   <th>Số điện thoại</th>
                   <th>Ngày tạo</th>
                   <th>Chức vụ</th>
+                  <th>Trạng thái</th>
                   <th width="100">Tính năng</th>
                 </tr>
                 </thead>
@@ -71,13 +78,16 @@
                   <td width="100">{{item.phonenumber}}</td>
                   <td width="100">{{item.registrationdate}}</td>
                   <td width="100">{{item.role.roleName}}</td>
+                  <td width="100" ng-class="{'text-success': item.status === 1, 'text-danger': item.status !== 1}">
+                    <span ng-if="item.status === 1">Hoạt động</span>
+                    <span ng-if="item.status !== 1">Dừng hoạt động</span>
+                </td>
                   <td class="table-td-center">
-                    <button class="btn btn-primary btn-sm trash" type="button" title="Xóa" onclick="myFunction(this)">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                    <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp" data-toggle="modal" data-target="#ModalUP">
+                    <button ng-click="deleteItem(item.id)" class="btn btn-danger btn-sm">Xóa</button>
+                    <button ng-click="getItemById(item.id)" class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp" data-toggle="modal" data-target="#ModalUP">
                       <i class="fas fa-edit"></i>
                     </button>
+                    <!-- <button ng-click="getItemById(user.id)" class="btn btn-primary btn-sm" data-target="#ModalUP">Chỉnh sửa</button> -->
                   </td>
                 </tr>
                 </tbody>
@@ -93,8 +103,7 @@
   <!--
   MODAL
   -->
-  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
-       data-keyboard="false">
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
 
@@ -106,49 +115,39 @@
               </span>
             </div>
           </div>
+          <div ng-if="notification.message" class="form-group col-md-12">
+            <div class="alert" ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}">
+              {{ notification.message }}
+            </div>
+          </div>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">ID nhân viên</label>
-              <input class="form-control" type="text" required value="#CD2187" disabled>
+              <input class="form-control" type="text"  ng-model="formData.id" required  disabled>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Họ và tên</label>
-              <input class="form-control" type="text" required value="Võ Trường">
+              <input class="form-control" type="text"  ng-model="formData.fullname" required >
             </div>
             <div class="form-group  col-md-6">
               <label class="control-label">Số điện thoại</label>
-              <input class="form-control" type="number" required value="09267312388">
+              <input class="form-control" type="text"  ng-model="formData.phonenumber" required >
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Địa chỉ email</label>
-              <input class="form-control" type="text" required value="truong.vd2000@gmail.com">
-            </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">Ngày sinh</label>
-              <input class="form-control" type="date" value="15/03/2000">
+              <input class="form-control" type="text" ng-model="formData.email" required >
             </div>
             <div class="form-group  col-md-6">
               <label for="exampleSelect1" class="control-label">Chức vụ</label>
-              <select class="form-control" id="exampleSelect1">
-                <option>Bán hàng</option>
-                <option>Tư vấn</option>
-                <option>Dịch vụ</option>
-                <option>Thu Ngân</option>
-                <option>Quản kho</option>
-                <option>Bảo trì</option>
-                <option>Kiểm hàng</option>
-                <option>Bảo vệ</option>
-                <option>Tạp vụ</option>
-              </select>
+              <select class="form-control" id="targetSelect" ng-model="formData.role">
+                <option ng-repeat="role in roles" ng-value="role.id">{{role.roleName}}</option>
+            </select>
             </div>
           </div>
           <BR>
-          <a href="#" style="    float: right;
-        font-weight: 600;
-        color: #ea0000;">Chỉnh sửa nâng cao</a>
           <BR>
           <BR>
-          <button class="btn btn-save" type="button">Lưu lại</button>
+            <button class="btn btn-success" type="button" ng-click="updateItem()">Lưu lại</button>
           <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
           <BR>
         </div>
