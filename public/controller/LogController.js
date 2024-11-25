@@ -3,7 +3,7 @@ app.controller("LogController", [
     "$http",
     function ($scope, $http) {
         const token = localStorage.getItem("authToken"); // Lấy token từ localStorage
-        const API_BASE_URL = "http://localhost:1234/api/Log"; // Đường dẫn API backend
+        const API_BASE_URL = "http://160.30.21.47:1234/api/Log"; // Đường dẫn API backend
 
         // Khởi tạo biến
         $scope.logs = []; // Danh sách logs
