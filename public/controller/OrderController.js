@@ -6,6 +6,7 @@ app.controller("OrderController", function ($scope, $http) {
 
   // List of possible order statuses
   $scope.availableStatuses = [
+    { code: 301, name: 'Chờ Duyệt Đơn' },
     { code: 333, name: 'Giỏ hàng' },
     { code: 334, name: 'Chờ xử lý' },
     { code: 335, name: 'Chờ thanh toán' },
