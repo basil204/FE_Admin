@@ -30,6 +30,10 @@ app.controller("LogController", [
             }).then(
                 function (response) {
                     $scope.logs = response.data.content; // Lấy danh sách logs từ response
+
+                    // Format thời gian với múi giờ '+0700'
+
+
                     $scope.totalPages = response.data.page.totalPages; // Tổng số trang
                     $scope.isSearching = false; // Đặt lại trạng thái tìm kiếm
                 },
@@ -38,6 +42,7 @@ app.controller("LogController", [
                 }
             );
         };
+
 
         // Hàm tìm kiếm logs theo username
         $scope.searchLogs = function () {
