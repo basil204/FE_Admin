@@ -57,7 +57,7 @@
                   <td class="text-center">{{ $index + 1 }}</td>
                   <td>{{ log.user.username }}</td>
                   <td>{{ log.action }}</td>
-                  <td>{{ log.created_at | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                  <td>{{ log.created_at | date: 'yyyy-MM-dd HH:mm:ss' : '+0700' }}</td>
                   <td>{{ log.description }}</td>
                 </tr>
                 <tr ng-if="logs.length === 0">
