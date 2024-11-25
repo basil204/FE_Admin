@@ -36,5 +36,12 @@
         <li ng-if="userRole === 'Admin'">
             <a class="app-menu__item" href="/quan-ly-bao-cao"><i class="app-menu__icon bx bx-pie-chart-alt-2"></i><span class="app-menu__label">Báo cáo doanh thu</span></a>
         </li>
+        <li ng-if="userRole === 'Admin' || userRole === 'Staff'">
+            <a class="app-menu__item" href="/check-log-he-thong">
+                <i class="app-menu__icon bx bx-history"></i>
+                <span class="app-menu__label">lịch sử hoạt động</span>
+            </a>
+        </li>
+
     </ul>
 </aside>

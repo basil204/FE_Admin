@@ -1,0 +1,93 @@
+<div ng-controller="LogController">
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb side">
+        <li class="breadcrumb-item active">
+          <a href="#"><b>Lịch sử Logs</b></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <div class="tile-body">
+            <div class="row element-button mb-4">
+              <!-- Input tìm kiếm username -->
+              <div class="col-md-6 d-flex align-items-center">
+                <input
+                        type="text"
+                        class="form-control form-control-lg"
+                        ng-model="searchUsername"
+                        placeholder="Nhập username để tìm kiếm"
+                />
+              </div>
+              <!-- Nút tìm kiếm -->
+              <div class="col-md-3 d-flex align-items-center">
+                <button
+                        class="btn btn-primary btn-lg w-100"
+                        ng-click="searchLogs()">
+                  <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+              </div>
+            </div>
+
+            <!-- Bảng hiển thị logs -->
+            <div
+                    style="
+                overflow-x: auto;
+                max-height: 500px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+              ">
+              <table
+                      class="table table-hover table-bordered table-striped"
+                      style="width: 100%; table-layout: auto;">
+                <thead class="table-dark">
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Người thực hiện</th>
+                  <th>Hành động</th>
+                  <th>Thời gian</th>
+                  <th>Chi tiết</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="log in logs track by $index">
+                  <td class="text-center">{{ $index + 1 }}</td>
+                  <td>{{ log.user.username }}</td>
+                  <td>{{ log.action }}</td>
+                  <td>{{ log.created_at | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                  <td>{{ log.description }}</td>
+                </tr>
+                <tr ng-if="logs.length === 0">
+                  <td colspan="5" class="text-center">Không có dữ liệu</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Phân trang -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <button
+                      class="btn btn-secondary btn-lg"
+                      ng-disabled="currentPage === 0"
+                      ng-click="changePage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i> Trước
+              </button>
+              <span class="h5 mb-0">
+                Trang {{ currentPage + 1 }} trên {{ totalPages }}
+              </span>
+              <button
+                      class="btn btn-secondary btn-lg"
+                      ng-disabled="currentPage === totalPages - 1"
+                      ng-click="changePage(currentPage + 1)">
+                Tiếp <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

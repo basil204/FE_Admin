@@ -46,10 +46,12 @@ app.run(function ($rootScope, $location) {
         "/table-data-oder",
         "/table-data-product",
         "/table-data-table",
+        "/check-log-he-thong",
       ];
 
       const staffRoutes = [
         "/home",
+          "/check-log-he-thong",
         "/form-add-don-hang",
         "/form-add-san-pham",
         "/table-data-khach-hang",
@@ -129,6 +131,10 @@ app.config(function ($routeProvider, $locationProvider) {
       })
       .when("/table-data-table", {
         templateUrl: "/views/table-data-table.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/check-log-he-thong", {
+        templateUrl: "/views/check-log-he-thong.html",
         resolve: { auth: requireAuth },
       })
       .otherwise({
