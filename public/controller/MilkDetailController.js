@@ -102,7 +102,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
   $scope.updateStock = function (id) {
     // Set the product ID in the form to use later in the save function
     $scope.formData = { newStockQuantity: null, productId: id };
-
+console.log($scope.formData);
     // Open the modal to enter the new stock quantity
     $("#ModalStockUpdate").modal("show");
   };

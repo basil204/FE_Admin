@@ -170,6 +170,36 @@ app.controller("OrderController", function ($scope, $http) {
         }
     );
   };
+  $scope.checkZalo = function (phoneNumber) {
+    const apiUrl = `http://160.30.21.47:3030/api/customerinfo?phone=${phoneNumber}`;
+
+    // Gửi yêu cầu GET để kiểm tra số điện thoại trên Zalo
+    $http({
+      method: "GET",
+      url: apiUrl,
+    }).then(function (response) {
+      // Kiểm tra mã trạng thái trả về và thông báo
+      if (response.status === 200) {
+        // Assuming the response contains a field 'zalo_name' when phone is found
+        const zaloName = response.data.user.zalo_name;
+        console.log("Zalo name:", response);
+
+        if (zaloName) {
+          $scope.showNotification(`Số điện thoại tồn tại trên Zalo! \n Tên Zalo: ${zaloName}`, "success");
+
+        } else {
+          $scope.showNotification("Số điện thoại tồn tại trên Zalo, nhưng không có tên Zalo.", "warning");
+        }
+      } else if (response.status === 404) {
+        $scope.showNotification("Số điện thoại không tồn tại trên Zalo.", "error");
+      } else {
+        $scope.showNotification("Số điện thoại không hợp lệ hoặc có lỗi xảy ra.", "error");
+      }
+    }, function (error) {
+      console.error("Có lỗi khi kiểm tra Zalo:", error);
+      $scope.showNotification("Có lỗi khi kiểm tra số điện thoại Zalo. Vui lòng thử lại!", "error");
+    });
+  };
 
   // Hàm tải lại danh sách hóa đơn
   $scope.loadInvoices = function () {

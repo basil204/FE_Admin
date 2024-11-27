@@ -67,7 +67,7 @@ app.controller("LogController", [
             }).then(
                 function (response) {
                     $scope.logs = response.data.content; // Lấy danh sách logs từ response
-                    $scope.totalPages = response.data.totalPages; // Tổng số trang
+                    $scope.totalPages =  response.data.page.totalPages; // Tổng số trang
                     $scope.isSearching = true; // Đặt trạng thái đang tìm kiếm
                 },
                 function (error) {

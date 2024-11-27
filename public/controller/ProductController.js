@@ -268,6 +268,40 @@ app.controller("ProductController", function ($scope, $http, $location) {
             );
         }
     };
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'link', '|',
+                'bulletedList', 'numberedList', '|',
+                'outdent', 'indent', '|',
+                'blockQuote', 'insertTable', '|',
+                'undo', 'redo', '|',
+                'fontColor', 'fontSize', 'fontFamily', '|',
+                'alignment', 'horizontalLine', '|',
+                'specialCharacters', 'strikethrough'
+            ],
+            language: 'vi' // Vietnamese language
+        })
+        .then(editor => {
+            // When CKEditor is ready, bind it to AngularJS model
+            editor.model.document.on('change:data', () => {
+                $scope.$apply(function () {
+                    $scope.editorContent = editor.getData();
+                    console.log($scope.editorContent);
+                });
+            });
+
+            // Expose the editor to scope for further interaction
+            $scope.editorInstance = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+
+    // Add any initial content or other logic
+    $scope.editorContent = '';
   // Gọi các hàm lấy dữ liệu ban đầu
   $scope.getTargets();
   $scope.getBrands();

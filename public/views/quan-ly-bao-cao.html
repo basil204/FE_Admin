@@ -173,6 +173,7 @@
                                         <th>Dung tích</th>
 
                                         <th>Hình ảnh</th>
+                                        <th>Chức Năng</th>
 
                                     </tr>
                                 </thead>
@@ -189,6 +190,11 @@
                   <td>{{milkdetail.usageCapacity.capacity + " " + milkdetail.usageCapacity.unit}}</td>
 
                   <td><img ng-src="{{milkdetail.imgUrl}}" alt="Milk Image" style="width: 50px; height: 50px;" /></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" type="button"  data-toggle="modal" data-target="#ModalStockUpdate" ng-click="updateStock(milkdetail.id)">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -314,5 +320,32 @@
                 </div>
             </div>
         </div>
-        
+
+<div class="modal fade" id="ModalStockUpdate" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <h5>Cập nhật số lượng sản phẩm</h5>
+                    </div>
+                </div>
+                <!-- Stock Quantity -->
+                <div class="form-group col-md-12">
+                    <label  class="control-label">Số lượng mới</label>
+                    <input class="form-control" type="number" ng-model="formData.newStockQuantity" required>
+                </div>
+
+                <!-- Save Button for Updating Stock -->
+                <button class="btn btn-save" type="button" ng-click="saveStockUpdate(formData)">
+                    Cập nhật số lượng
+                </button>
+                <button class="btn btn-save" type="button" ng-click="resetForm()">Làm mới</button>
+                <a class="btn btn-cancel" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
 </div>
+</div>
+
