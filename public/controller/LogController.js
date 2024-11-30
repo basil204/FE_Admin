@@ -1,6 +1,6 @@
 app.controller("LogController", [
     "$scope",
-    "$http",
+    "$http", "socket",
     function ($scope, $http, socket) {
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
         if (userInfo) {

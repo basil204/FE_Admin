@@ -1,15 +1,11 @@
 app.controller("ChartController", [
   "$scope",
-  "$http", // Thêm $http để gọi API
+  "$http", "socket", // Thêm $http để gọi API
   function ($scope, $http, socket
   ) {
     const token = localStorage.getItem("authToken");
     const API_BASE_URL =
       "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (userInfo) {
-      socket.connect(userInfo);
-    }
     // Dữ liệu mặc định của chart
     $scope.chartData = {
       labels: [], // Mảng sẽ chứa tháng và năm

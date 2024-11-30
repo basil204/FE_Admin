@@ -151,6 +151,8 @@ app.config(function ($routeProvider, $locationProvider) {
 app.factory('socket', ['$q', function ($q) {
   var socket = null;
   var stompClient = null;
+  var reconnectAttempts = 0;
+  const maxReconnectAttempts = 5; // Giới hạn số lần cố gắng kết nối lại
 
   return {
     connect: function (userInfo) {
@@ -166,6 +168,7 @@ app.factory('socket', ['$q', function ($q) {
           role: userInfo.role,
           status: 'online' // Thông báo người dùng online
         }));
+        reconnectAttempts = 0; // Đặt lại số lần kết nối lại khi kết nối thành công
         deferred.resolve();
       }, function (error) {
         console.error('Error: ' + error);
@@ -174,36 +177,46 @@ app.factory('socket', ['$q', function ($q) {
 
       socket.onclose = function () {
         console.log("Socket closed. Attempting to reconnect...");
-        setTimeout(() => {
-          this.connect(userInfo); // Cố gắng kết nối lại sau một vài giây
-        }, 5000);
+        if (reconnectAttempts < maxReconnectAttempts) {
+          reconnectAttempts++;
+          setTimeout(() => {
+            socket.connect(userInfo); // Cố gắng kết nối lại sau một vài giây
+          }, 5000);
+        } else {
+          console.log("Quá nhiều lần cố gắng kết nối lại.");
+        }
       };
 
       return deferred.promise;
     },
 
     subscribe: function (destination, callback) {
-      if (stompClient) {
+      if (stompClient && stompClient.connected) {
         stompClient.subscribe(destination, function (message) {
           callback(message.body);
         });
+      } else {
+        console.log("Kết nối chưa được thiết lập.");
       }
     },
 
     sendMessage: function (destination, message) {
-      if (stompClient) {
+      if (stompClient && stompClient.connected) {
         stompClient.send(destination, {}, JSON.stringify(message));
+      } else {
+        console.log("Kết nối chưa được thiết lập.");
       }
     },
 
     disconnect: function (userInfo) {
-      if (stompClient) {
+      if (stompClient && stompClient.connected) {
         stompClient.send('/app/disconnect', {}, JSON.stringify({ userId: userInfo.id, role: userInfo.role }));
         stompClient.disconnect();
       }
     }
   };
 }]);
+
 
 
 app.run(['$window', 'socket', function ($window, socket) {

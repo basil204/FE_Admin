@@ -1,8 +1,4 @@
 app.controller("OrderController", function ($scope, $http, socket) {
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  if (userInfo) {
-    socket.connect(userInfo);
-  }
   const token = localStorage.getItem("authToken");
 
   // Định nghĩa URL gốc của API
