@@ -1,7 +1,11 @@
 app.controller("LogController", [
     "$scope",
     "$http",
-    function ($scope, $http) {
+    function ($scope, $http, socket) {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (userInfo) {
+            socket.connect(userInfo);
+        }
         const token = localStorage.getItem("authToken"); // Lấy token từ localStorage
         const API_BASE_URL = "http://160.30.21.47:1234/api/Log"; // Đường dẫn API backend
 
@@ -67,7 +71,7 @@ app.controller("LogController", [
             }).then(
                 function (response) {
                     $scope.logs = response.data.content; // Lấy danh sách logs từ response
-                    $scope.totalPages =  response.data.page.totalPages; // Tổng số trang
+                    $scope.totalPages = response.data.page.totalPages; // Tổng số trang
                     $scope.isSearching = true; // Đặt trạng thái đang tìm kiếm
                 },
                 function (error) {

@@ -1,5 +1,9 @@
-app.controller("MilkDetailController", function ($scope, $http, $location) {
+app.controller("MilkDetailController", function ($scope, $http, $location, socket) {
   // Notification Setup
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  if (userInfo) {
+    socket.connect(userInfo);
+  }
   const token = localStorage.getItem("authToken");
   const API_BASE_URL = "http://160.30.21.47:1234/api";
 
@@ -102,7 +106,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
   $scope.updateStock = function (id) {
     // Set the product ID in the form to use later in the save function
     $scope.formData = { newStockQuantity: null, productId: id };
-console.log($scope.formData);
+    console.log($scope.formData);
     // Open the modal to enter the new stock quantity
     $("#ModalStockUpdate").modal("show");
   };
@@ -321,9 +325,8 @@ console.log($scope.formData);
 
   $scope.saveMilkdetail = function (formData) {
     const isUpdate = !!formData.id;
-    const url = `${API_BASE_URL}/Milkdetail/${
-      isUpdate ? "update/" + formData.id : "add"
-    }`;
+    const url = `${API_BASE_URL}/Milkdetail/${isUpdate ? "update/" + formData.id : "add"
+      }`;
     const method = isUpdate ? "PUT" : "POST";
 
     const datas = {

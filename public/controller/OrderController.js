@@ -1,4 +1,8 @@
-app.controller("OrderController", function ($scope, $http) {
+app.controller("OrderController", function ($scope, $http, socket) {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  if (userInfo) {
+    socket.connect(userInfo);
+  }
   const token = localStorage.getItem("authToken");
 
   // Định nghĩa URL gốc của API
@@ -55,16 +59,16 @@ app.controller("OrderController", function ($scope, $http) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          // Lọc các hóa đơn có status khác 334 và 336
-          $scope.invoices = response.data.filter(function (invoice) {
-            return invoice.status !== 336;
-          });
-        },
-        function (error) {
-          console.error("Có lỗi khi lấy dữ liệu:", error);
-          $scope.showNotification("Có lỗi khi tải danh sách hóa đơn. Vui lòng thử lại!", "error");
-        }
+      function (response) {
+        // Lọc các hóa đơn có status khác 334 và 336
+        $scope.invoices = response.data.filter(function (invoice) {
+          return invoice.status !== 336;
+        });
+      },
+      function (error) {
+        console.error("Có lỗi khi lấy dữ liệu:", error);
+        $scope.showNotification("Có lỗi khi tải danh sách hóa đơn. Vui lòng thử lại!", "error");
+      }
     );
   } else {
     console.error("Không tìm thấy token xác thực.");
@@ -135,39 +139,39 @@ app.controller("OrderController", function ($scope, $http) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.invoiceDetails = response.data;
-          console.log("Chi tiết hóa đơn:", $scope.invoiceDetails);
+      function (response) {
+        $scope.invoiceDetails = response.data;
+        console.log("Chi tiết hóa đơn:", $scope.invoiceDetails);
 
-          if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
-            const invoiceDetail = $scope.invoiceDetails[0];
+        if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
+          const invoiceDetail = $scope.invoiceDetails[0];
 
-            // Set invoice details in the modal form
-            $scope.invoiceCode = invoiceDetail.invoiceCode;
-            $scope.id = invoiceDetail.id;
-            $scope.deliveryAddress = invoiceDetail.deliveryAddress;
-            $scope.phoneNumber = invoiceDetail.phoneNumber;
+          // Set invoice details in the modal form
+          $scope.invoiceCode = invoiceDetail.invoiceCode;
+          $scope.id = invoiceDetail.id;
+          $scope.deliveryAddress = invoiceDetail.deliveryAddress;
+          $scope.phoneNumber = invoiceDetail.phoneNumber;
 
-            // Process the list of items
-            $scope.items = invoiceDetail.items.map((item) => {
-              return {
-                milkTasteName: item.milkTasteName,
-                milkDetailDescription: item.milkDetailDescription,
-                quantity: item.quantity,
-                totalAmount: item.totalAmount,
-                unit: item.unit,
-                capacity: item.capacity,
-              };
-            });
-          } else {
-            console.error("Không tìm thấy dữ liệu chi tiết hóa đơn.");
-            $scope.showNotification("Không tìm thấy chi tiết hóa đơn.", "error");
-          }
-        },
-        function (error) {
-          console.error("Có lỗi khi lấy chi tiết hóa đơn:", error);
-          $scope.showNotification("Có lỗi khi lấy chi tiết hóa đơn. Vui lòng thử lại!", "error");
+          // Process the list of items
+          $scope.items = invoiceDetail.items.map((item) => {
+            return {
+              milkTasteName: item.milkTasteName,
+              milkDetailDescription: item.milkDetailDescription,
+              quantity: item.quantity,
+              totalAmount: item.totalAmount,
+              unit: item.unit,
+              capacity: item.capacity,
+            };
+          });
+        } else {
+          console.error("Không tìm thấy dữ liệu chi tiết hóa đơn.");
+          $scope.showNotification("Không tìm thấy chi tiết hóa đơn.", "error");
         }
+      },
+      function (error) {
+        console.error("Có lỗi khi lấy chi tiết hóa đơn:", error);
+        $scope.showNotification("Có lỗi khi lấy chi tiết hóa đơn. Vui lòng thử lại!", "error");
+      }
     );
   };
   $scope.checkZalo = function (phoneNumber) {
@@ -211,16 +215,16 @@ app.controller("OrderController", function ($scope, $http) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          // Lọc các hóa đơn có status khác 334 và 336
-          $scope.invoices = response.data.filter(function (invoice) {
-            return invoice.status !== 336;
-          });
-        },
-        function (error) {
-          console.error("Có lỗi khi tải lại danh sách hóa đơn:", error);
-          $scope.showNotification("Có lỗi khi tải lại danh sách hóa đơn. Vui lòng thử lại!", "error");
-        }
+      function (response) {
+        // Lọc các hóa đơn có status khác 334 và 336
+        $scope.invoices = response.data.filter(function (invoice) {
+          return invoice.status !== 336;
+        });
+      },
+      function (error) {
+        console.error("Có lỗi khi tải lại danh sách hóa đơn:", error);
+        $scope.showNotification("Có lỗi khi tải lại danh sách hóa đơn. Vui lòng thử lại!", "error");
+      }
     );
   };
 });

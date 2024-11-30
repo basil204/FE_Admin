@@ -1,4 +1,8 @@
-app.controller("ProductController", function ($scope, $http, $location) {
+app.controller("ProductController", function ($scope, $http, $location, socket) {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  if (userInfo) {
+    socket.connect(userInfo);
+  }
   const token = localStorage.getItem("authToken");
   const API_BASE_URL = "http://160.30.21.47:1234/api";
 
@@ -15,19 +19,19 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.targets = response.data.filter((target) => target.status === 1);
-          $scope.deletedtargets = response.data.filter(
-              (target) => target.status === 0
-          );
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-              error,
-              "Không thể tải danh sách đối tượng sử dụng"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        $scope.targets = response.data.filter((target) => target.status === 1);
+        $scope.deletedtargets = response.data.filter(
+          (target) => target.status === 0
+        );
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách đối tượng sử dụng"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -42,19 +46,19 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.brands = response.data.filter((brand) => brand.status === 1);
-          $scope.deletedBrands = response.data.filter(
-              (brand) => brand.status === 0
-          );
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-              error,
-              "Không thể tải danh sách thương hiệu"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        $scope.brands = response.data.filter((brand) => brand.status === 1);
+        $scope.deletedBrands = response.data.filter(
+          (brand) => brand.status === 0
+        );
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách thương hiệu"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -69,17 +73,17 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.types = response.data.filter((type) => type.status === 1);
-          $scope.deletedtypes = response.data.filter((type) => type.status === 0);
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-              error,
-              "Không thể tải danh sách loại sữa"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        $scope.types = response.data.filter((type) => type.status === 1);
+        $scope.deletedtypes = response.data.filter((type) => type.status === 0);
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách loại sữa"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -94,21 +98,21 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.products = response.data.filter(
-              (product) => product.status === 1
-          );
-          $scope.deletedproducts = response.data.filter(
-              (product) => product.status === 0
-          );
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-              error,
-              "Không thể tải danh sách sản phẩm"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        $scope.products = response.data.filter(
+          (product) => product.status === 1
+        );
+        $scope.deletedproducts = response.data.filter(
+          (product) => product.status === 0
+        );
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách sản phẩm"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -121,19 +125,19 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          $scope.formData = response.data;
-          $scope.formData.milkBrand = response.data.milkBrand.id;
-          $scope.formData.milkType = response.data.milkType.id;
-          $scope.formData.targetUser = response.data.targetUser.id;
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-              error,
-              "Không thể tải dữ liệu sản phẩm"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        $scope.formData = response.data;
+        $scope.formData.milkBrand = response.data.milkBrand.id;
+        $scope.formData.milkType = response.data.milkType.id;
+        $scope.formData.targetUser = response.data.targetUser.id;
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải dữ liệu sản phẩm"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -151,8 +155,8 @@ app.controller("ProductController", function ($scope, $http, $location) {
     };
 
     const apiUrl = isUpdating
-        ? `${API_BASE_URL}/Product/update/${$scope.formData.id}`  // Cập nhật sản phẩm
-        : `${API_BASE_URL}/Product/add`;  // Thêm mới sản phẩm
+      ? `${API_BASE_URL}/Product/update/${$scope.formData.id}`  // Cập nhật sản phẩm
+      : `${API_BASE_URL}/Product/add`;  // Thêm mới sản phẩm
 
     const method = isUpdating ? "PUT" : "POST";  // Sử dụng PUT cho cập nhật, POST cho thêm mới
 
@@ -165,18 +169,18 @@ app.controller("ProductController", function ($scope, $http, $location) {
         Authorization: `Bearer ${token}`,
       },
     }).then(
-        function (response) {
-          const successMessage = isUpdating
-              ? "Cập nhật sản phẩm thành công"
-              : "Thêm sản phẩm mới thành công";
-          $scope.showNotification(successMessage, "success");
-          $scope.resetForm(); // Reset form sau khi lưu
-          $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(error, "Không thể lưu sản phẩm");
-          $scope.showNotification(errorMessage, "error");
-        }
+      function (response) {
+        const successMessage = isUpdating
+          ? "Cập nhật sản phẩm thành công"
+          : "Thêm sản phẩm mới thành công";
+        $scope.showNotification(successMessage, "success");
+        $scope.resetForm(); // Reset form sau khi lưu
+        $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(error, "Không thể lưu sản phẩm");
+        $scope.showNotification(errorMessage, "error");
+      }
     );
   };
 
@@ -194,22 +198,22 @@ app.controller("ProductController", function ($scope, $http, $location) {
     formData.append("image", file[0]); // Đảm bảo bạn đang gửi đúng tệp ảnh
 
     $http
-        .post("https://api.imgbb.com/1/upload", formData, {
-          headers: { "Content-Type": undefined },
-          transformRequest: angular.identity,
-        })
-        .then((response) => {
-          const imageUrl = response.data?.data?.url;
-          if (imageUrl) {
-            $scope.formData.imgUrl = imageUrl; // Cập nhật URL ảnh vào formData
-            $scope.showNotification("Image uploaded successfully", "success");
-          } else {
-            $scope.showNotification("Failed to upload image", "error");
-          }
-        })
-        .catch((error) => {
+      .post("https://api.imgbb.com/1/upload", formData, {
+        headers: { "Content-Type": undefined },
+        transformRequest: angular.identity,
+      })
+      .then((response) => {
+        const imageUrl = response.data?.data?.url;
+        if (imageUrl) {
+          $scope.formData.imgUrl = imageUrl; // Cập nhật URL ảnh vào formData
+          $scope.showNotification("Image uploaded successfully", "success");
+        } else {
           $scope.showNotification("Failed to upload image", "error");
-        });
+        }
+      })
+      .catch((error) => {
+        $scope.showNotification("Failed to upload image", "error");
+      });
   };
 
   // Chức năng xóa ảnh
@@ -223,7 +227,7 @@ app.controller("ProductController", function ($scope, $http, $location) {
     $scope.formData = {};
     $scope.formData.imgUrl = ""; // Reset ảnh khi reset form
   };
-    
+
   // Hiển thị thông báo
   $scope.showNotification = function (message, type) {
     Swal.fire({
@@ -243,65 +247,65 @@ app.controller("ProductController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
-    $scope.deleteItem = function (id) {
-        if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
-            $http({
-                method: "DELETE",
-                url: `${API_BASE_URL}/Product/delete/${id}`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }).then(
-                function (response) {
-                    const message =
-                        response.data.message || "Xóa đối tượng sử dụng thành công";
-                    $scope.showNotification(message, "success");
-                    $scope.getProducts();
-                },
-                function (error) {
-                    const errorMessage = parseErrorMessages(
-                        error,
-                        "Không thể xóa đối tượng sử dụng"
-                    );
-                    $scope.showNotification(errorMessage, "error");
-                }
-            );
+  $scope.deleteItem = function (id) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
+      $http({
+        method: "DELETE",
+        url: `${API_BASE_URL}/Product/delete/${id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          const message =
+            response.data.message || "Xóa đối tượng sử dụng thành công";
+          $scope.showNotification(message, "success");
+          $scope.getProducts();
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể xóa đối tượng sử dụng"
+          );
+          $scope.showNotification(errorMessage, "error");
         }
-    };
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            toolbar: [
-                'heading', '|',
-                'bold', 'italic', 'link', '|',
-                'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'blockQuote', 'insertTable', '|',
-                'undo', 'redo', '|',
-                'fontColor', 'fontSize', 'fontFamily', '|',
-                'alignment', 'horizontalLine', '|',
-                'specialCharacters', 'strikethrough'
-            ],
-            language: 'vi' // Vietnamese language
-        })
-        .then(editor => {
-            // When CKEditor is ready, bind it to AngularJS model
-            editor.model.document.on('change:data', () => {
-                $scope.$apply(function () {
-                    $scope.editorContent = editor.getData();
-                    console.log($scope.editorContent);
-                });
-            });
-
-            // Expose the editor to scope for further interaction
-            $scope.editorInstance = editor;
-        })
-        .catch(error => {
-            console.error(error);
+      );
+    }
+  };
+  ClassicEditor
+    .create(document.querySelector('#editor'), {
+      toolbar: [
+        'heading', '|',
+        'bold', 'italic', 'link', '|',
+        'bulletedList', 'numberedList', '|',
+        'outdent', 'indent', '|',
+        'blockQuote', 'insertTable', '|',
+        'undo', 'redo', '|',
+        'fontColor', 'fontSize', 'fontFamily', '|',
+        'alignment', 'horizontalLine', '|',
+        'specialCharacters', 'strikethrough'
+      ],
+      language: 'vi' // Vietnamese language
+    })
+    .then(editor => {
+      // When CKEditor is ready, bind it to AngularJS model
+      editor.model.document.on('change:data', () => {
+        $scope.$apply(function () {
+          $scope.editorContent = editor.getData();
+          console.log($scope.editorContent);
         });
+      });
+
+      // Expose the editor to scope for further interaction
+      $scope.editorInstance = editor;
+    })
+    .catch(error => {
+      console.error(error);
+    });
 
 
-    // Add any initial content or other logic
-    $scope.editorContent = '';
+  // Add any initial content or other logic
+  $scope.editorContent = '';
   // Gọi các hàm lấy dữ liệu ban đầu
   $scope.getTargets();
   $scope.getBrands();
