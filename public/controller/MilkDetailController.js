@@ -1,9 +1,5 @@
 app.controller("MilkDetailController", function ($scope, $http, $location, socket) {
   // Notification Setup
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  if (userInfo) {
-    socket.connect(userInfo);
-  }
   const token = localStorage.getItem("authToken");
   const API_BASE_URL = "http://160.30.21.47:1234/api";
 

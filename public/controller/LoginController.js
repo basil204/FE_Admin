@@ -37,13 +37,13 @@ app.controller(
             const token = response.data.token;
             if (token) {
               const userInfo = parseJwt(token);
-              $scope.connectUser(userInfo);
+
               if (userInfo.role === "Admin" || userInfo.role === "Staff") {
                 localStorage.setItem("authToken", token);
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
                 $rootScope.isLoggedIn = true;
                 $rootScope.userRole = userInfo.role;
-
+                $scope.connectUser(userInfo);
                 Swal.fire({
                   icon: "success",
                   title: "Thành công!",
