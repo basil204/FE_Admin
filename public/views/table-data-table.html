@@ -70,7 +70,7 @@
                 <tbody>
                 <tr ng-repeat="item in staffs track by $index">
                   <td width="10"><input type="checkbox" name="check1" value="1"></td>
-                  <td width="10">{{item.id}}</td>
+                  <td width="10">{{$index +1}}</td>
                   <td width="100">{{item.username}}</td>
                   <td width="100">{{item.fullname}}</td>
                   <td width="100">{{item.email}}</td>

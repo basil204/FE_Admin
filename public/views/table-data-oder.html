@@ -1,131 +1,178 @@
-  <div ng-controller="OrderController">
-    <main class="app-content">
-      <div class="app-title">
-        <ul class="app-breadcrumb breadcrumb side">
-          <li class="breadcrumb-item active"><a href="#"><b>Danh sách đơn hàng</b></a></li>
-        </ul>
-        <div id="clock"></div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="tile">
-            <div class="tile-body">
-              <div class="row element-button">
-                <div class="col-sm-2">
-                  <a class="btn btn-add btn-sm" href="/form-add-don-hang" title="Thêm"><i class="fas fa-plus"></i>
-                    Tạo mới đơn hàng</a>
-                </div>
-              </div>
-              <div style="overflow-x: auto;max-height: 600px; margin-top: 10px;">
-                <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%; table-layout: auto;">
-                  <thead>
-                    <tr>
-                      <th>Số thứ tự</th>
-                      <th>Mã hóa đơn</th>
-                      <th>Địa chỉ giao hàng</th>
-                      <th>Phương thức thanh toán</th>
-                      <th>Số điện thoại</th>
-                      <th>Ngày tạo</th>
-                      <th>Số tiền giảm giá</th>
-                      <th>Tổng tiền</th>
-                      <th>Tình trạng</th>
-                      <th>Tính năng</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="invoice in invoices track by $index">
-                      <td>{{ $index + 1 }}</td>
-                      <td>{{ invoice.invoicecode }}</td> <!-- Mã hóa đơn -->
-                      <td>{{ invoice.deliveryaddress }}</td> <!-- Địa chỉ giao hàng -->
-                      <td>{{ invoice.paymentmethod }}</td> <!-- Phương thức thanh toán -->
-                      <td>{{ invoice.phonenumber }}
-                      </td>
-                      <td>{{ invoice.creationdate | date:'yyyy-MM-dd HH:mm:ss' }}</td> <!-- Ngày tạo -->
-                      <td>{{ invoice.discountamount | currency }}</td> <!-- Số tiền giảm giá -->
-                      <td>{{ invoice.totalamount | number:''}} VNĐ</td> <!-- Tổng tiền -->
-                      <td>
-                        <select ng-model="invoice.status"
-                                ng-options="status.code as status.name for status in availableStatuses"
-                                class="form-control"
-                                ng-change="updateInvoiceStatus(invoice)">
-                        </select>
-                      </td>     <td>
-                      <button ng-click="checkZalo(invoice.phonenumber)" class="btn btn-info btn-sm">
-                        <i class="fas fa-check"></i>
-                      </button>
+<div ng-controller="OrderController">
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb side">
+        <li class="breadcrumb-item active"><a href="#"><b>Danh sách đơn hàng</b></a></li>
+      </ul>
+      <div id="clock"></div>
+    </div>
 
-                      <button ng-click="deleteOrRollbackItem('Invoice', invoice.id)" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                        <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" data-toggle="modal" data-target="#ModalUP" ng-click="getInvoiceDetailById(invoice.id)">
-                          <i class="fas fa-edit"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <div class="tile-body">
+            <!-- Search Form -->
+            <div class="row element-button mt-2">
+              <!-- Top row: Invoice Code, Username, Start Date -->
+              <div class="col-sm-6 col-md-4 mb-2">
+                <input type="text" ng-model="search.invoiceCode" class="form-control" placeholder="Mã hóa đơn">
+              </div>
+
+              <div class="col-sm-6 col-md-4 mb-2">
+                <input type="text" ng-model="search.username" class="form-control" placeholder="Tên người dùng">
+              </div>
+
+              <div class="col-sm-6 col-md-4 mb-2">
+                <input type="datetime-local" ng-model="search.startDate" class="form-control" placeholder="Ngày bắt đầu">
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </main>
 
-    <!-- Modal Structure -->
-    <!-- Modal Structure -->
-    <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true" ng-controller="OrderController">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="ModalUPLabel">Cập nhật thông tin đơn hàng</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="updateForm">
-              <div class="form-group">
-                <label for="invoicecode">Mã hóa đơn</label>
-                <input type="hidden" class="form-control" id="id" ng-model="id" disabled>
-                <input type="text" class="form-control" id="invoicecode" ng-model="invoiceCode" disabled>
-              </div>
-              <div class="form-group">
-                <label for="deliveryaddress">Địa chỉ giao hàng</label>
-                <input type="text" class="form-control" id="deliveryaddress" ng-model="deliveryAddress">
-              </div>
-              <div class="form-group">
-                <label for="phonenumber">Số điện thoại</label>
-                <input type="text" class="form-control" id="phonenumber" ng-model="phoneNumber">
+            <div class="row element-button">
+              <!-- Bottom row: End Date, Status, Search Button -->
+              <div class="col-sm-6 col-md-4 mb-2">
+                <input type="datetime-local" ng-model="search.endDate" class="form-control" placeholder="Ngày kết thúc">
               </div>
 
-              <h6>Chi tiết sản phẩm:</h6>
-              <div class="table-responsive" style="max-height: 400px; overflow-x: auto;">
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th>Vị</th>
-                    <th>Mô tả</th>
-                    <th>Số lượng</th>
-                    <th>Đơn giá</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr ng-repeat="item in items">
-                    <td>{{ item.milkTasteName }}</td>
-                    <td>{{ item.milkDetailDescription }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.totalAmount | number:''}} VNĐ</td>
-                  </tr>
-                  </tbody>
-                </table>
+              <div class="col-sm-6 col-md-4 mb-2">
+                <select ng-model="search.status" class="form-control" ng-options="status.code as status.name for status in availableStatuses">
+                  <option value="">Tất cả trạng thái</option>
+                </select>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-            <button type="button" class="btn btn-primary" ng-click="updateInvoice()">Lưu thay đổi</button>
+
+              <div class="col-sm-6 col-md-4 mb-2">
+                <button ng-click="searchInvoices()" class="btn btn-primary form-control">Tìm kiếm</button>
+              </div>
+            </div>
+
+
+            <div ng-if="search.startDate && !search.endDate" class="alert alert-warning mt-2">
+              <strong>Thông báo:</strong> Bạn phải chọn ngày kết thúc khi chọn ngày bắt đầu.
+            </div>
+            <div ng-if="!search.startDate && search.endDate" class="alert alert-warning mt-2">
+              <strong>Thông báo:</strong> Bạn phải chọn ngày bắt đầu khi chọn ngày kết thúc.
+            </div>
+
+            <!-- Invoice Table -->
+            <div style="overflow-x: auto; max-height: 600px; margin-top: 10px;">
+              <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%; table-layout: auto;">
+                <thead>
+                <tr>
+                  <th>Số thứ tự</th>
+                  <th>Mã hóa đơn</th>
+                  <th>Địa chỉ giao hàng</th>
+                  <th>Phương thức thanh toán</th>
+                  <th>Số điện thoại</th>
+                  <th>Ngày tạo</th>
+                  <th>Số tiền giảm giá</th>
+                  <th>Tổng tiền</th>
+                  <th>Tình trạng</th>
+                  <th>Tính năng</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="invoice in invoices track by $index">
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ invoice.invoiceCode }}</td>
+                  <td>{{ invoice.deliveryAddress }}</td>
+                  <td>{{ invoice.paymentMethod }}</td>
+                  <td>{{ invoice.phoneNumber }}</td>
+                  <td>{{ invoice.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                  <td>{{ invoice.discountAmount | currency }}</td>
+                  <td>{{ invoice.totalAmount | number:'' }} VNĐ</td>
+                  <td>
+                    <select ng-model="invoice.status"
+                            ng-options="status.code as status.name for status in availableStatuses"
+                            class="form-control"
+                            ng-change="updateInvoiceStatus(invoice)">
+                    </select>
+                  </td>
+                  <td>
+                    <button ng-click="checkZalo(invoice.phoneNumber)" class="btn btn-info btn-sm">
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button ng-click="deleteOrRollbackItem('Invoice', invoice.id)" class="btn btn-danger btn-sm">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" data-toggle="modal" data-target="#ModalUP" ng-click="getInvoiceDetailById(invoice.id)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+              <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
+  </main>
+
+  <!-- Modal Structure -->
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalUPLabel">Cập nhật thông tin đơn hàng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="updateForm">
+            <div class="form-group">
+              <label for="invoiceCode">Mã hóa đơn</label>
+              <input type="hidden" class="form-control" id="id" ng-model="id" disabled>
+              <input type="text" class="form-control" id="invoiceCode" ng-model="invoiceCode" disabled>
+            </div>
+
+            <div class="form-group">
+              <label for="deliveryAddress">Địa chỉ giao hàng</label>
+              <input type="text" class="form-control" id="deliveryAddress" ng-model="deliveryAddress">
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Số điện thoại</label>
+              <input type="text" class="form-control" id="phoneNumber" ng-model="phoneNumber">
+            </div>
+
+            <h6>Chi tiết sản phẩm:</h6>
+            <div class="table-responsive" style="max-height: 400px; overflow-x: auto;">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th>Vị</th>
+                  <th>Mô tả</th>
+                  <th>Số lượng</th>
+                  <th>Đơn giá</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                  <td>{{ item.milkTasteName }}</td>
+                  <td>{{ item.milkDetailDescription }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.totalAmount | number:'' }} VNĐ</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary" ng-click="updateInvoice()">Lưu thay đổi</button>
+        </div>
+      </div>
+    </div>
   </div>
+</div>

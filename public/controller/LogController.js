@@ -1,7 +1,8 @@
 app.controller("LogController", [
     "$scope",
     "$http",
-    function ($scope, $http) {
+    "$timeout",  // Inject $timeout service
+    function ($scope, $http, $timeout) {
         const token = localStorage.getItem("authToken"); // Lấy token từ localStorage
         const API_BASE_URL = "http://160.30.21.47:1234/api/Log"; // Đường dẫn API backend
 
@@ -12,6 +13,7 @@ app.controller("LogController", [
         $scope.pageSize = 10; // Số lượng bản ghi trên mỗi trang
         $scope.totalPages = 0; // Tổng số trang
         $scope.isSearching = false; // Trạng thái tìm kiếm
+        let debounceTimeout; // Variable to hold the debounce timeout
 
         // Hàm lấy toàn bộ logs (mặc định hiển thị danh sách ban đầu)
         $scope.getAllLogs = function () {
@@ -30,10 +32,6 @@ app.controller("LogController", [
             }).then(
                 function (response) {
                     $scope.logs = response.data.content; // Lấy danh sách logs từ response
-
-                    // Format thời gian với múi giờ '+0700'
-
-
                     $scope.totalPages = response.data.page.totalPages; // Tổng số trang
                     $scope.isSearching = false; // Đặt lại trạng thái tìm kiếm
                 },
@@ -43,37 +41,44 @@ app.controller("LogController", [
             );
         };
 
-
         // Hàm tìm kiếm logs theo username
         $scope.searchLogs = function () {
-            if (!$scope.searchUsername) {
-                alert("Vui lòng nhập username để tìm kiếm!");
-                return;
+            if (debounceTimeout) {
+                $timeout.cancel(debounceTimeout); // Clear previous timeout if it exists
             }
 
-            const params = {
-                username: $scope.searchUsername,
-                page: $scope.currentPage,
-                size: $scope.pageSize,
-            };
+            // Debounce: wait 3000ms (3 seconds) after user stops typing to trigger search
+            debounceTimeout = $timeout(function () {
+                if (!$scope.searchUsername) {
+                    // If searchUsername is empty or null, call the /lst endpoint
+                    $scope.getAllLogs();  // Fetch all logs
+                } else {
+                    // Otherwise, perform search
+                    const params = {
+                        username: $scope.searchUsername,
+                        page: $scope.currentPage,
+                        size: $scope.pageSize,
+                    };
 
-            $http({
-                method: "GET",
-                url: `${API_BASE_URL}/search`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                params: params,
-            }).then(
-                function (response) {
-                    $scope.logs = response.data.content; // Lấy danh sách logs từ response
-                    $scope.totalPages =  response.data.page.totalPages; // Tổng số trang
-                    $scope.isSearching = true; // Đặt trạng thái đang tìm kiếm
-                },
-                function (error) {
-                    console.error("Không thể tìm logs theo username", error);
+                    $http({
+                        method: "GET",
+                        url: `${API_BASE_URL}/search`,
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        params: params,
+                    }).then(
+                        function (response) {
+                            $scope.logs = response.data.content; // Lấy danh sách logs từ response
+                            $scope.totalPages = response.data.page.totalPages; // Tổng số trang
+                            $scope.isSearching = true; // Đặt trạng thái đang tìm kiếm
+                        },
+                        function (error) {
+                            console.error("Không thể tìm logs theo username", error);
+                        }
+                    );
                 }
-            );
+            }, 1000); // 3-second delay
         };
 
         // Hàm thay đổi trang

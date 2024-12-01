@@ -71,13 +71,16 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       })
       .catch((error) => handleApiError("Failed to upload image", error));
   };
+  const config = {
+    headers: {
+        Authorization: `Bearer ${token}`,
+    }
+  }
   $scope.getProducts = function () {
     $http({
       method: "GET",
       url: `${API_BASE_URL}/Product/lst`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      config,
     }).then(
       function (response) {
         if (response.data && Array.isArray(response.data)) {
