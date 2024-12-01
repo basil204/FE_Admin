@@ -1,12 +1,14 @@
 app.controller("indexController", [
   "$scope",
   "$http",
-  "$location", // Inject $location to handle page redirection
-  function ($scope, $http, $location) {
+  "$location", "socket", // Inject $location to handle page redirection
+  function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-
     $scope.showWarning = true;
-
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    if (userInfo) {
+      socket.connect(userInfo);
+    }
     // Hide warning after 5 seconds
     setTimeout(function () {
       $scope.$apply(function () {
@@ -38,11 +40,11 @@ app.controller("indexController", [
     // Fetch data with proper error handling
     const fetchData = (url, scopeKey) => {
       $http
-          .get(url, config)
-          .then((response) => {
-            $scope[scopeKey] = response.data;
-          })
-          .catch(handleForbiddenError);
+        .get(url, config)
+        .then((response) => {
+          $scope[scopeKey] = response.data;
+        })
+        .catch(handleForbiddenError);
     };
 
     // Fetch different API endpoints
@@ -79,24 +81,24 @@ app.controller("indexController", [
             "Content-Type": "application/json",
           },
         }).then(
-            function (response) {
-              if (response.status === 200) {
-                // Show success notification
-                showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
+          function (response) {
+            if (response.status === 200) {
+              // Show success notification
+              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
 
-                // Reload milk details (re-fetch data)
-                fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+              // Reload milk details (re-fetch data)
+              fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
-                // Close the modal
-                $("#ModalStockUpdate").modal("hide");
-              } else {
-                showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
-              }
-            },
-            function (error) {
-              const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
-              showNotification(errorMessage, "error");
+              // Close the modal
+              $("#ModalStockUpdate").modal("hide");
+            } else {
+              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
             }
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
+            showNotification(errorMessage, "error");
+          }
         );
       } else {
         showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
