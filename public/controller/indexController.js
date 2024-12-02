@@ -1,7 +1,8 @@
 app.controller("indexController", [
   "$scope",
   "$http",
-  "$location", "socket", // Inject $location to handle page redirection
+  "$location",
+  "socket", // Inject $location to handle page redirection
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
     $scope.showWarning = true;
@@ -9,12 +10,13 @@ app.controller("indexController", [
     if (userInfo) {
       socket.connect(userInfo);
     }
+
     // Hide warning after 5 seconds
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.showWarning = false;
       });
-    }, 5000);
+    }, 3000);
 
     // Close warning manually
     $scope.closeWarning = function () {
@@ -40,11 +42,11 @@ app.controller("indexController", [
     // Fetch data with proper error handling
     const fetchData = (url, scopeKey) => {
       $http
-        .get(url, config)
-        .then((response) => {
-          $scope[scopeKey] = response.data;
-        })
-        .catch(handleForbiddenError);
+          .get(url, config)
+          .then((response) => {
+            $scope[scopeKey] = response.data;
+          })
+          .catch(handleForbiddenError);
     };
 
     // Fetch different API endpoints
@@ -58,6 +60,19 @@ app.controller("indexController", [
     fetchData("http://160.30.21.47:1234/api/Invoicedetail/invoice-summary", "invoiceSummary");
     fetchData("http://160.30.21.47:1234/api/payment/historyBank", "transactionHistoryList");
     fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+
+    // Fetch the count of online users
+    const fetchOnlineUsers = () => {
+      $http
+          .get("http://160.30.21.47:1234/api/user/online", config)
+          .then((response) => {
+            $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
+          })
+          .catch(handleForbiddenError);
+    };
+
+    // Fetch the online users count on page load
+    fetchOnlineUsers();
 
     // Open modal to update stock quantity
     $scope.updateStock = function (id) {
@@ -81,24 +96,24 @@ app.controller("indexController", [
             "Content-Type": "application/json",
           },
         }).then(
-          function (response) {
-            if (response.status === 200) {
-              // Show success notification
-              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
+            function (response) {
+              if (response.status === 200) {
+                // Show success notification
+                showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
 
-              // Reload milk details (re-fetch data)
-              fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+                // Reload milk details (re-fetch data)
+                fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
-              // Close the modal
-              $("#ModalStockUpdate").modal("hide");
-            } else {
-              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
+                // Close the modal
+                $("#ModalStockUpdate").modal("hide");
+              } else {
+                showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
+              }
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
+              showNotification(errorMessage, "error");
             }
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
-            showNotification(errorMessage, "error");
-          }
         );
       } else {
         showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
@@ -115,5 +130,20 @@ app.controller("indexController", [
     function parseErrorMessages(error, fallbackMessage) {
       return error.data ? error.data.message : fallbackMessage;
     }
-  }
+
+    // Auto-reload every 5 seconds
+    setInterval(function () {
+      fetchData("http://160.30.21.47:1234/api/user/findTop5", "customers");
+      fetchData("http://160.30.21.47:1234/api/Milkdetail/low-stock-count", "countend");
+      fetchData("http://160.30.21.47:1234/api/Milkdetail/count-milkdetail", "countmilkdetail");
+      fetchData("http://160.30.21.47:1234/api/Invoice/count/current", "countinvoice");
+      fetchData("http://160.30.21.47:1234/api/user/count", "countuser");
+      fetchData("http://160.30.21.47:1234/api/Userinvoice/user-invoices", "orders");
+      fetchData("http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details", "milkSalesDetails");
+      fetchData("http://160.30.21.47:1234/api/Invoicedetail/invoice-summary", "invoiceSummary");
+      fetchData("http://160.30.21.47:1234/api/payment/historyBank", "transactionHistoryList");
+      fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+      fetchOnlineUsers();
+    }, 50000);
+  },
 ]);
