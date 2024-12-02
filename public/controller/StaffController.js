@@ -27,6 +27,23 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
     );
   };
 
+  $scope.GetCustomers = function () {
+    $http.get(`${API_BASE_URL}/user/lst`, config).then(
+      function (response) {
+        console.log(response.data);
+        $scope.customers = response.data.filter((staff) => staff.role.id === 2);
+        console.log($scope.customers);
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tải danh sách nhân viên"
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+
   $scope.deleteItem = function (id) {
     if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
       $http({
@@ -39,6 +56,7 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
         function (response) {
           const message = response.data.message || "Xóa nguoi dung thành công";
           $scope.showNotification(message, "success");
+          $scope.GetCustomers();
           $scope.GetStaffs();
         },
         function (error) {
@@ -128,6 +146,7 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
           const message =
             response.data.message || "Cập nhật tài khoản thành công";
           $scope.showNotification(message, "success");
+          $scope.GetCustomers();
           $scope.GetStaffs();
           $scope.resetForm(); // Clear form after success
         },
@@ -147,7 +166,7 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
       );
     }
   };
-
+  $scope.GetCustomers();
   $scope.getRoles();
   $scope.GetStaffs();
 });
