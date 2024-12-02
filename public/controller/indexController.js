@@ -7,9 +7,25 @@ app.controller("indexController", [
     const token = localStorage.getItem("authToken");
     $scope.showWarning = true;
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-right',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
     if (userInfo) {
-      socket.connect(userInfo);
+      socket.connect().then(function () {
+        socket.sendMessage('/app/connect', { userId: userInfo.id, role: userInfo.role });
+        socket.subscribe('/topic/messages', function (message) {
+          Toast.fire({
+            icon: 'info',
+            title: `Hóa đơn #${message} đã được đặt!`
+          });
+        });
+      });
     }
+
 
     // Hide warning after 5 seconds
     setTimeout(function () {
@@ -42,11 +58,11 @@ app.controller("indexController", [
     // Fetch data with proper error handling
     const fetchData = (url, scopeKey) => {
       $http
-          .get(url, config)
-          .then((response) => {
-            $scope[scopeKey] = response.data;
-          })
-          .catch(handleForbiddenError);
+        .get(url, config)
+        .then((response) => {
+          $scope[scopeKey] = response.data;
+        })
+        .catch(handleForbiddenError);
     };
 
     // Fetch different API endpoints
@@ -64,11 +80,11 @@ app.controller("indexController", [
     // Fetch the count of online users
     const fetchOnlineUsers = () => {
       $http
-          .get("http://160.30.21.47:1234/api/user/online", config)
-          .then((response) => {
-            $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
-          })
-          .catch(handleForbiddenError);
+        .get("http://160.30.21.47:1234/api/user/online", config)
+        .then((response) => {
+          $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
+        })
+        .catch(handleForbiddenError);
     };
 
     // Fetch the online users count on page load
@@ -96,24 +112,24 @@ app.controller("indexController", [
             "Content-Type": "application/json",
           },
         }).then(
-            function (response) {
-              if (response.status === 200) {
-                // Show success notification
-                showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
+          function (response) {
+            if (response.status === 200) {
+              // Show success notification
+              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
 
-                // Reload milk details (re-fetch data)
-                fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+              // Reload milk details (re-fetch data)
+              fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
-                // Close the modal
-                $("#ModalStockUpdate").modal("hide");
-              } else {
-                showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
-              }
-            },
-            function (error) {
-              const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
-              showNotification(errorMessage, "error");
+              // Close the modal
+              $("#ModalStockUpdate").modal("hide");
+            } else {
+              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
             }
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
+            showNotification(errorMessage, "error");
+          }
         );
       } else {
         showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");

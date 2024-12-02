@@ -9,11 +9,6 @@ app.controller(
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       return JSON.parse(atob(base64));
     }
-    $scope.connectUser = function (user) {
-      socket.connect(user).then(function () {
-        socket.sendMessage('/app/connect', { userId: user.id, role: user.role });
-      });
-    };
     $scope.login = function () {
       if (!$scope.user.username || !$scope.user.password) {
         Swal.fire({
@@ -43,7 +38,6 @@ app.controller(
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
                 $rootScope.isLoggedIn = true;
                 $rootScope.userRole = userInfo.role;
-                $scope.connectUser(userInfo);
                 Swal.fire({
                   icon: "success",
                   title: "Thành công!",

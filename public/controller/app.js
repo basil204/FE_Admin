@@ -151,24 +151,16 @@ app.config(function ($routeProvider, $locationProvider) {
 app.factory('socket', ['$q', function ($q) {
   var socket = null;
   var stompClient = null;
-  var reconnectAttempts = 0;
-  const maxReconnectAttempts = 5; // Giới hạn số lần cố gắng kết nối lại
+  var subscriptions = {}; // Khai báo biến subscriptions để lưu danh sách topic đã subscribe
 
   return {
-    connect: function (userInfo) {
+    connect: function () {
       var deferred = $q.defer();
-      socket = new SockJS('http://160.30.21.47:1234/api/u-websocket'); // URL WebSocket
+      socket = new SockJS('http://160.30.21.47:1234/api/u-websocket');
       stompClient = Stomp.over(socket);
 
       stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-        // Gửi thông điệp khi kết nối thành công để thông báo người dùng online
-        stompClient.send('/app/connect', {}, JSON.stringify({
-          userId: userInfo.id,
-          role: userInfo.role,
-          status: 'online' // Thông báo người dùng online
-        }));
-        reconnectAttempts = 0; // Đặt lại số lần kết nối lại khi kết nối thành công
         deferred.resolve();
       }, function (error) {
         console.error('Error: ' + error);
@@ -177,45 +169,44 @@ app.factory('socket', ['$q', function ($q) {
 
       socket.onclose = function () {
         console.log("Socket closed. Attempting to reconnect...");
-        if (reconnectAttempts < maxReconnectAttempts) {
-          reconnectAttempts++;
-          setTimeout(() => {
-            socket.connect(userInfo); // Cố gắng kết nối lại sau một vài giây
-          }, 5000);
-        } else {
-          console.log("Quá nhiều lần cố gắng kết nối lại.");
-        }
+        setTimeout(() => {
+          this.connect();
+        }, 5000);
       };
 
       return deferred.promise;
     },
 
     subscribe: function (destination, callback) {
-      if (stompClient && stompClient.connected) {
-        stompClient.subscribe(destination, function (message) {
-          callback(message.body);
-        });
+      if (stompClient) {
+        if (!subscriptions[destination]) {
+          // Đăng ký topic nếu chưa tồn tại trong danh sách subscriptions
+          subscriptions[destination] = stompClient.subscribe(destination, function (response) {
+            callback(JSON.parse(response.body));
+          });
+        }
       } else {
-        console.log("Kết nối chưa được thiết lập.");
+        console.error('Stomp client is not connected!');
       }
     },
 
     sendMessage: function (destination, message) {
-      if (stompClient && stompClient.connected) {
+      if (stompClient) {
         stompClient.send(destination, {}, JSON.stringify(message));
-      } else {
-        console.log("Kết nối chưa được thiết lập.");
       }
     },
 
     disconnect: function (userInfo) {
-      if (stompClient && stompClient.connected) {
+      if (stompClient) {
         stompClient.send('/app/disconnect', {}, JSON.stringify({ userId: userInfo.id, role: userInfo.role }));
         stompClient.disconnect();
+        stompClient = null;
+        subscriptions = {}; // Xóa danh sách subscriptions
       }
     }
   };
 }]);
+
 
 
 
