@@ -5,7 +5,7 @@ app.controller("ChartController", [
     const token = localStorage.getItem("authToken");
     const API_BASE_URL =
         "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
-    const API_REVENUE_BY_DAY_URL = "http://localhost:1234/api/Thongke/by-month"; // API mới
+    const API_REVENUE_BY_DAY_URL = "http://160.30.21.47:1234/api/Thongke/by-month"; // API mới
 
     // Cập nhật tháng hiện tại
     const currentDate = new Date();
