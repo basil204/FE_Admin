@@ -302,20 +302,18 @@
             </div>
         </div>
         
-        <div class="row mb-4">
+        <div class="row mb-4" ng-controller="ChartController">
             <div class="col-md-6">
                 <div class="tile shadow-sm p-3 bg-white rounded">
-                    <h3 class="tile-title text-center">Dữ Liệu Hàng Tháng</h3>
-                    <div class="embed-responsive embed-responsive-16by9">
-                        <canvas id="pieChart" class="embed-responsive-item"></canvas>
-                    </div>
+                    <h3 class="tile-title text-center">Dữ Liệu Của {{ currentMonth }}</h3>
+                    <div class="embed-responsive">
+                        <canvas id="dailyRevenueChart"></canvas>                    </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="tile shadow-sm p-3 bg-white rounded">
                     <h3 class="tile-title text-center">Thống Kê Doanh Số</h3>
                     <div class="embed-responsive embed-responsive-16by9">
-                        <canvas id="barChart" class="embed-responsive-item"></canvas>
                     </div>
                 </div>
             </div>
