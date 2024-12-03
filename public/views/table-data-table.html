@@ -2,7 +2,7 @@
   <main class="app-content">
     <div class="app-title">
       <ul class="app-breadcrumb breadcrumb side">
-        <li class="breadcrumb-item active"><a href="#"><b>Danh sách Nhân Viên</b></a></li>
+        <li class="breadcrumb-item active"><a href="#"><b>Danh sách Người Dùng</b></a></li>
       </ul>
       <div id="clock"></div>
     </div>
@@ -12,38 +12,7 @@
         <div class="tile">
           <div class="tile-body">
 
-            <div class="row element-button">
-              <div class="col-sm-2">
-
-                <a class="btn btn-add btn-sm" href="/form-add-nhan-vien" title="Thêm"><i class="fas fa-plus"></i>
-                  Tạo mới nhân viên</a>
-              </div>
-              <div class="col-sm-2">
-                <a class="btn btn-delete btn-sm nhap-tu-file" type="button" title="Nhập" onclick="myFunction(this)"><i
-                        class="fas fa-file-upload"></i> Tải từ file</a>
-              </div>
-
-              <div class="col-sm-2">
-                <a class="btn btn-delete btn-sm print-file" type="button" title="In" onclick="myApp.printTable()"><i
-                        class="fas fa-print"></i> In dữ liệu</a>
-              </div>
-              <div class="col-sm-2">
-                <a class="btn btn-delete btn-sm print-file js-textareacopybtn" type="button" title="Sao chép"><i
-                        class="fas fa-copy"></i> Sao chép</a>
-              </div>
-
-              <div class="col-sm-2">
-                <a class="btn btn-excel btn-sm" href="" title="In"><i class="fas fa-file-excel"></i> Xuất Excel</a>
-              </div>
-              <div class="col-sm-2">
-                <a class="btn btn-delete btn-sm pdf-file" type="button" title="In" onclick="myFunction(this)"><i
-                        class="fas fa-file-pdf"></i> Xuất PDF</a>
-              </div>
-              <div class="col-sm-2">
-                <a class="btn btn-delete btn-sm" type="button" title="Xóa" onclick="myFunction(this)"><i
-                        class="fas fa-trash-alt"></i> Xóa tất cả </a>
-              </div>
-            </div>
+            
             
             <div style="overflow-x: auto; margin-top: 10px;">
               <div ng-if="notification.message" class="form-group col-md-12">
@@ -56,8 +25,8 @@
                 <tr>
                   <th width="10"><input type="checkbox" id="all"></th>
                   <th>ID nhân viên</th>
+                  <th>Tên đăng nhập</th>
                   <th>Họ và tên</th>
-                  <th>Tên Đăng Nhập</th>
                   <th>Email</th>
                   <th>Địa chỉ</th>
                   <th>Số điện thoại</th>
@@ -135,7 +104,7 @@
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Địa chỉ email</label>
-              <input class="form-control" type="text" ng-model="formData.email" required >
+              <input class="form-control" type="email" ng-model="formData.email" required >
             </div>
             <div class="form-group  col-md-6">
               <label for="exampleSelect1" class="control-label">Chức vụ</label>
