@@ -14,31 +14,18 @@
           <div class="tile-body">
             <div class="row element-button">
               <div class="col-md-2">
-                <a
-                  class="btn btn-add btn-sm"
-                  href="/form-add-san-pham"
-                  title="Thêm"
-                  ><i class="fas fa-plus"></i> Tạo mới sản phẩm</a
-                >
+                <a class="btn btn-add btn-sm" href="/form-add-san-pham" title="Thêm"><i class="fas fa-plus"></i> Tạo mới
+                  sản phẩm</a>
               </div>
-              <a
-                class="btn btn-add btn-sm"
-                data-toggle="modal"
-                data-target="#ModalUP"
-                ><i class="fas fa-folder-plus"></i> Thêm Sản phẩm</a
-              >
+              <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#ModalUP"><i
+                  class="fas fa-folder-plus"></i> Thêm Sản phẩm</a>
             </div>
 
             <!-- Search and Filter Controls -->
             <div class="row mb-2">
               <!-- Search Box -->
               <div class="col-md-4">
-                <input
-                  type="text"
-                  class="form-control"
-                  ng-model="searchQuery"
-                  placeholder="Tìm kiếm sản phẩm..."
-                />
+                <input type="text" class="form-control" ng-model="searchQuery" placeholder="Tìm kiếm sản phẩm..." />
               </div>
 
               <!-- Status Filter Dropdown -->
@@ -49,54 +36,56 @@
                   <option value="0">Ngừng bán</option>
                 </select>
               </div>
-            <!-- select lọc dữ liệu -->
-            <!-- Các thẻ <select> đã cập nhật để thực hiện chức năng lọc -->
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkTasteId" ng-options="taste.id as taste.milktastename for taste in milktastes">
+              <!-- select lọc dữ liệu -->
+              <!-- Các thẻ <select> đã cập nhật để thực hiện chức năng lọc -->
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkTasteId"
+                  ng-options="taste.id as taste.milktastename for taste in milktastes">
                   <option value="">Lọc hương vị</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.packagingUnitId" ng-options="unit.id as unit.packagingunitname for unit in packagingunits">
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.packagingUnitId"
+                  ng-options="unit.id as unit.packagingunitname for unit in packagingunits">
                   <option value="">Lọc đơn vị đóng gói</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.usageCapacityId" ng-options="capacity.id as (capacity.capacity + ' ' + capacity.unit) for capacity in usagecapacitys">
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.usageCapacityId"
+                  ng-options="capacity.id as (capacity.capacity + ' ' + capacity.unit) for capacity in usagecapacitys">
                   <option value="">Lọc dung tích</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkBrandId" ng-options="brand.id as brand.milkbrandname for brand in milkBrands">
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkBrandId"
+                  ng-options="brand.id as brand.milkbrandname for brand in milkBrands">
                   <option value="">Lọc hãng</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.targetUserId" ng-options="user.id as user.targetuser for user in targetUsers">
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.targetUserId"
+                  ng-options="user.id as user.targetuser for user in targetUsers">
                   <option value="">Lọc độ tuổi</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
 
-            <div class="col-md-2">
-              <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkTypeId" ng-options="type.id as type.milkTypename for type in milkTypes">
+              <div class="col-md-2">
+                <select class="form-control" ng-change="filterMilkDetails()" ng-model="filters.milkTypeId"
+                  ng-options="type.id as type.milkTypename for type in milkTypes">
                   <option value="">Lọc loại</option>
-              </select>
-            </div>
+                </select>
+              </div>
 
             </div>
 
             <!-- Table of Products -->
             <div style="overflow-x: auto; margin-top: 10px">
-              <table
-                class="table table-hover table-bordered"
-                id="sampleTable"
-                style="width: 100%"
-              >
+              <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%">
                 <thead>
                   <tr>
                     <th width="10"><input type="checkbox" id="all" /></th>
@@ -116,8 +105,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter}">
+                  <tr ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter}">
                     <td width="10">
                       <input type="checkbox" name="check1" value="1" />
                     </td>
@@ -135,11 +123,7 @@
                     </td>
                     <td>{{milkdetail.stockquantity}}</td>
                     <td>
-                      <img
-                        ng-src="{{milkdetail.imgUrl}}"
-                        alt="Milk Image"
-                        style="width: 50px; height: 50px"
-                      />
+                      <img ng-src="{{milkdetail.imgUrl}}" alt="Milk Image" style="width: 50px; height: 50px" />
                     </td>
                     <td>
                       {{ milkdetail.status == 1 ? "Đang bán" : "Ngừng bán" }}
@@ -147,39 +131,21 @@
                     <td>
                       <!-- Nút xóa hoặc khôi phục tùy thuộc vào trạng thái với chỉ icon -->
                       <!-- Nút xóa hoặc khôi phục -->
-                      <button
-                        class="btn btn-sm"
-                        type="button"
-                        title="{{milkdetail.status == 1 ? 'Xóa' : 'Khôi phục'}}"
+                      <button class="btn btn-sm" type="button" title="{{milkdetail.status == 1 ? 'Xóa' : 'Khôi phục'}}"
                         ng-click="deleteOrRestoreMilkdetail(milkdetail.id, milkdetail.status)"
-                        ng-class="{'btn-danger': milkdetail.status == 1, 'btn-success': milkdetail.status != 1}"
-                      >
-                        <i
-                          class="fas"
-                          ng-class="milkdetail.status == 1 ? 'fa-trash-alt' : 'fa-sync-alt'"
-                        ></i>
+                        ng-class="{'btn-danger': milkdetail.status == 1, 'btn-success': milkdetail.status != 1}">
+                        <i class="fas" ng-class="milkdetail.status == 1 ? 'fa-trash-alt' : 'fa-sync-alt'"></i>
                       </button>
 
                       <!-- Nút chỉnh sửa -->
-                      <button
-                        class="btn btn-sm btn-warning"
-                        type="button"
-                        title="Sửa"
-                        data-toggle="modal"
-                        data-target="#ModalUP"
-                        ng-click="getMilkdetailById(milkdetail.id)"
-                      >
+                      <button class="btn btn-sm btn-warning" type="button" title="Sửa" data-toggle="modal"
+                        data-target="#ModalUP" ng-click="getMilkdetailById(milkdetail.id)">
                         <i class="fas fa-edit"></i>
                       </button>
 
                       <!-- Nút cập nhật số lượng -->
-                      <button
-                        class="btn btn-sm btn-info"
-                        type="button"
-                        data-toggle="modal"
-                        data-target="#ModalStockUpdate"
-                        ng-click="updateStock(milkdetail.id)"
-                      >
+                      <button class="btn btn-sm btn-info" type="button" data-toggle="modal"
+                        data-target="#ModalStockUpdate" ng-click="updateStock(milkdetail.id)">
                         <i class="fas fa-pen"></i>
                       </button>
                     </td>
@@ -189,38 +155,20 @@
             </div>
 
             <!-- Pagination Controls -->
-            <div
-              class="pagination-controls d-flex justify-content-center align-items-center my-3"
-            >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="goToFirstPage()"
-              >
+            <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">
                 First
               </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="previousPage()"
-              >
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">
                 Previous
               </button>
-              <span class="mx-2"
-                >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span
-              >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="nextPage()"
-              >
+              <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="nextPage()">
                 Next
               </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="goToLastPage()"
-              >
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="goToLastPage()">
                 Last
               </button>
             </div>
@@ -232,15 +180,8 @@
 
   <!-- MODAL -->
 
-  <div
-    class="modal fade"
-    id="ModalUP"
-    tabindex="-1"
-    role="dialog"
-    aria-hidden="true"
-    data-backdrop="static"
-    data-keyboard="false"
-  >
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
+    data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -254,18 +195,9 @@
             </div>
           </div>
           <div class="row">
-            <div
-              ng-if="formData.imgUrl"
-              class="form-group col-md-12 text-center"
-            >
-              <img
-                ng-src="{{formData.imgUrl}}"
-                id="productImage"
-                class="img-thumbnail"
-                alt="Product Image"
-                ng-click="changeImage()"
-                style="width: 100px; height: 100px; object-fit: cover"
-              />
+            <div ng-if="formData.imgUrl" class="form-group col-md-12 text-center">
+              <img ng-src="{{formData.imgUrl}}" id="productImage" class="img-thumbnail" alt="Product Image"
+                ng-click="changeImage()" style="width: 100px; height: 100px; object-fit: cover" />
             </div>
 
             <!-- Product Selection -->
@@ -279,46 +211,24 @@
             </div>
             <div class="form-group col-md-6">
               <label for="milkTaste" class="control-label">Hương vị sữa</label>
-              <select
-                class="form-control"
-                id="milkTaste"
-                ng-model="formData.milkTaste"
-              >
+              <select class="form-control" id="milkTaste" ng-model="formData.milkTaste">
                 <option ng-repeat="taste in milktastes" ng-value="taste.id">
                   {{taste.milktastename}}
                 </option>
               </select>
             </div>
             <div class="form-group col-md-6">
-              <label for="packagingUnit" class="control-label"
-                >Đơn vị đóng gói</label
-              >
-              <select
-                class="form-control"
-                id="packagingUnit"
-                ng-model="formData.packagingunit"
-              >
-                <option
-                  ng-repeat="packagingunit in packagingunits"
-                  ng-value="packagingunit.id"
-                >
+              <label for="packagingUnit" class="control-label">Đơn vị đóng gói</label>
+              <select class="form-control" id="packagingUnit" ng-model="formData.packagingunit">
+                <option ng-repeat="packagingunit in packagingunits" ng-value="packagingunit.id">
                   {{packagingunit.packagingunitname}}
                 </option>
               </select>
             </div>
             <div class="form-group col-md-6">
-              <label for="usageCapacity" class="control-label"
-                >Dung tích sử dụng</label
-              >
-              <select
-                class="form-control"
-                id="usageCapacity"
-                ng-model="formData.usageCapacity"
-              >
-                <option
-                  ng-repeat="usagecapacity in usagecapacitys"
-                  ng-value="usagecapacity.id"
-                >
+              <label for="usageCapacity" class="control-label">Dung tích sử dụng</label>
+              <select class="form-control" id="usageCapacity" ng-model="formData.usageCapacity">
+                <option ng-repeat="usagecapacity in usagecapacitys" ng-value="usagecapacity.id">
                   {{usagecapacity.capacity + " " + usagecapacity.unit}}
                 </option>
               </select>
@@ -327,62 +237,32 @@
             <!-- Expiration Date -->
             <div class="form-group col-md-6">
               <label class="control-label">Ngày hết hạn</label>
-              <input
-                class="form-control"
-                type="text"
-                ng-model="formData.shelflifeofmilk"
-                required
-              />
+              <input class="form-control" type="text" ng-model="formData.shelflifeofmilk" required />
             </div>
 
             <!-- Price -->
             <div class="form-group col-md-6">
               <label class="control-label">Giá bán</label>
-              <input
-                class="form-control"
-                type="number"
-                ng-model="formData.price"
-                required
-              />
+              <input class="form-control" type="number" ng-model="formData.price" required />
             </div>
 
             <!-- Product Description -->
             <div class="form-group col-md-6">
               <label class="control-label">Mô tả sản phẩm</label>
-              <input
-                class="form-control"
-                type="text"
-                ng-model="formData.description"
-                required
-              />
+              <input class="form-control" type="text" ng-model="formData.description" required />
             </div>
 
             <!-- Stock Quantity -->
             <div class="form-group col-md-6">
               <label class="control-label">Số lượng trong kho</label>
-              <input
-                class="form-control"
-                type="number"
-                ng-model="formData.stockquantity"
-                required
-              />
+              <input class="form-control" type="number" ng-model="formData.stockquantity" required />
             </div>
             <div class="form-group col-md-6">
-              <label for="imageUpload" class="control-label"
-                >Hình ảnh sản phẩm</label
-              >
+              <label for="imageUpload" class="control-label">Hình ảnh sản phẩm</label>
               <div class="custom-file">
-                <input
-                  type="file"
-                  class="custom-file-input"
-                  id="imageUpload"
-                  accept=".jpg, .jpeg, .png, .webp"
-                  ng-model="file"
-                  onchange="angular.element(this).scope().uploadImage(this.files)"
-                />
-                <label class="custom-file-label" for="imageUpload"
-                  >Chọn ảnh...</label
-                >
+                <input type="file" class="custom-file-input" id="imageUpload" accept=".jpg, .jpeg, .png, .webp"
+                  ng-model="file" onchange="angular.element(this).scope().uploadImage(this.files)" />
+                <label class="custom-file-label" for="imageUpload">Chọn ảnh...</label>
               </div>
             </div>
             <input type="hidden" ng-model="formData.imgUrl" />
@@ -392,27 +272,13 @@
           <!-- Save Button with Dynamic Label -->
           <!-- Save and Reset buttons -->
           <div class="form-group col-md-12 text-center">
-            <button
-              class="btn btn-success btn-lg mx-2"
-              type="button"
-              ng-click="saveMilkdetail(formData)"
-            >
+            <button class="btn btn-success btn-lg mx-2" type="button" ng-click="saveMilkdetail(formData)">
               {{ formData.id ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới" }}
             </button>
-            <button
-              class="btn btn-secondary btn-lg mx-2"
-              type="button"
-              ng-click="resetForm()"
-            >
+            <button class="btn btn-secondary btn-lg mx-2" type="button" ng-click="resetForm()">
               Làm mới
             </button>
-            <a
-              class="btn btn-danger btn-lg mx-2"
-              data-dismiss="modal"
-              href="#"
-              ng-click="resetForm()"
-              >Hủy bỏ</a
-            >
+            <a class="btn btn-danger btn-lg mx-2" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
           </div>
 
           <br />
@@ -423,15 +289,8 @@
   </div>
 
   <!-- New Modal for Updating Stock -->
-  <div
-    class="modal fade"
-    id="ModalStockUpdate"
-    tabindex="-1"
-    role="dialog"
-    aria-hidden="true"
-    data-backdrop="static"
-    data-keyboard="false"
-  >
+  <div class="modal fade" id="ModalStockUpdate" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
+    data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -443,32 +302,17 @@
           <!-- Stock Quantity -->
           <div class="form-group col-md-12">
             <label class="control-label">Số lượng mới</label>
-            <input
-              class="form-control"
-              type="number"
-              ng-model="formData.newStockQuantity"
-              required
-            />
+            <input class="form-control" type="number" ng-model="formData.newStockQuantity" required />
           </div>
 
           <!-- Save Button for Updating Stock -->
-          <button
-            class="btn btn-save"
-            type="button"
-            ng-click="saveStockUpdate(formData)"
-          >
+          <button class="btn btn-save" type="button" ng-click="saveStockUpdate(formData)">
             Cập nhật số lượng
           </button>
           <button class="btn btn-save" type="button" ng-click="resetForm()">
             Làm mới
           </button>
-          <a
-            class="btn btn-cancel"
-            data-dismiss="modal"
-            href="#"
-            ng-click="resetForm()"
-            >Hủy bỏ</a
-          >
+          <a class="btn btn-cancel" data-dismiss="modal" href="#" ng-click="resetForm()">Hủy bỏ</a>
         </div>
         <div class="modal-footer"></div>
       </div>
