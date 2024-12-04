@@ -26,12 +26,80 @@ app.controller("OrderController", function ($scope, $http) {
     { code: 910, name: 'Đã đối soát khách' },
     { code: 911, name: 'COD trả cho khách' },
     { code: 912, name: 'Chờ thanh toán COD' },
-    { code: 913, name: 'Hoàn thành' },
     { code: 914, name: 'Đơn hủy' },
     { code: 915, name: 'Giao hàng trễ' },
     { code: 916, name: 'Giao hàng 1 phần' },
     { code: 1000, name: 'Lỗi đơn hàng' }
   ];
+
+  // Define a function to filter available statuses based on current order status
+  // Filter available statuses based on the current status of the invoice
+  // Filter available statuses based on the current status of the invoice
+  $scope.filterAvailableStatuses = function (currentStatusCode) {
+    const hiddenStatuses = [336,905, 906, 907, 908, 909, 910, 911, 912, 914, 915, 916, 1000]; // Trạng thái cần ẩn
+
+    // Nếu trạng thái hiện tại nằm trong nhóm cần ẩn, chỉ hiển thị trạng thái hiện tại
+    if (hiddenStatuses.includes(currentStatusCode)) {
+      // Chỉ trả về trạng thái hiện tại, không cho phép thay đổi
+      return $scope.availableStatuses.filter(status => status.code === currentStatusCode);
+    }
+
+    // Nếu không, hiển thị các trạng thái từ trạng thái hiện tại trở lên
+    return $scope.availableStatuses.filter(status => status.code >= currentStatusCode);
+  };
+
+
+  // Example usage of filter in updating an invoice status
+  $scope.updateInvoiceStatus = function (invoice) {
+    // Get available statuses based on the current invoice status
+    const filteredStatuses = $scope.filterAvailableStatuses(invoice.status);
+    console.log("Filtered available statuses: ", filteredStatuses);
+
+    // Here, you can use filteredStatuses for updating or displaying valid options for the invoice status.
+    // For example, if you are updating the invoice status:
+    $http({
+      method: "PUT",
+      url: `${baseUrl}/Invoice/update/${invoice.id}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: { status: invoice.status }
+    }).then(function () {
+      $scope.showNotification("Cập nhật trạng thái đơn hàng thành công!", "success");
+    }, function (error) {
+      $scope.showNotification("Cập nhật trạng thái đơn hàng thất bại!", "error");
+    });
+  };
+
+  // Optionally, you can filter available statuses when retrieving an invoice or performing any other actions
+  $scope.getFilteredStatusesForInvoice = function (invoiceId) {
+    // Fetch the invoice details and filter statuses based on the current status
+    $http({
+      method: "GET",
+      url: `${baseUrl}/Invoicedetail/${invoiceId}/details`,
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(function (response) {
+      const invoiceDetail = response.data[0];
+      const currentStatusCode = invoiceDetail.status;
+
+      // Get available statuses based on the current status
+      const availableStatuses = $scope.filterAvailableStatuses(currentStatusCode);
+      console.log("Available statuses: ", availableStatuses);
+      // Use availableStatuses for UI or other logic as needed
+    }, function (error) {
+      console.error("Error fetching invoice details:", error);
+    });
+  };
+
+  // Show notification
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
 
   $scope.currentPage = 0;
   $scope.pageSize = 10;
