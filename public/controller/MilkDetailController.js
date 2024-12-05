@@ -450,6 +450,7 @@ app.controller(
     $scope.getUsagecapacitys();
     $scope.getMilkdetails();
 
+    // Đây chính là phân bạn sẽ cập nhật lại từ mỗi danh sách sang danh sách có phân trang giông getMilkDetail() ở trên kia
     // Các hàm gọi API để lấy dữ liệu cho các bộ lọc
     $scope.getMilkBrands = function () {
       $http({
@@ -511,12 +512,18 @@ app.controller(
       $http({
         method: "GET",
         url: `${API_BASE_URL}/Milkdetail/filter`,
-        params: $scope.filters,
+        params: {
+          ...$scope.filters,
+          page: $scope.currentPage,
+          size: $scope.pageSize
+        },
         headers: { Authorization: `Bearer ${token}` },
       }).then(
         function (response) {
           if (response.data.status === "success") {
-            $scope.Milkdetails = response.data.message;
+            const data = response.data.message;
+            $scope.Milkdetails = data.content;
+            $scope.pageInfo = data.page;
           } else {
             showNotification("Không tìm thấy dữ liệu phù hợp.", "error");
           }
@@ -526,6 +533,7 @@ app.controller(
         }
       );
     };
+    
     // Gọi hàm lấy dữ liệu ngay khi khởi tạo controller
     $scope.getMilkBrands();
     $scope.getMilkTypes();
