@@ -1,5 +1,14 @@
 var app = angular.module("myApp", ["ngRoute"]);
+app.run(['$rootScope', '$location', function($rootScope, $location) {
+  // Kiểm tra nếu người dùng đang ở trang '/ban-hang-tai-quay'
+  $rootScope.isBanHangTaiQuayPage = $location.path() === '/ban-hang-tai-quay';
 
+  // Lắng nghe sự thay đổi của route để cập nhật trạng thái của isBanHangTaiQuayPage
+  $rootScope.$on('$routeChangeStart', function(event, next, current) {
+    // Kiểm tra nếu URL thay đổi và cập nhật trạng thái
+    $rootScope.isBanHangTaiQuayPage = $location.path() === '/ban-hang-tai-quay';
+  });
+}]);
 app.run(function ($rootScope, $location, socket) {
   const token = localStorage.getItem("authToken");
 
@@ -52,12 +61,12 @@ app.run(function ($rootScope, $location, socket) {
       const adminRoutes = [
         "/home", "/form-add-don-hang", "/form-add-nhan-vien", "/form-add-san-pham",
         "/quan-ly-bao-cao", "/table-data-khach-hang", "/table-data-oder",
-        "/table-data-product", "/table-data-table", "/check-log-he-thong"
+        "/table-data-product", "/table-data-table", "/check-log-he-thong","/ban-hang-tai-quay"
       ];
 
       const staffRoutes = [
         "/home", "/check-log-he-thong", "/form-add-don-hang", "/form-add-san-pham",
-        "/table-data-khach-hang", "/table-data-oder", "/table-data-product"
+        "/table-data-khach-hang", "/table-data-oder", "/table-data-product","/ban-hang-tai-quay"
       ];
 
       const userRoutes = $rootScope.userRole === "Admin" ? adminRoutes : staffRoutes;
@@ -98,6 +107,11 @@ app.config(function ($routeProvider, $locationProvider) {
       })
       .when("/home", {
         templateUrl: "/views/home.html",
+        resolve: { auth: requireAuth },
+      })
+      .when("/ban-hang-tai-quay", {
+        templateUrl: "/views/ban-hang-tai-quay.html",
+        controller: "BanHangTaiQuayController",
         resolve: { auth: requireAuth },
       })
       .when("/form-add-don-hang", {
