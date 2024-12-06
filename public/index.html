@@ -33,10 +33,18 @@
 
 <body ng-class="{'app sidebar-mini rtl': isLoggedIn}">
     <div id="myApp">
-        <header ng-if="isLoggedIn" ng-include="'/layout/header.html'"></header>
-        <div ng-view>
-        </div>
-        <footer ng-if="isLoggedIn" ng-include="'/layout/footer.html'"></footer>
+        <header class="app-header">
+            <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+
+            <ul class="app-nav" ng-controller="LoginController">
+                <li>
+                    <a class="app-nav__item" id="logoutButton" ng-click="logout()"><i class="bx bx-log-out bx-rotate-180"></i> </a>
+                </li>
+            </ul>
+        </header>
+        <header ng-if="isLoggedIn && !isBanHangTaiQuayPage" ng-include="'/layout/header.html'"></header>
+        <div ng-view></div>
+        <footer ng-if="isLoggedIn && !isBanHangTaiQuayPage" ng-include="'/layout/footer.html'"></footer>
     </div>
 
 
@@ -44,6 +52,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/controller/app.js"></script>
     <script src="/controller/LoginController.js"></script>
+    <script src="/controller/BanHangTaiQuayController.js"></script>
     <script src="/controller/BrandController.js"></script>
     <script src="/controller/ProductController.js"></script>
     <script src="/controller/MilktasteController.js"></script>

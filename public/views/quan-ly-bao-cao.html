@@ -265,24 +265,19 @@
                             <th>Ngày giao dịch</th>
                             <th>Số tài khoản</th>
                             <th>Số tiền ghi có</th>
-<!--                            <th>Số tiền ghi nợ</th>-->
                             <th>Tiền tệ</th>
-                            <th>Diễn giải</th>
-<!--                            <th>Số dư khả dụng</th>-->
+                            <th>Nôi Dung</th>
                             <th>Mã giao dịch</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="transaction in transactionHistoryList">
-<!--                            <td>{{ transaction.postingDate }}</td>-->
                             <td>{{ transaction.transactionDate }}</td>
                             <td>{{ transaction.accountNo }}</td>
                             <td>{{ transaction.creditAmount }}</td>
-<!--                            <td>{{ transaction.debitAmount }}</td>-->
                             <td>{{ transaction.currency }}</td>
                             <td>{{ transaction.description }}</td>
-<!--                            <td>{{ transaction.availableBalance }}</td>-->
-                            <td>{{ transaction.refNo }}</td>
+                 <td>{{ transaction.refNo }}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -26,7 +26,6 @@ app.controller("indexController", [
       });
     }
 
-
     // Hide warning after 5 seconds
     setTimeout(function () {
       $scope.$apply(function () {
@@ -58,11 +57,11 @@ app.controller("indexController", [
     // Fetch data with proper error handling
     const fetchData = (url, scopeKey) => {
       $http
-        .get(url, config)
-        .then((response) => {
-          $scope[scopeKey] = response.data;
-        })
-        .catch(handleForbiddenError);
+          .get(url, config)
+          .then((response) => {
+            $scope[scopeKey] = response.data;
+          })
+          .catch(handleForbiddenError);
     };
 
     // Fetch different API endpoints
@@ -74,21 +73,39 @@ app.controller("indexController", [
     fetchData("http://160.30.21.47:1234/api/Userinvoice/user-invoices", "orders");
     fetchData("http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details", "milkSalesDetails");
     fetchData("http://160.30.21.47:1234/api/Invoicedetail/invoice-summary", "invoiceSummary");
-    fetchData("http://160.30.21.47:1234/api/payment/historyBank", "transactionHistoryList");
     fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
     // Fetch the count of online users
     const fetchOnlineUsers = () => {
       $http
-        .get("http://160.30.21.47:1234/api/user/online", config)
-        .then((response) => {
-          $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
-        })
-        .catch(handleForbiddenError);
+          .get("http://160.30.21.47:1234/api/user/online", config)
+          .then((response) => {
+            $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
+          })
+          .catch(handleForbiddenError);
     };
 
-    // Fetch the online users count on page load
+    // Fetch the transaction history separately
+    const fetchTransactionHistory = () => {
+      $http
+          .get("http://160.30.21.47:1234/api/payment/historyBank", config)
+          .then((response) => {
+            // Assuming the transaction history is inside `data.transactionHistoryList`
+            $scope.transactionHistoryList = response.data.transactionHistoryList;
+
+            // Loop through the transactionHistoryList using a for loop
+            for (let i = 0; i < $scope.transactionHistoryList.length; i++) {
+              let transaction = $scope.transactionHistoryList[i];
+              console.log(transaction); // or any logic to process each transaction
+            }
+          })
+          .catch(handleForbiddenError);
+    };
+
+
+    // Fetch the online users count and transaction history on page load
     fetchOnlineUsers();
+    fetchTransactionHistory();
 
     // Open modal to update stock quantity
     $scope.updateStock = function (id) {
@@ -112,24 +129,24 @@ app.controller("indexController", [
             "Content-Type": "application/json",
           },
         }).then(
-          function (response) {
-            if (response.status === 200) {
-              // Show success notification
-              showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
+            function (response) {
+              if (response.status === 200) {
+                // Show success notification
+                showNotification("Số lượng sản phẩm đã được cập nhật thành công.", "success");
 
-              // Reload milk details (re-fetch data)
-              fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
+                // Reload milk details (re-fetch data)
+                fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
-              // Close the modal
-              $("#ModalStockUpdate").modal("hide");
-            } else {
-              showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
+                // Close the modal
+                $("#ModalStockUpdate").modal("hide");
+              } else {
+                showNotification("Không thể cập nhật số lượng sản phẩm. Vui lòng thử lại.", "error");
+              }
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
+              showNotification(errorMessage, "error");
             }
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(error, "Không thể cập nhật số lượng. Vui lòng thử lại.");
-            showNotification(errorMessage, "error");
-          }
         );
       } else {
         showNotification("Số lượng không hợp lệ. Vui lòng thử lại.", "error");
@@ -157,9 +174,9 @@ app.controller("indexController", [
       fetchData("http://160.30.21.47:1234/api/Userinvoice/user-invoices", "orders");
       fetchData("http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details", "milkSalesDetails");
       fetchData("http://160.30.21.47:1234/api/Invoicedetail/invoice-summary", "invoiceSummary");
-      fetchData("http://160.30.21.47:1234/api/payment/historyBank", "transactionHistoryList");
       fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
       fetchOnlineUsers();
+      fetchTransactionHistory(); // Fetch transaction history periodically
     }, 50000);
   },
 ]);

@@ -115,6 +115,7 @@ app.controller("OrderController", function ($scope, $http) {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   }
   $scope.searchInvoices = function() {
+    // Check if both start and end dates are selected properly
     if ($scope.search.startDate && !$scope.search.endDate) {
       $scope.showNotification("Bạn phải chọn cả ngày bắt đầu và ngày kết thúc", "error");
       return;
@@ -123,15 +124,23 @@ app.controller("OrderController", function ($scope, $http) {
       $scope.showNotification("Bạn phải chọn cả ngày bắt đầu và ngày kết thúc", "error");
       return;
     }
+
     let queryParams = [];
 
-    // Check if any search criteria is provided, add it to the query parameters
+    // Collect filters from search model
     if ($scope.search.invoiceCode) {
       queryParams.push(`invoiceCode=${$scope.search.invoiceCode}`);
     }
-    if ($scope.search.username) {
-      queryParams.push(`username=${$scope.search.username}`);
+    if ($scope.search.phonenumber) {
+      queryParams.push(`phonenumber=${$scope.search.phonenumber}`);
     }
+    if ($scope.search.deliveryAddress) {
+      queryParams.push(`deliveryAddress=${$scope.search.deliveryAddress}`);
+    }
+    if ($scope.search.paymentMethod) {
+      queryParams.push(`paymentmethod=${$scope.search.paymentMethod}`);
+    }
+
     if ($scope.search.startDate) {
       queryParams.push(`startDate=${formatDate($scope.search.startDate)}`);
     }
@@ -142,10 +151,9 @@ app.controller("OrderController", function ($scope, $http) {
       queryParams.push(`status=${$scope.search.status}`);
     }
 
-    // Combine all parameters with '&'
     let queryString = queryParams.join("&");
 
-    // Make the API call with the constructed query string
+    // Send the GET request with the query string parameters
     $http({
       method: "GET",
       url: `${baseUrl}/Invoice/search?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
@@ -153,24 +161,18 @@ app.controller("OrderController", function ($scope, $http) {
     }).then(function (response) {
       const data = response.data;
       if (data && data.content) {
-        // Initialize an empty array for invoices
-        $scope.invoices = [];
-        // Loop through all content items and store them
-        for (let i = 0; i < data.content.length; i++) {
-          const invoice = data.content[i];
-          $scope.invoices.push({
-            id: invoice[0],
-            invoiceCode: invoice[1],
-            creationDate: invoice[2],
-            deliveryAddress: invoice[5],
-            discountAmount: invoice[6],
-            totalAmount: invoice[4],
-            paymentMethod: invoice[7],
-            status: invoice[8],
-            phoneNumber: invoice[9]
-          });
-        }
-        // Set page info for pagination
+        // Map the response data to the invoices array
+        $scope.invoices = data.content.map(invoice => ({
+          id: invoice[0],
+          invoiceCode: invoice[1],
+          creationDate: invoice[2],
+          deliveryAddress: invoice[5],
+          discountAmount: invoice[6],
+          totalAmount: invoice[4],
+          paymentMethod: invoice[7],
+          status: invoice[8],
+          phoneNumber: invoice[9]
+        }));
         $scope.pageInfo = data.page;
       }
     }, function (error) {
@@ -178,6 +180,14 @@ app.controller("OrderController", function ($scope, $http) {
       $scope.showNotification("Có lỗi khi tìm kiếm hóa đơn. Vui lòng thử lại!", "error");
     });
   };
+
+// Available payment methods for the dropdown
+  $scope.availablePaymentMethods = [
+    { code: 'NetBanking', name: 'NetBanking' },
+    { code: 'COD', name: 'COD' },
+  ];
+
+
 
   // Fetch invoices with pagination
   $scope.getInvoices = function () {
@@ -229,7 +239,7 @@ app.controller("OrderController", function ($scope, $http) {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
       // Check if searchInvoices is being used, otherwise call getInvoices
-      if ($scope.search && ($scope.search.invoiceCode || $scope.search.username || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
+      if ($scope.search && ($scope.search.invoiceCode || $scope.search.phoneNumber|| $scope.search.deliveryAddress|| $scope.search.paymentMethod || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
         $scope.searchInvoices();
       } else {
         $scope.getInvoices();
@@ -241,7 +251,7 @@ app.controller("OrderController", function ($scope, $http) {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
       // Check if searchInvoices is being used, otherwise call getInvoices
-      if ($scope.search && ($scope.search.invoiceCode || $scope.search.username || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
+      if ($scope.search && ($scope.search.invoiceCode || $scope.search.phoneNumber|| $scope.search.deliveryAddress|| $scope.search.paymentMethod || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
         $scope.searchInvoices();
       } else {
         $scope.getInvoices();
@@ -252,7 +262,7 @@ app.controller("OrderController", function ($scope, $http) {
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
     // Check if searchInvoices is being used, otherwise call getInvoices
-    if ($scope.search && ($scope.search.invoiceCode || $scope.search.username || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
+    if ($scope.search && ($scope.search.invoiceCode || $scope.search.phoneNumber|| $scope.search.deliveryAddress|| $scope.search.paymentMethod || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
       $scope.searchInvoices();
     } else {
       $scope.getInvoices();
@@ -262,7 +272,7 @@ app.controller("OrderController", function ($scope, $http) {
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     // Check if searchInvoices is being used, otherwise call getInvoices
-    if ($scope.search && ($scope.search.invoiceCode || $scope.search.username || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
+    if ($scope.search && ($scope.search.invoiceCode || $scope.search.phoneNumber|| $scope.search.deliveryAddress|| $scope.search.paymentMethod || $scope.search.startDate || $scope.search.endDate || $scope.search.status)) {
       $scope.searchInvoices();
     } else {
       $scope.getInvoices();
