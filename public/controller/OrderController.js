@@ -2,7 +2,7 @@ app.controller("OrderController", function ($scope, $http) {
   const token = localStorage.getItem("authToken");
 
   // Define base URL for API
-  const baseUrl = "http://160.30.21.47:1234/api";
+  const baseUrl = "http://localhost:1234/api";
 
   // List of possible order statuses
   $scope.availableStatuses = [
@@ -50,24 +50,7 @@ app.controller("OrderController", function ($scope, $http) {
 
 
   // Example usage of filter in updating an invoice status
-  $scope.updateInvoiceStatus = function (invoice) {
-    // Get available statuses based on the current invoice status
-    const filteredStatuses = $scope.filterAvailableStatuses(invoice.status);
-    console.log("Filtered available statuses: ", filteredStatuses);
 
-    // Here, you can use filteredStatuses for updating or displaying valid options for the invoice status.
-    // For example, if you are updating the invoice status:
-    $http({
-      method: "PUT",
-      url: `${baseUrl}/Invoice/update/${invoice.id}`,
-      headers: { Authorization: `Bearer ${token}` },
-      data: { status: invoice.status }
-    }).then(function () {
-      $scope.showNotification("Cập nhật trạng thái đơn hàng thành công!", "success");
-    }, function (error) {
-      $scope.showNotification("Cập nhật trạng thái đơn hàng thất bại!", "error");
-    });
-  };
 
   // Optionally, you can filter available statuses when retrieving an invoice or performing any other actions
   $scope.getFilteredStatusesForInvoice = function (invoiceId) {
@@ -172,6 +155,7 @@ app.controller("OrderController", function ($scope, $http) {
           paymentMethod: invoice[7],
           status: invoice[8],
           phoneNumber: invoice[9]
+
         }));
         $scope.pageInfo = data.page;
       }
@@ -281,38 +265,12 @@ app.controller("OrderController", function ($scope, $http) {
 
 
   // Fetch invoice details by ID
-  $scope.getInvoiceDetailById = function (invoiceId) {
-    $http({
-      method: "GET",
-      url: `${baseUrl}/Invoicedetail/${invoiceId}/details`,
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(function (response) {
-      $scope.invoiceDetails = response.data;
-      if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
-        const invoiceDetail = $scope.invoiceDetails[0];
-        $scope.invoiceCode = invoiceDetail.invoiceCode;
-        $scope.id = invoiceDetail.id;
-        $scope.deliveryAddress = invoiceDetail.deliveryAddress;
-        $scope.phoneNumber = invoiceDetail.phoneNumber;
-        $scope.items = invoiceDetail.items.map(item => ({
-          milkTasteName: item.milkTasteName,
-          milkDetailDescription: item.milkDetailDescription,
-          quantity: item.quantity,
-          totalAmount: item.totalAmount,
-          unit: item.unit,
-          capacity: item.capacity
-        }));
-      }
-    }, function (error) {
-      console.error("Error fetching invoice details:", error);
-    });
-  };
 
   // Update invoice status
   $scope.updateInvoiceStatus = function (invoice) {
     $http({
       method: "PUT",
-      url: `${baseUrl}/Invoice/update/${invoice.id}`,
+      url: `${baseUrl}/Invoice/updatestatus/${invoice.id}`,
       headers: { Authorization: `Bearer ${token}` },
       data: { status: invoice.status }
     }).then(function () {
@@ -359,9 +317,18 @@ app.controller("OrderController", function ($scope, $http) {
       $scope.loadInvoices();
     }, function (error) {
       console.error("Có lỗi khi cập nhật hóa đơn:", error);
-      $scope.showNotification("Có lỗi khi cập nhật hóa đơn. Vui lòng thử lại!", "error");
+
+      // Check for specific error response and handle accordingly
+      if (error.status === 400 && error.data.message && error.data.message.statusCodeValue === "400") {
+        const errorMessage = error.data.message.body || "Có lỗi khi cập nhật hóa đơn!";
+        $scope.showNotification(errorMessage, "error");
+      } else {
+        // Default error message for other errors
+        $scope.showNotification("Có lỗi khi cập nhật hóa đơn. Vui lòng thử lại!", "error");
+      }
     });
   };
+
 
   // Fetch invoice details by ID
   $scope.getInvoiceDetailById = function (invoiceId) {
@@ -373,26 +340,36 @@ app.controller("OrderController", function ($scope, $http) {
       },
     }).then(function (response) {
       $scope.invoiceDetails = response.data;
-      console.log("Chi tiết hóa đơn:", $scope.invoiceDetails);
-
       if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
         const invoiceDetail = $scope.invoiceDetails[0];
-
+        $scope.invoicestatus = invoiceDetail.status;
         $scope.invoiceCode = invoiceDetail.invoiceCode;
         $scope.id = invoiceDetail.id;
         $scope.deliveryAddress = invoiceDetail.deliveryAddress;
         $scope.phoneNumber = invoiceDetail.phoneNumber;
 
+        console.log("invoiceDetail:", $scope.invoicestatus);
+
+        // Set items for the invoice
         $scope.items = invoiceDetail.items.map((item) => {
           return {
             milkTasteName: item.milkTasteName,
             milkDetailDescription: item.milkDetailDescription,
             quantity: item.quantity,
+            price: item.price,
             totalAmount: item.totalAmount,
             unit: item.unit,
             capacity: item.capacity,
+            status: item.status,
           };
         });
+
+        // Check status and set flag for editable fields
+        if ($scope.invoicestatus === 334) {
+          $scope.isEditable = true;  // Enable the form inputs and button
+        } else {
+          $scope.isEditable = false;  // Disable the form inputs and button
+        }
       } else {
         console.error("Không tìm thấy dữ liệu chi tiết hóa đơn.");
         $scope.showNotification("Không tìm thấy chi tiết hóa đơn.", "error");
@@ -403,9 +380,11 @@ app.controller("OrderController", function ($scope, $http) {
     });
   };
 
+
+
   // Check Zalo account by phone number
   $scope.checkZalo = function (phoneNumber) {
-    const apiUrl = `http://160.30.21.47:3030/api/customerinfo?phone=${phoneNumber}`;
+    const apiUrl = `http://localhost:3030/api/customerinfo?phone=${phoneNumber}`;
 
     $http({
       method: "GET",
