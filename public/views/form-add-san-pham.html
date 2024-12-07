@@ -117,9 +117,6 @@
                     <li class="nav-item">
                       <a class="nav-link active" data-toggle="tab" href="#activeProduct" role="tab">Danh sách sản phẩm</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" data-toggle="tab" href="#deletedUProduct" role="tab">Đã xóa</a>
-                    </li>
                   </ul>
 
                   <div class="tab-content">
@@ -129,64 +126,51 @@
                         <table class="table table-bordered">
                           <thead>
                             <tr>
-                              <th>ID</th>
+                              <th>STT</th>
                               <th>Mã sản phẩm</th>
                               <th>Tên sản phẩm</th>
                               <th>Loại sữa</th>
                               <th>Thương hiệu</th>
                               <th>Đối tượng sử dụng</th>
+                              <th>Trang thai</th>
                               <th>Chức năng</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr ng-repeat="product in products">
+                            <tr ng-repeat="product in products ">
                               <td>{{ product.id }}</td>
                               <td>{{ product.productCode }}</td>
                               <td>{{ product.productname }}</td>
                               <td>{{ product.milkType.milkTypename }}</td>
                               <td>{{ product.milkBrand.milkbrandname }}</td>
                               <td>{{ product.targetUser.targetuser }}</td>
+                              <td ng-class="{'text-success': product.status === 1, 'text-danger': product.status === 0}">
+                                {{ product.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                            </td>
                               <td>
-                                <button ng-click="deleteItem(product.id)" class="btn btn-danger btn-sm">Xóa</button>
+                                <button 
+                                            ng-click="product.status === 1 ? deleteItem(product.id) : deleteItem(product.id)" 
+                                            ng-class="{'btn-danger': product.status === 1, 'btn-success': product.status === 0}" 
+                                            class="btn btn-sm">
+                                            {{ product.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                                            </button>
                                               <button ng-click="getItemById(product.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                               </td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
+                      <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+                        <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+                        <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+                        <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+                        <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+                        <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+                      </div>
                     </div>
 
                     <!-- Deleted Usage Capacities Tab -->
-                    <div class="tab-pane" id="deletedUProduct" role="tabpanel">
-                      <div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-                        <table class="table table-bordered">
-                          <thead>
-                              <tr>
-                                <th>ID</th>
-                                <th>Mã sản phẩm</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Loại sữa</th>
-                                <th>Thương hiệu</th>
-                                <th>Đối tượng sử dụng</th>
-                                <th>Chức năng</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                            <tr ng-repeat="product in deletedproducts">
-                              <td>{{ product.id }}</td>
-                              <td>{{ product.productCode }}</td>
-                              <td>{{ product.productname }}</td>
-                              <td>{{ product.milkType.milkTypename }}</td>
-                              <td>{{ product.milkBrand.milkbrandname }}</td>
-                              <td>{{ product.targetUser.targetuser }}</td>
-                              <td>
-                                <button ng-click="deleteItem(product.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+
                   </div> 
                 </div>
        </div>
@@ -229,9 +213,7 @@
                       <li class="nav-item">
                           <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeBrands" role="tab" aria-controls="activeBrands" aria-selected="true">Danh sách thương hiệu</a>
                       </li>
-                      <li class="nav-item">
-                          <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#inactiveBrands" role="tab" aria-controls="inactiveBrands" aria-selected="false">Thương hiệu không hoạt động</a>
-                      </li>
+
                   </ul>
   
                   <!-- Tab Panes -->
@@ -242,52 +224,44 @@
                               <table class="table table-bordered">
                                   <thead>
                                       <tr>
-                                          <th>ID</th>
+                                          <th>STT</th>
                                           <th>Tên thương hiệu</th>
                                           <th>Mô tả</th>
+                                          <th>Trạng thái</th>
                                           <th>Chức Năng</th>
                                       </tr>
                                   </thead>
                                   <tbody>
-                                      <tr ng-repeat="brand in brands">
-                                          <td>{{ brand.id }}</td>
+                                      <tr ng-repeat="brand in brands track by $index">
+                                          <td>{{ $index + 1 }}</td>
                                           <td>{{ brand.milkbrandname }}</td>
                                           <td>{{ brand.description }}</td>
+                                          <td ng-class="{'text-success': brand.status === 1, 'text-danger': brand.status === 0}">
+                                            {{ brand.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                                        </td>
                                           <td>
-                                              <button ng-click="deleteItem(brand.id)" class="btn btn-danger btn-sm">Xóa</button>
-                                              <button ng-click="getItemById(brand.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
+                                            <button 
+                                            ng-click="brand.status === 1 ? deleteItem(brand.id) : deleteItem(brand.id)" 
+                                            ng-class="{'btn-danger': brand.status === 1, 'btn-success': brand.status === 0}" 
+                                            class="btn btn-sm">
+                                            {{ brand.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                                            </button>
+                                            <button ng-click="getItemById(brand.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                                           </td>
                                       </tr>
                                   </tbody>
                               </table>
+                          </div>
+                          <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+                            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+                            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+                            <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+                            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+                            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
                           </div>
                       </div>
   
-                      <!-- Inactive Brands Tab -->
-                      <div class="tab-pane fade" id="inactiveBrands" role="tabpanel" aria-labelledby="inactive-tab">
-                          <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-                              <table class="table table-bordered">
-                                  <thead>
-                                      <tr>
-                                          <th>ID</th>
-                                          <th>Tên thương hiệu</th>
-                                          <th>Mô tả</th>
-                                          <th>Chức Năng</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      <tr ng-repeat="brand in deletedBrands">
-                                          <td>{{ brand.id }}</td>
-                                          <td>{{ brand.milkbrandname }}</td>
-                                          <td>{{ brand.description }}</td>
-                                          <td>
-                                              <button ng-click="deleteItem(brand.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                                          </td>
-                                      </tr>
-                                  </tbody>
-                              </table>
-                          </div>
-                      </div>
+
                   </div>
               </div>
   
@@ -327,9 +301,7 @@
               <li class="nav-item">
                 <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeTastes" role="tab" aria-controls="activeTastes" aria-selected="true">Danh sách vị sữa</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedMilktastes" role="tab" aria-controls="deletedMilktastes" aria-selected="false">Vị sữa không hoạt động</a>
-            </li>
+           
             </ul>
     
             <!-- Tab panes -->
@@ -340,48 +312,40 @@
                   <table class="table table-bordered">
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        <th>STT</th>
                         <th>Tên vị sữa</th>
+                        <th>Trạng thái</th>
                         <th>Chức Năng</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="taste in milktastes">
-                        <td>{{ taste.id }}</td>
+                      <tr ng-repeat="taste in milktastes track by $index">
+                        <td>{{ $index + 1 }}</td>
                         <td>{{ taste.milktastename }}</td>
+                        <td ng-class="{'text-success': taste.status === 1, 'text-danger': taste.status === 0}">
+                          {{ taste.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                      </td>
                         <td>
-                          <button ng-click="deleteItem(taste.id)" class="btn btn-danger btn-sm">Xóa</button>
+                          <button 
+                                            ng-click="taste.status === 1 ? deleteItem(taste.id) : deleteItem(taste.id)" 
+                                            ng-class="{'btn-danger': taste.status === 1, 'btn-success': taste.status === 0}" 
+                                            class="btn btn-sm">
+                                            {{ taste.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                                            </button>
                           <button ng-click="getItemById(taste.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-              </div>
-    
-              <!-- Deleted Tastes Tab -->
-              <div class="tab-pane fade" id="deletedMilktastes" role="tabpanel" aria-labelledby="inactive-tab">
-                <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                              <th>ID</th>
-                              <th>Tên vị sữa</th>
-                              <th>Chức Năng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          <tr ng-repeat="taste in deletedMilktastes">
-                            <td>{{ taste.id }}</td>
-                            <td>{{ taste.milktastename }}</td>
-                                <td>
-                                    <button ng-click="deleteItem(taste.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+                  <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+                  <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+                  <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+                  <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+                  <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
                 </div>
-            </div>
+              </div>
             </div>
     
             <br>
@@ -428,9 +392,6 @@
            <li class="nav-item">
              <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeType" role="tab" aria-controls="activeType" aria-selected="true">Danh sách loại sữa</a>
          </li>
-         <li class="nav-item">
-             <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedType" role="tab" aria-controls="deletedType" aria-selected="false">Loại sữa không hoạt động</a>
-         </li>
          </ul>
   
          <!-- Tab panes -->
@@ -441,51 +402,42 @@
                <table class="table table-bordered">
                  <thead>
                    <tr>
-                    <th>ID</th>
+                    <th>STT</th>
                     <th>Tên loại sữa</th>
                     <th>Mô tả</th>
+                    <th>Trạng thái</th>
                     <th>Chức Năng</th>
                    </tr>
                  </thead>
                  <tbody>
-                   <tr ng-repeat="type in types">
-                    <td>{{ type.id }}</td>
+                   <tr ng-repeat="type in types track by $index">
+                    <td>{{ $index +1 }}</td>
                     <td>{{ type.milkTypename }}</td>
                     <td>{{ type.description }}</td>
+                    <td ng-class="{'text-success': type.status === 1, 'text-danger': type.status === 0}">
+                      {{ type.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                  </td>
                      <td>
-                       <button ng-click="deleteItem(type.id)" class="btn btn-danger btn-sm">Xóa</button>
+                      <button 
+                      ng-click="type.status === 1 ? deleteItem(type.id) : deleteItem(type.id)" 
+                      ng-class="{'btn-danger': type.status === 1, 'btn-success': type.status === 0}" 
+                      class="btn btn-sm">
+                      {{ type.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                      </button>
                        <button ng-click="getItemById(type.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                      </td>
                    </tr>
                  </tbody>
                </table>
              </div>
+             <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+              <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+            </div>
            </div>
-  
-           <!-- Deleted Tastes Tab -->
-           <div class="tab-pane fade" id="deletedType" role="tabpanel" aria-labelledby="inactive-tab">
-             <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-                 <table class="table table-bordered">
-                     <thead>
-                         <tr>
-                           <th>ID</th>
-                           <th>Tên vị sữa</th>
-                           <th>Chức Năng</th>
-                         </tr>
-                     </thead>
-                     <tbody>
-                       <tr ng-repeat="type in deletedtypes">
-                        <td>{{ type.id }}</td>
-                        <td>{{ type.milkTypename }}</td>
-                        <td>{{ type.description }}</td>
-                             <td>
-                                 <button ng-click="deleteItem(type.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                             </td>
-                         </tr>
-                     </tbody>
-                 </table>
-             </div>
-         </div>
          </div>
   
          <br>
@@ -526,9 +478,7 @@
          <li class="nav-item">
            <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activePacka" role="tab" aria-controls="activePacka" aria-selected="true">Danh sách loại đóng gói</a>
        </li>
-       <li class="nav-item">
-           <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedPacka" role="tab" aria-controls="deletedPacka" aria-selected="false">Loại đóng gói không hoạt động</a>
-       </li>
+      
        </ul>
   
        <!-- Tab panes -->
@@ -539,17 +489,26 @@
              <table class="table table-bordered">
                <thead>
                  <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Tên loại đóng gói</th>
+                  <th>Trạng thái</th>
                   <th>Chức Năng</th>
                  </tr>
                </thead>
                <tbody>
-                 <tr ng-repeat="packagingunit in packas">
-                  <td>{{ packagingunit.id }}</td>
+                 <tr ng-repeat="packagingunit in packas track by $index">
+                  <td>{{ $index +1}}</td>
                   <td>{{ packagingunit.packagingunitname }}</td>
+                  <td ng-class="{'text-success': packagingunit.status === 1, 'text-danger': packagingunit.status === 0}">
+                    {{ packagingunit.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                </td>
                    <td>
-                     <button ng-click="deleteItem(packagingunit.id)" class="btn btn-danger btn-sm">Xóa</button>
+                    <button 
+                    ng-click="packagingunit.status === 1 ? deleteItem(packagingunit.id) : deleteItem(packagingunit.id)" 
+                    ng-class="{'btn-danger': packagingunit.status === 1, 'btn-success': packagingunit.status === 0}" 
+                    class="btn btn-sm">
+                    {{ packagingunit.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                    </button>
                      <button ng-click="getItemById(packagingunit.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                    </td>
                  </tr>
@@ -557,30 +516,13 @@
              </table>
            </div>
          </div>
-  
-         <!-- Deleted Tastes Tab -->
-         <div class="tab-pane fade" id="deletedPacka" role="tabpanel" aria-labelledby="inactive-tab">
-           <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-               <table class="table table-bordered">
-                   <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Tên loại đóng gói</th>
-                      <th>Chức Năng</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     <tr ng-repeat="packagingunit in deletedpackas">
-                      <td>{{ packagingunit.id }}</td>
-                      <td>{{ packagingunit.packagingunitname }}</td>
-                           <td>
-                               <button ng-click="deleteItem(packagingunit.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                           </td>
-                       </tr>
-                   </tbody>
-               </table>
-           </div>
-       </div>
+         <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+          <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+          <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+          <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+          <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+          <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+        </div>
        </div>
   
        <br>
@@ -625,9 +567,6 @@
          <li class="nav-item">
            <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeTarget" role="tab" aria-controls="activeTarget" aria-selected="true">Đối tượng sử dụng</a>
        </li>
-       <li class="nav-item">
-           <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedTarget" role="tab" aria-controls="deletedTarget" aria-selected="false">Không hoạt động</a>
-       </li>
        </ul>
   
        <!-- Tab panes -->
@@ -638,52 +577,43 @@
              <table class="table table-bordered">
                <thead>
                  <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                       <th>Tên loại người dùng</th>
                       <th>Mô tả</th>
+                      <th>Trạng thái</th>
                       <th>Chức Năng</th>
                  </tr>
                </thead>
                <tbody>
-                 <tr ng-repeat="targetuser in targets">
-                  <td>{{ targetuser.id }}</td>
+                 <tr ng-repeat="targetuser in targets track by $index">
+                  <td>{{ $index + 1}}</td>
                   <td>{{ targetuser.targetuser }}</td>
                   <td>{{ targetuser.description }}</td>
+                  <td ng-class="{'text-success': targetuser.status === 1, 'text-danger': targetuser.status === 0}">
+                    {{ targetuser.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                </td>
                    <td>
-                     <button ng-click="deleteItem(targetuser.id)" class="btn btn-danger btn-sm">Xóa</button>
+                    <button 
+                    ng-click="targetuser.status === 1 ? deleteItem(targetuser.id) : deleteItem(targetuser.id)" 
+                    ng-class="{'btn-danger': targetuser.status === 1, 'btn-success': targetuser.status === 0}" 
+                    class="btn btn-sm">
+                    {{ targetuser.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                    </button>
                      <button ng-click="getItemById(targetuser.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                    </td>
                  </tr>
                </tbody>
              </table>
            </div>
+           <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+            <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+          </div>
          </div>
   
-         <!-- Deleted Tastes Tab -->
-         <div class="tab-pane fade" id="deletedTarget" role="tabpanel" aria-labelledby="inactive-tab">
-           <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-               <table class="table table-bordered">
-                   <thead>
-                    <tr>
-                      <th>ID</th>
-                          <th>Tên loại người dùng</th>
-                          <th>Mô tả</th>
-                          <th>Chức Năng</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     <tr ng-repeat="targetuser in deletedtargets">
-                      <td>{{ targetuser.id }}</td>
-                  <td>{{ targetuser.targetuser }}</td>
-                  <td>{{ targetuser.description }}</td>
-                           <td>
-                               <button ng-click="deleteItem(targetuser.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                           </td>
-                       </tr>
-                   </tbody>
-               </table>
-           </div>
-       </div>
        </div>
   
        <br>
@@ -728,9 +658,6 @@
          <li class="nav-item">
            <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeUsage" role="tab" aria-controls="activeUsage" aria-selected="true">Đơn vị đóng gói</a>
        </li>
-       <li class="nav-item">
-           <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedUsage" role="tab" aria-controls="deletedUsage" aria-selected="false">Không hoạt động</a>
-       </li>
        </ul>
   
        <!-- Tab panes -->
@@ -741,19 +668,28 @@
              <table class="table table-bordered">
                <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Công suất</th>
                   <th>Đơn vị</th>
+                  <th>Trạng thái</th>
                   <th>Chức năng</th>
                 </tr>
                </thead>
                <tbody>
-                 <tr ng-repeat="usagecapacity in usages">
-                  <td>{{ usagecapacity.id }}</td>
+                 <tr ng-repeat="usagecapacity in usages track by $index">
+                  <td>{{ $index + 1}}</td>
                   <td>{{ usagecapacity.capacity }}</td>
                   <td>{{ usagecapacity.unit }}</td>
+                  <td ng-class="{'text-success': usagecapacity.status === 1, 'text-danger': usagecapacity.status === 0}">
+                    {{ usagecapacity.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                </td>
                    <td>
-                     <button ng-click="deleteItem(usagecapacity.id)" class="btn btn-danger btn-sm">Xóa</button>
+                    <button 
+                    ng-click="usagecapacity.status === 1 ? deleteItem(usagecapacity.id) : deleteItem(usagecapacity.id)" 
+                    ng-class="{'btn-danger': usagecapacity.status === 1, 'btn-success': usagecapacity.status === 0}" 
+                    class="btn btn-sm">
+                    {{ usagecapacity.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                    </button>
                      <button ng-click="getItemById(usagecapacity.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                    </td>
                  </tr>
@@ -762,31 +698,7 @@
            </div>
          </div>
   
-         <!-- Deleted Tastes Tab -->
-         <div class="tab-pane fade" id="deletedUsage" role="tabpanel" aria-labelledby="inactive-tab">
-           <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-               <table class="table table-bordered">
-                   <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Công suất</th>
-                      <th>Đơn vị</th>
-                      <th>Chức năng</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     <tr ng-repeat="usagecapacity in deletedusages">
-                      <td>{{ usagecapacity.id }}</td>
-                      <td>{{ usagecapacity.capacity }}</td>
-                      <td>{{ usagecapacity.unit }}</td>
-                           <td>
-                               <button ng-click="deleteItem(usagecapacity.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                           </td>
-                       </tr>
-                   </tbody>
-               </table>
-           </div>
-       </div>
+
        </div>
   
        <br>
@@ -847,9 +759,7 @@
          <li class="nav-item">
            <a class="nav-link active" id="active-tab" data-toggle="tab" data-target="#activeVoucher" role="tab" aria-controls="activeVoucher" aria-selected="true">Voucher</a>
        </li>
-       <li class="nav-item">
-           <a class="nav-link" id="inactive-tab" data-toggle="tab" data-target="#deletedVoucher" role="tab" aria-controls="deletedVoucher" aria-selected="false">Không hoạt động</a>
-       </li>
+    
        </ul>
   
        <!-- Tab panes -->
@@ -860,68 +770,43 @@
              <table class="table table-bordered">
                <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>STT</th>
                   <th>Mã code</th>
                   <th>Ngày bắt đầu</th>
                   <th>Ngày kết thúc</th>
                   <th>Phần trăm giảm giá</th>
                   <th>Số tiền tối đa khi giảm giá</th>
                   <th>Số ần sử dụng</th>
+                  <th>Trạng thái</th>
                   <th>Chức năng</th>
                 </tr>
                </thead>
                <tbody>
-                 <tr ng-repeat="voucher in vouchers">
-                  <td>{{ voucher.id }}</td>
+                 <tr ng-repeat="voucher in vouchers track by $index">
+                  <td>{{ $index + 1 }}</td>
                   <td>{{ voucher.vouchercode }}</td>
                   <td>{{ voucher.startdate }}</td>
                   <td>{{ voucher.enddate }}</td>
                   <td>{{ voucher.discountpercentage }}</td>
                   <td>{{ voucher.maxamount }}</td>
                   <td>{{ voucher.usagecount }}</td>
+                  <td ng-class="{'text-success': voucher.status === 1, 'text-danger': voucher.status === 0}">
+                    {{ voucher.status === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+                </td>
                    <td>
-                     <button ng-click="deleteItem(voucher.id)" class="btn btn-danger btn-sm">Xóa</button>
+                    <button 
+                    ng-click="voucher.status === 1 ? deleteItem(voucher.id) : deleteItem(voucher.id)" 
+                    ng-class="{'btn-danger': voucher.status === 1, 'btn-success': voucher.status === 0}" 
+                    class="btn btn-sm">
+                    {{ voucher.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                    </button>
                      <button ng-click="getItemById(voucher.id)" class="btn btn-primary btn-sm">Chỉnh sửa</button>
                    </td>
                  </tr>
                </tbody>
              </table>
            </div>
-         </div>
-  
-         <!-- Deleted Tastes Tab -->
-         <div class="tab-pane fade" id="deletedVoucher" role="tabpanel" aria-labelledby="inactive-tab">
-           <div class="table-responsive" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
-               <table class="table table-bordered">
-                   <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Mã code</th>
-                      <th>Ngày bắt đầu</th>
-                      <th>Ngày kết thúc</th>
-                      <th>Phần trăm giảm giá</th>
-                      <th>Số tiền tối đa khi giảm giá</th>
-                      <th>Số ần sử dụng</th>
-                      <th>Chức năng</th>
-                    </tr>
-                   </thead>
-                   <tbody>
-                     <tr ng-repeat="voucher in deletedvouchers">
-                      <td>{{ voucher.id }}</td>
-                      <td>{{ voucher.vouchercode }}</td>
-                      <td>{{ voucher.startdate }}</td>
-                      <td>{{ voucher.enddate }}</td>
-                      <td>{{ voucher.discountpercentage }}</td>
-                      <td>{{ voucher.maxamount }}</td>
-                      <td>{{ voucher.usagecount }}</td>
-                           <td>
-                               <button ng-click="deleteItem(voucher.id)" class="btn btn-success btn-sm">Kích hoạt</button>
-                           </td>
-                       </tr>
-                   </tbody>
-               </table>
-           </div>
-       </div>
+         </div>     
        </div>
   
        <br>

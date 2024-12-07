@@ -3,22 +3,20 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
   const API_BASE_URL = "http://160.30.21.47:1234/api/Milkbrand";
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   $scope.brands = [];
-  $scope.deletedBrands = [];
   $scope.formData = {};
-
+  $scope.currentPage = 0;
+  $scope.pageSize = 5;
   $scope.getBrands = function () {
     $http({
       method: "GET",
-      url: `${API_BASE_URL}/lst`,
+      url: `${API_BASE_URL}/getMilkBrandPage?page=${$scope.currentPage}&size=${$scope.pageSize}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).then(
       function (response) {
-        $scope.brands = response.data.filter((brand) => brand.status === 1);
-        $scope.deletedBrands = response.data.filter(
-          (brand) => brand.status === 0
-        );
+        $scope.pageInfo = response.data.page;
+        $scope.brands = response.data.content;
       },
       function (error) {
         const errorMessage = parseErrorMessages(
@@ -80,7 +78,7 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
   };
 
   $scope.deleteItem = function (id) {
-    if (confirm("Bạn có chắc chắn muốn xóa thương hiệu này không?")) {
+    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không?")) {
       $http({
         method: "DELETE",
         url: `${API_BASE_URL}/delete/${id}`,
@@ -124,30 +122,6 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
       }
     );
   };
-
-  $scope.getDeletedBrands = function () {
-    $http({
-      method: "GET",
-      url: `${API_BASE_URL}/lst`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function (response) {
-        $scope.deletedBrands = response.data.filter(
-          (brand) => brand.status === 0
-        );
-      },
-      function (error) {
-        const errorMessage = parseErrorMessages(
-          error,
-          "Không thể tải danh sách thương hiệu đã xóa"
-        );
-        $scope.showNotification(errorMessage, "error");
-      }
-    );
-  };
-
   $scope.resetForm = function () {
     $scope.formData = {};
   };
@@ -171,6 +145,29 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
     }
     return defaultMessage;
   }
+  $scope.nextPage = function () {
+    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+      $scope.currentPage++;
+      $scope.getBrands();
+    }
+  };
+
+  $scope.previousPage = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      $scope.getBrands();
+    }
+  };
+
+  $scope.goToFirstPage = function () {
+    $scope.currentPage = 0;
+    $scope.getBrands();
+  };
+
+  $scope.goToLastPage = function () {
+    $scope.currentPage = $scope.pageInfo.totalPages - 1;
+    $scope.getBrands();
+  };
 
   $scope.getBrands();
 });
