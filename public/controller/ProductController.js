@@ -117,25 +117,25 @@ app.controller(
     $scope.nextPage = function () {
       if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
         $scope.currentPage++;
-        $scope.getTargets();
+        $scope.getProducts();
       }
     };
 
     $scope.previousPage = function () {
       if ($scope.currentPage > 0) {
         $scope.currentPage--;
-        $scope.getTargets();
+        $scope.getProducts();
       }
     };
 
     $scope.goToFirstPage = function () {
       $scope.currentPage = 0;
-      $scope.getTargets();
+      $scope.getProducts();
     };
 
     $scope.goToLastPage = function () {
       $scope.currentPage = $scope.pageInfo.totalPages - 1;
-      $scope.getTargets();
+      $scope.getProducts();
     };
 
     // Lấy thông tin sản phẩm theo ID
