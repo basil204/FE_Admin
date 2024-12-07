@@ -3,6 +3,25 @@ app.controller("OrderController", function ($scope, $http) {
 
   // Define base URL for API
   const baseUrl = "http://localhost:1234/api";
+// Increase quantity
+  $scope.decreaseQuantity = function(item) {
+    if (item.quantity > 0) {
+      item.quantity--;  // Giảm số lượng
+      $scope.updateTotalAmount(item);  // Tính lại tổng tiền sau khi thay đổi số lượng
+    } else {
+      alert("Số lượng không thể nhỏ hơn 0!");  // Thông báo khi số lượng đã bằng 0
+    }
+  };
+
+  $scope.increaseQuantity = function(item) {
+    item.quantity++;  // Tăng số lượng
+    $scope.updateTotalAmount(item);  // Tính lại tổng tiền
+  };
+
+  $scope.updateTotalAmount = function(item) {
+    item.totalAmount = item.quantity * item.price;  // Tính lại tổng tiền (quantity * price)
+  };
+
 
   // List of possible order statuses
   $scope.availableStatuses = [
@@ -31,10 +50,16 @@ app.controller("OrderController", function ($scope, $http) {
     { code: 916, name: 'Giao hàng 1 phần' },
     { code: 1000, name: 'Lỗi đơn hàng' }
   ];
+  $scope.calculateTotalInvoiceAmount = function() {
+    let total = 0;
+    // Sum up the totalAmount for each item
+    $scope.items.forEach(function(item) {
+      total += item.totalAmount;
+    });
+    return total;
+  };
+// Update the total amount of the invoice
 
-  // Define a function to filter available statuses based on current order status
-  // Filter available statuses based on the current status of the invoice
-  // Filter available statuses based on the current status of the invoice
   $scope.filterAvailableStatuses = function (currentStatusCode) {
     const hiddenStatuses = [336,905, 906, 907, 908, 909, 910, 911, 912, 914, 915, 916, 1000]; // Trạng thái cần ẩn
 
@@ -270,7 +295,7 @@ app.controller("OrderController", function ($scope, $http) {
   $scope.updateInvoiceStatus = function (invoice) {
     $http({
       method: "PUT",
-      url: `${baseUrl}/Invoice/updatestatus/${invoice.id}`,
+      url: `${baseUrl}/Invoice/update/${invoice.id}`,
       headers: { Authorization: `Bearer ${token}` },
       data: { status: invoice.status }
     }).then(function () {
@@ -298,46 +323,98 @@ app.controller("OrderController", function ($scope, $http) {
 
 // Update invoice details
   $scope.updateInvoice = function () {
-    const updatedInvoice = {
-      phonenumber: $scope.phoneNumber,
-      deliveryaddress: $scope.deliveryAddress,
-    };
+    // Đảm bảo rằng chúng ta sẽ thực hiện cả hai tác vụ cùng một lúc
+    const updateQuantityPromises = $scope.updateAllItemQuantities();
+const  a = $scope.updateInvoiceTotalAmount($scope.id);
+    // Cập nhật thông tin hóa đơn
+    const updateInvoicePromise = $http({
+      method: "PUT",
+      url: `${baseUrl}/Invoice/update/${$scope.id}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        deliveryaddress: $scope.deliveryAddress,
+        phonenumber: $scope.phoneNumber,
+        fullname: $scope.fullname,
+      }
+    });
 
+    // Sử dụng Promise.all để xử lý cả hai thao tác (cập nhật số lượng và hóa đơn)
+    Promise.all([...updateQuantityPromises, updateInvoicePromise,a])
+        .then(function (responses) {
+          // Tất cả các yêu cầu thành công
+          $scope.getInvoices();  // Lấy danh sách hóa đơn mới
+          console.log("Invoice and item quantities updated successfully!");
+          $scope.showNotification("Cập nhật hóa đơn và số lượng thành công!", "success");
+        })
+        .catch(function (error) {
+          // Nếu có lỗi trong bất kỳ yêu cầu nào
+          console.error("Error during update:", error);
+          $scope.showNotification("Có lỗi khi cập nhật hóa đơn hoặc số lượng!", "error");
+        });
+  };
+
+  $scope.updateAllItemQuantities = function () {
+    const promises = [];
+
+    if (!$scope.items || $scope.items.length === 0) {
+      $scope.showNotification("Chưa có thông tin hóa đơn để cập nhật số lượng.", "error");
+      return [];
+    }
+
+    // Tạo mảng các món hàng cần cập nhật số lượng
+    const itemsToUpdate = $scope.items.map(item => ({
+      id: item.id,  // Gán id của món hàng
+      quantity: item.quantity  // Số lượng món hàng cần cập nhật
+    }));
+
+    // Cập nhật số lượng cho từng món hàng
+    itemsToUpdate.forEach(item => {
+      const updatePromise = $http({
+        method: "PUT",
+        url: `${baseUrl}/Invoicedetail/updateCount/${item.id}`, // Sử dụng item.id
+        headers: { Authorization: `Bearer ${token}` },
+        data: { quantity: item.quantity }
+      })
+          .then(function (response) {
+            console.log(`Quantity for item ID ${item.id} updated successfully!`);
+          })
+          .catch(function (error) {
+            console.error(`Error updating quantity for item ID ${item.id}:`, error);
+            $scope.showNotification("Có lỗi khi cập nhật số lượng!", "error");
+          });
+
+      promises.push(updatePromise);
+    });
+
+    return promises; // Trả về mảng các promise để Promise.all có thể xử lý
+  };
+  $scope.updateInvoiceTotalAmount = function (invoiceId) {
+    const totalAmount = $scope.calculateTotalInvoiceAmount(); // Get the total amount
+
+    // Make PUT request to update the invoice total amount
     $http({
       method: "PUT",
-      url: `${baseUrl}/Invoice/update/${$scope.id}`, // Using 'id' instead of 'invoiceCode'
-      data: updatedInvoice,
-      headers: {
-        Authorization: `Bearer ${token}`
+      url: `${baseUrl}/Invoice/updatequantity/${invoiceId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        totalamount: totalAmount // Send the updated total amount
       }
     }).then(function (response) {
-      console.log("Cập nhật hóa đơn thành công:", response);
-      $scope.showNotification("Cập nhật hóa đơn thành công!", "success");
-      $('#ModalUP').modal('hide');
-      $scope.loadInvoices();
+      // Successfully updated the total amount
+      $scope.showNotification("Cập nhật tổng tiền hóa đơn thành công!", "success");
     }, function (error) {
-      console.error("Có lỗi khi cập nhật hóa đơn:", error);
-
-      // Check for specific error response and handle accordingly
-      if (error.status === 400 && error.data.message && error.data.message.statusCodeValue === "400") {
-        const errorMessage = error.data.message.body || "Có lỗi khi cập nhật hóa đơn!";
-        $scope.showNotification(errorMessage, "error");
-      } else {
-        // Default error message for other errors
-        $scope.showNotification("Có lỗi khi cập nhật hóa đơn. Vui lòng thử lại!", "error");
-      }
+      // Handle error
+      $scope.showNotification("Có lỗi khi cập nhật tổng tiền hóa đơn!", "error");
     });
   };
 
 
-  // Fetch invoice details by ID
+// Fetch invoice details by ID and load items
   $scope.getInvoiceDetailById = function (invoiceId) {
     $http({
       method: "GET",
       url: `${baseUrl}/Invoicedetail/${invoiceId}/details`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     }).then(function (response) {
       $scope.invoiceDetails = response.data;
       if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
@@ -347,12 +424,14 @@ app.controller("OrderController", function ($scope, $http) {
         $scope.id = invoiceDetail.id;
         $scope.deliveryAddress = invoiceDetail.deliveryAddress;
         $scope.phoneNumber = invoiceDetail.phoneNumber;
+        $scope.fullname = invoiceDetail.fullname;
 
         console.log("invoiceDetail:", $scope.invoicestatus);
 
-        // Set items for the invoice
+        // Lưu danh sách món hàng vào $scope.items
         $scope.items = invoiceDetail.items.map((item) => {
           return {
+            id: item.ida,
             milkTasteName: item.milkTasteName,
             milkDetailDescription: item.milkDetailDescription,
             quantity: item.quantity,
@@ -364,11 +443,11 @@ app.controller("OrderController", function ($scope, $http) {
           };
         });
 
-        // Check status and set flag for editable fields
-        if ($scope.invoicestatus === 334) {
-          $scope.isEditable = true;  // Enable the form inputs and button
+        // Kiểm tra trạng thái để xác định nếu có thể chỉnh sửa
+        if ($scope.invoicestatus === 335) {
+          $scope.isEditable = true;  // Enable các trường nhập liệu
         } else {
-          $scope.isEditable = false;  // Disable the form inputs and button
+          $scope.isEditable = false;  // Disable các trường nhập liệu
         }
       } else {
         console.error("Không tìm thấy dữ liệu chi tiết hóa đơn.");
@@ -379,6 +458,7 @@ app.controller("OrderController", function ($scope, $http) {
       $scope.showNotification("Có lỗi khi lấy chi tiết hóa đơn. Vui lòng thử lại!", "error");
     });
   };
+
 
 
 

@@ -133,67 +133,93 @@
     </div>
   </main>
  <!-- Modal Structure -->
-<div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalUPLabel">Cập nhật thông tin đơn hàng</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="updateForm">
-          <div class="form-group">
-            <label for="invoiceCode">Mã hóa đơn</label>
-            <input type="hidden" class="form-control" id="id" ng-model="id" disabled>
-            <input type="text" class="form-control" id="invoiceCode" ng-model="invoiceCode" disabled>
-          </div>
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalUPLabel">Cập nhật thông tin đơn hàng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="updateForm">
+            <div class="form-group">
+              <label for="invoiceCode">Mã hóa đơn</label>
+              <input type="hidden" class="form-control" id="id" ng-model="id" disabled>
+              <input type="text" class="form-control" id="invoiceCode" ng-model="invoiceCode" disabled>
+            </div>
+            <div class="form-group">
+              <label for="fullname">fullname</label>
+              <input type="text" class="form-control" id="fullname" ng-model="fullname" ng-disabled="!isEditable">
+            </div>
+            <div class="form-group">
+              <label for="deliveryAddress">Địa chỉ giao hàng</label>
+              <input type="text" class="form-control" id="deliveryAddress" ng-model="deliveryAddress" ng-disabled="!isEditable">
+            </div>
 
-          <div class="form-group">
-            <label for="deliveryAddress">Địa chỉ giao hàng</label>
-            <input type="text" class="form-control" id="deliveryAddress" ng-model="deliveryAddress" ng-disabled="!isEditable">
-          </div>
+            <div class="form-group">
+              <label for="phoneNumber">Số điện thoại</label>
+              <input type="text" class="form-control" id="phoneNumber" ng-model="phoneNumber" ng-disabled="!isEditable">
+            </div>
 
-          <div class="form-group">
-            <label for="phoneNumber">Số điện thoại</label>
-            <input type="text" class="form-control" id="phoneNumber" ng-model="phoneNumber" ng-disabled="!isEditable">
-          </div>
+            <h6>Chi tiết sản phẩm:</h6>
+            <div class="table-responsive" style="max-height: 400px; overflow-x: auto;">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th>Vị</th>
+                  <th>Mô tả</th>
+                  <th>Số lượng</th>
+                  <th>Đơn giá</th>
+                  <th>Tổng Đơn Giá</th>
+                  <th ng-show="isEditable">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                  <td>{{ item.milkTasteName }}</td>
+                  <td>{{ item.milkDetailDescription }}</td>
 
-          <h6>Chi tiết sản phẩm:</h6>
-          <div class="table-responsive" style="max-height: 400px; overflow-x: auto;">
-            <table class="table table-bordered">
-              <thead>
-              <tr>
-                <th>Vị</th>
-                <th>Mô tả</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Tổng Đơn Giá</th>
-                <th ng-show="isEditable">Thao tác</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="item in items">
-                <td>{{ item.milkTasteName }}</td>
-                <td>{{ item.milkDetailDescription }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price }}</td>
-                <td>{{ item.totalAmount | number:'' }} VNĐ</td>
-                <td ng-show="isEditable">
-                  <button class="btn-danger btn-sm" type="button" ng-show="isEditable">xóa</button>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <!-- Only show "Lưu thay đổi" button if isEditable is true -->
-        <button type="button" class="btn btn-primary" ng-click="updateInvoice()" ng-show="isEditable">Lưu thay đổi</button>
+                  <td>
+                    <div class="input-group input-group-sm" ng-show="isEditable">
+                      <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" ng-click="decreaseQuantity(item)">-</button>
+                      </div>
+                      <input type="number" class="form-control form-control-sm" ng-model="item.quantity" min="0" style="width: 50px;" ng-change="updateTotalAmount(item)">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" ng-click="increaseQuantity(item)">+</button>
+                      </div>
+                    </div>
+                    <span ng-show="!isEditable">{{ item.quantity }}</span>
+                  </td>
+
+                  <td>
+                    <span>{{ item.price | number:'' }} VNĐ</span>
+                  </td>
+
+                  <td>{{ item.totalAmount | number:'' }} VNĐ</td>
+
+                  <td ng-show="isEditable">
+                    <button class="btn-danger btn-sm" type="button" ng-show="isEditable" ng-click="removeItem(item)">xóa</button>
+                  </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <td colspan="4" class="text-right"><strong>Tổng tiền hóa đơn:</strong></td>
+                  <td><strong>{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ</strong></td>
+                  <td></td>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary" ng-click="updateInvoice()" ng-show="isEditable">Lưu thay đổi</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
