@@ -119,16 +119,19 @@ app.controller("indexController", [
       let endDate = $scope.endDate;      // Get end date value
 
       // Check if start and end dates are not null
+      if (!startDate || !endDate) {
+        console.error("Please select both start and end dates.");
+        return;  // Exit if dates are not selected
+      }
+
       let url = "http://160.30.21.47:1234/api/Thongke/by-month"; // Default URL
 
-      if (startDate && endDate) {
-        // Convert startDate and endDate to 'YYYY-MM-DDTHH:mm:ss' format
-        startDate = new Date($scope.startDate).toISOString();
-        endDate = new Date($scope.endDate).toISOString();
+      // Convert startDate and endDate to 'YYYY-MM-DDTHH:mm:ss' format
+      startDate = new Date($scope.startDate).toISOString();
+      endDate = new Date($scope.endDate).toISOString();
 
-        // Create URL with startDate and endDate as query params
-        url = `http://160.30.21.47:1234/api/Thongke/by-month?startDate=${startDate}&endDate=${endDate}`;
-      }
+      // Create URL with startDate and endDate as query params
+      url = `http://160.30.21.47:1234/api/Thongke/by-month?startDate=${startDate}&endDate=${endDate}`;
 
       // Call API
       $http.get(url, config)
@@ -155,6 +158,7 @@ app.controller("indexController", [
           });
     };
 
+
 // Function to draw the chart using Chart.js or other library
     function drawChart(labels, data) {
       const ctx = document.getElementById("myChart").getContext("2d");
@@ -176,7 +180,7 @@ app.controller("indexController", [
             x: {
               title: {
                 display: true,
-                text: 'Thời Gians'
+                text: 'Thời Gian'
               },
               ticks: {
                 autoSkip: true,  // Skip some ticks if there are too many dates

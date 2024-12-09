@@ -215,13 +215,14 @@
                 </tr>
                 </tbody>
                 <tfoot>
-                <tr>
-                  <td colspan="4" class="text-right"><strong>Tổng tiền hóa đơn:</strong></td>
-                  <td><strong>{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ</strong></td>
-                  <td></td>
-                </tr>
+
                 </tfoot>
               </table>
+              <tr>
+                <td colspan="4" class="text-right"><strong>Tổng tiền hóa đơn:</strong></td>
+                <td><strong>{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ</strong></td>
+
+              </tr>
             </div>
           </form>
         </div>

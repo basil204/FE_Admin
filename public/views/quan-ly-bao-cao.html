@@ -219,8 +219,13 @@
                         <input type="datetime-local" id="endDate" ng-model="endDate" class="form-control">
                     </div>
 
+                    <!-- Error message if dates are not selected -->
+                    <div ng-if="!startDate || !endDate" class="text-danger">
+                        <small>Cả ngày bắt đầu và ngày kết thúc phải được chọn!</small>
+                    </div>
+
                     <!-- Button to trigger the fetch -->
-                    <button ng-click="fetchMonthlyStatistics()" class="btn btn-primary">Tải dữ liệu</button>
+                    <button ng-click="fetchMonthlyStatistics()" class="btn btn-primary" ng-disabled="!startDate || !endDate">Tải dữ liệu</button>
 
                     <!-- Display Total Revenue -->
                     <div class="form-group mt-3">
@@ -235,7 +240,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-md-12">
