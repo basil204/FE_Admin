@@ -202,55 +202,41 @@
                     </div>
                 </div>
             </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <div>
-                        <h3 class="tile-title">NHÂN VIÊN MỚI</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tile">
+                <div>
+                    <h3 class="tile-title">Biểu đồ thống kê theo tháng</h3>
+                </div>
+                <div class="tile-body">
+                    <!-- Date Range Picker -->
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu:</label>
+                        <input type="datetime-local" id="startDate" ng-model="startDate" class="form-control">
                     </div>
-                    <div class="tile-body">
-                        <table class="table table-hover table-bordered" id="sampleTable">
-                            <thead>
-                                <tr>
-                                    <th>Họ và tên</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Ngày sinh</th>
-                                    <th>Giới tính</th>
-                                    <th>SĐT</th>
-                                    <th>Chức vụ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Hồ Thị Thanh Ngân</td>
-                                    <td>155-157 Trần Quốc Thảo, Quận 3, Hồ Chí Minh </td>
-                                    <td>12/02/1999</td>
-                                    <td>Nữ</td>
-                                    <td>0926737168</td>
-                                    <td>Bán hàng</td>
-                                </tr>
-                                <tr>
-                                    <td>Trần Khả Ái</td>
-                                    <td>6 Nguyễn Lương Bằng, Tân Phú, Quận 7, Hồ Chí Minh</td>
-                                    <td>22/12/1999</td>
-                                    <td>Nữ</td>
-                                    <td>0931342432</td>
-                                    <td>Bán hàng</td>
-                                </tr>
-                                <tr>
-                                    <td>Nguyễn Đặng Trọng Nhân</td>
-                                    <td>59C Nguyễn Đình Chiểu, Quận 3, Hồ Chí Minh </td>
-                                    <td>23/07/1996</td>
-                                    <td>Nam</td>
-                                    <td>0846881155</td>
-                                    <td>Dịch vụ</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group">
+                        <label for="endDate">Ngày kết thúc:</label>
+                        <input type="datetime-local" id="endDate" ng-model="endDate" class="form-control">
                     </div>
+
+                    <!-- Button to trigger the fetch -->
+                    <button ng-click="fetchMonthlyStatistics()" class="btn btn-primary">Tải dữ liệu</button>
+
+                    <!-- Display Total Revenue -->
+                    <div class="form-group mt-3">
+                        <label for="totalRevenue">Tổng doanh thu:</label>
+                        <input type="text" id="totalRevenue" ng-model="totalRevenue" class="form-control" readonly>
+                    </div>
+
+                    <!-- Chart -->
+                    <canvas id="myChart" style="width: 40px"></canvas>
+
                 </div>
             </div>
         </div>
+    </div>
+
+
     <div class="row">
         <div class="col-md-12">
             <div class="tile">

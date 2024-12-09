@@ -2,21 +2,87 @@ app.controller("OrderController", function ($scope, $http) {
   const token = localStorage.getItem("authToken");
 
   // Define base URL for API
-  const baseUrl = "http://localhost:1234/api";
+  const baseUrl = "http://160.30.21.47:1234/api";
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  }
 // Increase quantity
+  // Decrease quantity
+
   $scope.decreaseQuantity = function(item) {
     if (item.quantity > 0) {
-      item.quantity--;  // Giảm số lượng
-      $scope.updateTotalAmount(item);  // Tính lại tổng tiền sau khi thay đổi số lượng
+      // Check the current stock before decreasing
+      $http.get(`http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity - 1}`, config)
+          .then(function(response) {
+            if (response.status === 200) {
+              // If the stock check is successful and the quantity can be decreased
+              item.quantity--;
+              $scope.updateTotalAmount(item);  // Recalculate total after quantity change
+            }
+          })
+          .catch(function(error) {
+            if (error.status === 400) {
+              // Show a custom notification when stock is insufficient
+              $scope.showNotification(`Số lượng không đủ trong kho! Hiện tại kho chỉ còn ${error.data.currentStock} sản phẩm.`, "error");
+              item.quantity = error.data.currentStock;
+            } else {
+              console.error("Error checking stock:", error);
+            }
+          });
     } else {
-      alert("Số lượng không thể nhỏ hơn 0!");  // Thông báo khi số lượng đã bằng 0
+      alert("Số lượng không thể nhỏ hơn 0!");  // Notify when quantity is already 0
     }
   };
 
+// Increase quantity
   $scope.increaseQuantity = function(item) {
-    item.quantity++;  // Tăng số lượng
-    $scope.updateTotalAmount(item);  // Tính lại tổng tiền
+    let currentQuantity = item.quantity;
+    $http.get(`http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${currentQuantity + 1}`, config)
+        .then(function(response) {
+          if (response.status === 200) {
+            if (response.data.currentStock >= currentQuantity + 1) {
+              item.quantity++;
+            } else {
+              item.quantity = 1;
+              $scope.showNotification(`Kho không đủ. Số lượng đã được đặt lại về 1.`, "warning");
+            }
+            $scope.updateTotalAmount(item);  // Recalculate total after quantity change
+          }
+        })
+        .catch(function(error) {
+          if (error.status === 400) {
+            $scope.showNotification(`Số lượng không đủ trong kho! Hiện tại kho chỉ còn ${error.data.currentStock} sản phẩm.`, "error");
+            item.quantity = error.data.currentStock;
+          } else {
+            console.error("Error checking stock:", error);
+          }
+        });
   };
+
+  $scope.checkStockQuantity = function(item) {
+    const apiUrl = `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
+
+    // Gửi yêu cầu kiểm tra số lượng từ API
+    $http.get(apiUrl, config).then(function(response) {  // Fixed here: Added '.then()' for proper promise handling
+
+      if (response.status === 200) {
+        $scope.updateTotalAmount(item);
+      } else if (response.status === 404) {
+        $scope.showNotification("Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " + response.data.currentStock, "error");
+        item.quantity = response.data.currentStock;  // Gán lại số lượng bằng tồn kho hiện tại
+        $scope.updateTotalAmount(item);
+      }
+    }).catch(function(error) {  // Added error handling for API call
+      console.error('API error:', error);
+      $scope.showNotification("Có lỗi khi kiểm tra số lượng tồn kho", "error");
+      item.quantity = error.data.currentStock;
+    });
+  };
+
+
+
 
   $scope.updateTotalAmount = function(item) {
     item.totalAmount = item.quantity * item.price;  // Tính lại tổng tiền (quantity * price)
@@ -408,7 +474,6 @@ const  a = $scope.updateInvoiceTotalAmount($scope.id);
     });
   };
 
-
 // Fetch invoice details by ID and load items
   $scope.getInvoiceDetailById = function (invoiceId) {
     $http({
@@ -432,6 +497,7 @@ const  a = $scope.updateInvoiceTotalAmount($scope.id);
         $scope.items = invoiceDetail.items.map((item) => {
           return {
             id: item.ida,
+            milkdetailid: item.milkdetailid,
             milkTasteName: item.milkTasteName,
             milkDetailDescription: item.milkDetailDescription,
             quantity: item.quantity,
@@ -464,7 +530,7 @@ const  a = $scope.updateInvoiceTotalAmount($scope.id);
 
   // Check Zalo account by phone number
   $scope.checkZalo = function (phoneNumber) {
-    const apiUrl = `http://localhost:3030/api/customerinfo?phone=${phoneNumber}`;
+    const apiUrl = `http://160.30.21.47:3030/api/customerinfo?phone=${phoneNumber}`;
 
     $http({
       method: "GET",

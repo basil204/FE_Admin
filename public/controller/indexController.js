@@ -14,6 +14,7 @@ app.controller("indexController", [
       timer: 3000,
       timerProgressBar: true,
     });
+
     if (userInfo) {
       socket.connect().then(function () {
         socket.sendMessage('/app/connect', { userId: userInfo.id, role: userInfo.role });
@@ -102,7 +103,6 @@ app.controller("indexController", [
           .catch(handleForbiddenError);
     };
 
-
     // Fetch the online users count and transaction history on page load
     fetchOnlineUsers();
     fetchTransactionHistory();
@@ -112,6 +112,89 @@ app.controller("indexController", [
       $scope.formData = { newStockQuantity: null, productId: id };
       $("#ModalStockUpdate").modal("show");
     };
+
+    // Fetch Monthly Statistics and Draw Chart
+    $scope.fetchMonthlyStatistics = function() {
+      let startDate = $scope.startDate;  // Get start date value
+      let endDate = $scope.endDate;      // Get end date value
+
+      // Check if start and end dates are not null
+      let url = "http://160.30.21.47:1234/api/Thongke/by-month"; // Default URL
+
+      if (startDate && endDate) {
+        // Convert startDate and endDate to 'YYYY-MM-DDTHH:mm:ss' format
+        startDate = new Date($scope.startDate).toISOString();
+        endDate = new Date($scope.endDate).toISOString();
+
+        // Create URL with startDate and endDate as query params
+        url = `http://160.30.21.47:1234/api/Thongke/by-month?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      // Call API
+      $http.get(url, config)
+          .then(function(response) {
+            // Initialize arrays for labels and data
+            const labels = [];
+            const revenueData = [];
+
+            // Loop through the response data
+            for (let i = 0; i < response.data.length; i++) {
+              const monthlyData = response.data[i];  // Get the individual data item
+              labels.push(monthlyData.Date);         // Extract Date (X-axis)
+              revenueData.push(monthlyData.totalRevenue);  // Extract totalRevenue (Y-axis)
+            }
+
+            // Update total revenue (optional, if you want to display the sum)
+            $scope.totalRevenue = revenueData.reduce((sum, revenue) => sum + revenue, 0);
+
+            // Draw the chart with the extracted labels and data
+            drawChart(labels, revenueData);
+          })
+          .catch(function(error) {
+            console.error("Error fetching data:", error);
+          });
+    };
+
+// Function to draw the chart using Chart.js or other library
+    function drawChart(labels, data) {
+      const ctx = document.getElementById("myChart").getContext("2d");
+
+      const chart = new Chart(ctx, {
+        type: 'line',  // or 'bar' depending on the chart type
+        data: {
+          labels: labels,  // X-axis labels (dates)
+          datasets: [{
+            label: 'Revenue',
+            data: data,  // Y-axis data (revenue values)
+            borderColor: 'rgba(75, 192, 192, 1)',
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              },
+              ticks: {
+                autoSkip: true,  // Skip some ticks if there are too many dates
+                maxRotation: 45,  // Rotate the dates if necessary
+                minRotation: 30
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Revenue'
+              }
+            }
+          }
+        }
+      });
+    }
+
 
     // Save updated stock quantity to API
     $scope.saveStockUpdate = function (formData) {

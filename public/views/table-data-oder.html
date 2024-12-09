@@ -186,7 +186,14 @@
                       <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary btn-sm" type="button" ng-click="decreaseQuantity(item)">-</button>
                       </div>
-                      <input type="number" class="form-control form-control-sm" ng-model="item.quantity" min="0" style="width: 50px;" ng-change="updateTotalAmount(item)">
+                      <input
+                              type="number"
+                              class="form-control form-control-sm"
+                              ng-model="item.quantity"
+                              min="0"
+                              style="width: 50px;"
+                              ng-change="checkStockQuantity(item)"
+                      required>
                       <div class="input-group-append">
                         <button class="btn btn-outline-secondary btn-sm" type="button" ng-click="increaseQuantity(item)">+</button>
                       </div>
@@ -194,11 +201,13 @@
                     <span ng-show="!isEditable">{{ item.quantity }}</span>
                   </td>
 
+
                   <td>
                     <span>{{ item.price | number:'' }} VNĐ</span>
                   </td>
 
                   <td>{{ item.totalAmount | number:'' }} VNĐ</td>
+
 
                   <td ng-show="isEditable">
                     <button class="btn-danger btn-sm" type="button" ng-show="isEditable" ng-click="removeItem(item)">xóa</button>
@@ -223,3 +232,4 @@
       </div>
     </div>
   </div>
+</div>
