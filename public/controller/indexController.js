@@ -164,7 +164,7 @@ app.controller("indexController", [
         data: {
           labels: labels,  // X-axis labels (dates)
           datasets: [{
-            label: 'Revenue',
+            label: 'Doanh Thu',
             data: data,  // Y-axis data (revenue values)
             borderColor: 'rgba(75, 192, 192, 1)',
             fill: false
@@ -176,7 +176,7 @@ app.controller("indexController", [
             x: {
               title: {
                 display: true,
-                text: 'Date'
+                text: 'Thời Gians'
               },
               ticks: {
                 autoSkip: true,  // Skip some ticks if there are too many dates
