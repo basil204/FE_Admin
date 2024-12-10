@@ -120,15 +120,15 @@ app.controller("OrderController", function ($scope, $http) {
 
   // List of possible order statuses
   $scope.availableStatuses = [
-    { code: 301, name: "Chờ Duyệt Đơn" }, // ApproveOrders
-    { code: 337, name: "Chưa Thanh Toán" }, // UnPaid
-    { code: 338, name: "Hoàn thành" }, // Complete
-    { code: 336, name: "Hủy Đơn" }, // Canceled
-    { code: 901, name: "Chờ lấy hàng" }, // Waiting
-    { code: 903, name: "Đã lấy hàng" }, // Took
-    { code: 904, name: "Giao hàng" }, // Delivery
-    { code: 912, name: "Chờ thanh toán COD" }, // WaitingInvoice
-    { code: 305, name: "Thanh toán thành công" }, // SuccessfulPayment
+    { code: 301, name: "Chờ Duyệt Đơn" },
+    { code: 305, name: "Thanh toán thành công" },
+    { code: 336, name: "Huỷ Đơn" },
+    { code: 337, name: "Chưa Thanh Toán" },
+    { code: 338, name: "Đơn Chờ" },
+    { code: 901, name: "Chờ lấy hàng" },
+    { code: 903, name: "Đã lấy hàng" },
+    { code: 904, name: "Giao hàng" },
+    { code: 913, name: "Hoàn thành" },
   ];
 
   $scope.calculateTotalInvoiceAmount = function () {
@@ -142,7 +142,7 @@ app.controller("OrderController", function ($scope, $http) {
   // Update the total amount of the invoice
 
   $scope.filterAvailableStatuses = function (currentStatusCode) {
-    const hiddenStatuses = [338]; // Trạng thái cần ẩn
+    const hiddenStatuses = [901, 903, 904, 913, 336]; // Trạng thái cần ẩn
 
     // Nếu trạng thái hiện tại nằm trong nhóm cần ẩn, chỉ hiển thị trạng thái hiện tại
     if (hiddenStatuses.includes(currentStatusCode)) {
