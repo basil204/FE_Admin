@@ -38,9 +38,7 @@ app.run(function ($rootScope, $location, socket) {
   // Logout function
   $rootScope.logout = function () {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (userInfo) {
-      socket.disconnect(userInfo);
-    }
+    socket.disconnect();
     localStorage.removeItem("authToken");
     localStorage.removeItem("userInfo");
 
@@ -134,12 +132,9 @@ app.config(function ($routeProvider, $locationProvider) {
       templateUrl: "/views/home.html",
       resolve: { auth: requireAuth },
     })
-    .when("/settings", {
-      templateUrl: "/views/setting.html",
-      resolve: { auth: requireAuth },
-    })
     .when("/ban-hang-tai-quay", {
       templateUrl: "/views/ban-hang-tai-quay.html",
+      controller: "BanHangTaiQuayController",
       resolve: { auth: requireAuth },
     })
     .when("/form-add-don-hang", {
@@ -195,31 +190,31 @@ app.factory("socket", [
     var socket = null;
     var stompClient = null;
     var subscriptions = {}; // Khai báo biến subscriptions để lưu danh sách topic đã subscribe
-
+    var isConnected = false;
     return {
       connect: function () {
         var deferred = $q.defer();
-        socket = new SockJS("http://160.30.21.47:1234/api/u-websocket");
+        var token = localStorage.getItem("authToken");
+        var socketUrl =
+          "http://160.30.21.47:1234/api/ws?token=" + encodeURIComponent(token);
+
+        socket = new SockJS(socketUrl);
         stompClient = Stomp.over(socket);
 
+        // Kết nối với Stomp server
         stompClient.connect(
           {},
           function (frame) {
             console.log("Connected: " + frame);
+            isConnected = true;
             deferred.resolve();
           },
           function (error) {
             console.error("Error: " + error);
+            isConnected = false;
             deferred.reject(error);
           }
         );
-
-        socket.onclose = function () {
-          console.log("Socket closed. Attempting to reconnect...");
-          setTimeout(() => {
-            this.connect();
-          }, 5000);
-        };
 
         return deferred.promise;
       },
@@ -227,7 +222,6 @@ app.factory("socket", [
       subscribe: function (destination, callback) {
         if (stompClient) {
           if (!subscriptions[destination]) {
-            // Đăng ký topic nếu chưa tồn tại trong danh sách subscriptions
             subscriptions[destination] = stompClient.subscribe(
               destination,
               function (response) {
@@ -246,36 +240,14 @@ app.factory("socket", [
         }
       },
 
-      disconnect: function (userInfo) {
+      disconnect: function () {
         if (stompClient) {
-          stompClient.send(
-            "/app/disconnect",
-            {},
-            JSON.stringify({ userId: userInfo.id, role: userInfo.role })
-          );
           stompClient.disconnect();
           stompClient = null;
           subscriptions = {}; // Xóa danh sách subscriptions
+          isConnected = false;
         }
       },
-    };
-  },
-]);
-
-app.run([
-  "$window",
-  "socket",
-  function ($window, socket) {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (!userInfo) {
-      return;
-    }
-    // Kết nối WebSocket khi người dùng đăng nhập
-    socket.connect(userInfo);
-
-    // Đảm bảo khi người dùng đóng trang, kết nối WebSocket bị đóng và ID bị xóa khỏi online users
-    $window.onbeforeunload = function () {
-      socket.disconnect(userInfo);
     };
   },
 ]);

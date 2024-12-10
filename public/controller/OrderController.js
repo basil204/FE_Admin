@@ -16,8 +16,7 @@ app.controller("OrderController", function ($scope, $http) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
-            item.milkdetailid
+          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
         )
@@ -50,8 +49,7 @@ app.controller("OrderController", function ($scope, $http) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
-          item.milkdetailid
+        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
       )
@@ -96,7 +94,7 @@ app.controller("OrderController", function ($scope, $http) {
         } else if (response.status === 404) {
           $scope.showNotification(
             "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-              response.data.currentStock,
+            response.data.currentStock,
             "error"
           );
           item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
