@@ -67,7 +67,8 @@ app.run(function ($rootScope, $location, socket) {
         "/table-data-khach-hang", "/table-data-oder", "/table-data-product", "/ban-hang-tai-quay"
       ];
 
-      const userRoutes = $rootScope.userRole === "Admin" ? adminRoutes : staffRoutes;
+      const userRoutes =
+        $rootScope.userRole === "Admin" ? adminRoutes : staffRoutes;
 
       if (!userRoutes.includes(next.originalPath)) {
         Swal.fire({

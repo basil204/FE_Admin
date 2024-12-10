@@ -3,16 +3,20 @@
     <!-- Cảnh báo -->
     <div class="popup-alert" ng-if="showWarning" role="alert">
       <strong>Cảnh báo!</strong> Đây là một thông báo cảnh báo quan trọng.
-      <p>Thông tin chi tiết: Vui lòng kiểm tra lại các sản phẩm trong kho và cập nhật ngay khi có thay đổi.</p>
+      <p>
+        Thông tin chi tiết: Vui lòng kiểm tra lại các sản phẩm trong kho và cập
+        nhật ngay khi có thay đổi.
+      </p>
       <button class="btn-close" ng-click="closeWarning()">Đóng</button>
     </div>
-
 
     <div class="row">
       <div class="col-md-12">
         <div class="app-title">
           <ul class="app-breadcrumb breadcrumb">
-            <li class="breadcrumb-item"><a href="#"><b>Bảng điều khiển</b></a></li>
+            <li class="breadcrumb-item">
+              <a href="#"><b>Bảng điều khiển</b></a>
+            </li>
           </ul>
           <div id="clock"></div>
         </div>
@@ -26,7 +30,7 @@
           <!-- Widget 1 -->
           <div class="col-md-6">
             <div class="widget-small primary coloured-icon">
-              <i class='icon bx bxs-user-account fa-3x'></i>
+              <i class="icon bx bxs-user-account fa-3x"></i>
               <div class="info">
                 <h4>Tổng khách hàng</h4>
                 <p><b>{{countuser}} khách hàng</b></p>
@@ -37,7 +41,7 @@
           <!-- Widget 2 -->
           <div class="col-md-6">
             <div class="widget-small info coloured-icon">
-              <i class='icon bx bxs-data fa-3x'></i>
+              <i class="icon bx bxs-data fa-3x"></i>
               <div class="info">
                 <h4>Tổng sản phẩm</h4>
                 <p><b>{{countmilkdetail}} sản phẩm</b></p>
@@ -48,7 +52,7 @@
           <!-- Widget 3 -->
           <div class="col-md-6">
             <div class="widget-small warning coloured-icon">
-              <i class='icon bx bxs-shopping-bags fa-3x'></i>
+              <i class="icon bx bxs-shopping-bags fa-3x"></i>
               <div class="info">
                 <h4>Tổng đơn hàng</h4>
                 <p><b>{{countinvoice}} đơn hàng</b></p>
@@ -59,7 +63,7 @@
           <!-- Widget 4 -->
           <div class="col-md-6">
             <div class="widget-small danger coloured-icon">
-              <i class='icon bx bxs-error-alt fa-3x'></i>
+              <i class="icon bx bxs-error-alt fa-3x"></i>
               <div class="info">
                 <h4>Sắp hết hàng</h4>
                 <p><b>{{countend}} sản phẩm</b></p>
@@ -80,47 +84,54 @@
             </div>
           </div>
 
-
           <!-- Order Status Table -->
           <div class="col-md-12">
             <div class="tile">
               <h3 class="tile-title">Tình trạng đơn hàng</h3>
-              <div class="table-responsive" style="height: 400px; overflow-x: auto;"> <!-- Bảng có thể cuộn ngang -->
+              <div
+                class="table-responsive"
+                style="height: 400px; overflow-x: auto"
+              >
+                <!-- Bảng có thể cuộn ngang -->
                 <table class="table table-bordered">
                   <thead>
-                  <tr>
-                    <th>ID đơn hàng</th>
-                    <th>Tên khách hàng</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                  </tr>
+                    <tr>
+                      <th>ID đơn hàng</th>
+                      <th>Tên khách hàng</th>
+                      <th>Tổng tiền</th>
+                      <th>Trạng thái</th>
+                    </tr>
                   </thead>
                   <tbody>
-                  <!-- Lặp qua danh sách đơn hàng -->
-                  <tr ng-repeat="order in orders">
-                    <td>{{ order.invoicecode }}</td>
-                    <td>{{ order.username }}</td>
-                    <td>{{ order.totalAmount | number:''}} VNĐ</td>
-                    <td>
-                             <span class="badge"
-                                   ng-class="{
-            'bg-success': order.status === 'Hoàn thành',
-            'bg-warning': order.status === 'Đã xử lý',
-            'bg-danger': order.status === 'Đã hủy',
-            'bg-warnings': order.status === 'Chờ thanh toán',
-            'bg-info': order.status === 'Đang chờ xử lý'
-        }">
-        {{ order.status }}
-    </span>
-                    </td>
-                  </tr>
+                    <!-- Lặp qua danh sách đơn hàng -->
+                    <tr ng-repeat="order in orders">
+                      <td>{{ order.invoicecode }}</td>
+                      <td>{{ order.username }}</td>
+                      <td>{{ order.totalAmount | number:''}} VNĐ</td>
+                      <td>
+                        <span
+                          class="badge"
+                          ng-class="{
+                        'bg-success': order.status === 'Hoàn thành',
+                        'bg-warning': order.status === 'Chờ thanh toán',
+                        'bg-danger': order.status === 'Huỷ Đơn',
+                        'bg-info': order.status === 'Chưa Thanh Toán',
+                        'bg-primary': order.status === 'Chờ Duyệt Đơn',
+                        'bg-secondary': order.status === 'Đơn Chờ',
+                        'bg-light': order.status === 'Chờ lấy hàng',
+                        'bg-dark': order.status === 'Đã lấy hàng',
+                        'bg-muted': order.status === 'Giao hàng'
+                      }"
+                        >
+                          {{ order.status }}
+                        </span>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-
-
 
           <!-- New Customers Table -->
           <div class="col-md-12">
@@ -129,16 +140,16 @@
               <div>
                 <table class="table table-hover">
                   <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Tên khách hàng</th>
-                  </tr>
+                    <tr>
+                      <th>ID</th>
+                      <th>Tên khách hàng</th>
+                    </tr>
                   </thead>
                   <tbody>
-                  <tr ng-repeat="customer in customers track by $index">
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ customer }}</td>
-                  </tr>
+                    <tr ng-repeat="customer in customers track by $index">
+                      <td>{{ $index + 1 }}</td>
+                      <td>{{ customer }}</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -158,7 +169,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

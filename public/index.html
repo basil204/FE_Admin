@@ -1,26 +1,59 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
-
-<head>
+  <head>
     <title>Đăng nhập quản trị | Website quản trị v2.0</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-    <link rel="stylesheet" type="text/css" href="css/util.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-    <link rel="stylesheet" type="text/css" href="/doc/css/main.css">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="vendor/bootstrap/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="vendor/css-hamburgers/hamburgers.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="vendor/select2/select2.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="css/util.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/doc/css/main.css" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/38.0.0/classic/ckeditor.js"></script>
 
@@ -29,24 +62,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-</head>
+  </head>
 
-<body ng-class="{'app sidebar-mini rtl': isLoggedIn}">
+  <body ng-class="{'app sidebar-mini rtl': isLoggedIn}">
     <div id="myApp">
-        <header ng-if="isLoggedIn" class="app-header">
-            <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+      <header ng-if="isLoggedIn" class="app-header">
+        <a
+          class="app-sidebar__toggle"
+          href="#"
+          data-toggle="sidebar"
+          aria-label="Hide Sidebar"
+        ></a>
 
-            <ul class="app-nav" ng-controller="LoginController">
-                <li>
-                    <a  class="app-nav__item" id="logoutButton" ng-click="logout()"><i class="bx bx-log-out bx-rotate-180"></i> </a>
-                </li>
-            </ul>
-        </header>
-        <header ng-if="isLoggedIn && !isBanHangTaiQuayPage" ng-include="'/layout/header.html'"></header>
-        <div ng-view></div>
-        <footer ng-if="isLoggedIn && !isBanHangTaiQuayPage" ng-include="'/layout/footer.html'"></footer>
+        <ul class="app-nav" ng-controller="LoginController">
+          <li>
+            <a class="app-nav__item" id="logoutButton" ng-click="logout()"
+              ><i class="bx bx-log-out bx-rotate-180"></i>
+            </a>
+          </li>
+        </ul>
+      </header>
+      <header
+        ng-if="isLoggedIn && !isBanHangTaiQuayPage"
+        ng-include="'/layout/header.html'"
+      ></header>
+      <div ng-view></div>
+      <footer
+        ng-if="isLoggedIn && !isBanHangTaiQuayPage"
+        ng-include="'/layout/footer.html'"
+      ></footer>
     </div>
-
 
     <!--Javascript-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -57,8 +102,9 @@
     <script src="/controller/ProductController.js"></script>
     <script src="/controller/MilktasteController.js"></script>
     <script src="/controller/PackagingunitController.js"></script>
-    <script src="/controller/TargetuserController.js"></script>
     <script src="/controller/LogController.js"></script>
+    <script src="/controller/TargetuserController.js"></script>
+    <script src="/controller/settingsController.js"></script>
     <script src="/controller/TypeController.js"></script>
     <script src="/controller/UsagecapacityController.js"></script>
     <script src="/controller/StaffController.js"></script>
@@ -75,23 +121,21 @@
     <script src="/doc/js/main.js"></script>
     <script src="/doc/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript">
-        //show - hide mật khẩu
-        function togglePassword() {
-            const passwordField = document.getElementById("password-field");
-            const icon = document.querySelector(".click-eye");
+      //show - hide mật khẩu
+      function togglePassword() {
+        const passwordField = document.getElementById("password-field");
+        const icon = document.querySelector(".click-eye");
 
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                icon.classList.remove("bx-hide");
-                icon.classList.add("bx-show");
-            } else {
-                passwordField.type = "password";
-                icon.classList.remove("bx-show");
-                icon.classList.add("bx-hide");
-            }
+        if (passwordField.type === "password") {
+          passwordField.type = "text";
+          icon.classList.remove("bx-hide");
+          icon.classList.add("bx-show");
+        } else {
+          passwordField.type = "password";
+          icon.classList.remove("bx-show");
+          icon.classList.add("bx-hide");
         }
+      }
     </script>
-
-</body>
-
+  </body>
 </html>

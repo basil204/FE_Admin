@@ -1,0 +1,210 @@
+<div ng-controller="settingsController">
+  <main class="app-content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="app-title">
+          <ul class="app-breadcrumb breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#"><b>Cài đặt</b></a>
+            </li>
+          </ul>
+          <div id="clock"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <div>
+            <h3 class="tile-title">Cài đặt</h3>
+          </div>
+          <div class="tile-body">
+            <form name="settingsForm" ng-submit="saveSettings()">
+              <!-- Upload Logo Section -->
+              <!-- Image Preview Section -->
+              <div class="form-group">
+                <div class="preview-container" ng-if="settings.imgUrl">
+                  <div class="text-center">
+                    <img
+                      ng-src="{{settings.imgUrl}}"
+                      alt="Logo Preview"
+                      class="logo-preview"
+                    />
+                    <br />
+                    <button
+                      class="btn btn-danger btn-sm mt-2"
+                      ng-click="removeImage()"
+                    >
+                      Xóa Hình
+                    </button>
+                  </div>
+                </div>
+                <label for="logo">Upload Logo:</label>
+                <input
+                  type="file"
+                  id="logo"
+                  name="logo"
+                  class="form-control"
+                  onchange="angular.element(this).scope().uploadImage(this.files)"
+                />
+              </div>
+
+              <!-- Other Fields (Shop Name, API Key, etc.) -->
+              <div class="form-group">
+                <label for="nameshop">Tên cửa hàng:</label>
+                <input
+                  type="text"
+                  id="nameshop"
+                  ng-model="settings.nameshop"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apikey">API Key:</label>
+                <input
+                  type="text"
+                  id="apikey"
+                  ng-model="settings.apikey"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Value Bank Field -->
+              <div class="form-group">
+                <label for="bank">Ngân hàng:</label>
+                <select
+                  id="bank"
+                  ng-model="settings.valuebank"
+                  ng-options="bank.code as bank.name for bank in availableBanks"
+                  class="form-control"
+                  required
+                ></select>
+              </div>
+
+              <!-- STK Field -->
+              <div class="form-group">
+                <label for="stk">Số tài khoản (STK):</label>
+                <input
+                  type="text"
+                  id="stk"
+                  ng-model="settings.stk"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Hotline Field -->
+              <div class="form-group">
+                <label for="hotline">Hotline:</label>
+                <input
+                  type="text"
+                  id="hotline"
+                  ng-model="settings.hotline"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Full Name Field -->
+              <div class="form-group">
+                <label for="fullname">Tên đầy đủ:</label>
+                <input
+                  type="text"
+                  id="fullname"
+                  ng-model="settings.fullname"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Email Field -->
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  ng-model="settings.email"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Address Field -->
+              <div class="form-group">
+                <label for="address">Địa chỉ:</label>
+                <input
+                  type="text"
+                  id="address"
+                  ng-model="settings.address"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Save Button -->
+              <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                ng-click="resetForm()"
+              >
+                Làm mới
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+  /* Image Preview Section Styling */
+  .logo-preview {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+
+  .preview-container {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .btn-danger {
+    font-size: 14px;
+    padding: 5px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 20px;
+  }
+
+  .btn-danger:hover {
+    background-color: #ff4d4d;
+    border-color: #e60000;
+  }
+
+  /* Form Field Styles */
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .tile-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+</style>
