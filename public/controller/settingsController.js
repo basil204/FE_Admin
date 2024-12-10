@@ -138,34 +138,89 @@ app.controller(
 
     // Function to save the settings (send data to backend)
     $scope.saveSettings = function () {
-      const data = {
-        logo: $scope.settings.logo,
-        nameshop: $scope.settings.nameshop,
-        apikey: $scope.settings.apikey,
-        valuebank: $scope.settings.valuebank,
-        stk: $scope.settings.stk,
-        hotline: $scope.settings.hotline,
-        fullname: $scope.settings.fullname,
-        email: $scope.settings.email,
-        address: $scope.settings.address,
-      };
+      // Kiểm tra xem tất cả các trường bắt buộc có được điền đầy đủ không
+      if (
+        !$scope.settings.logo ||
+        !$scope.settings.nameshop ||
+        !$scope.settings.apikey ||
+        !$scope.settings.valuebank ||
+        !$scope.settings.stk ||
+        !$scope.settings.hotline ||
+        !$scope.settings.fullname ||
+        !$scope.settings.email ||
+        !$scope.settings.address
+      ) {
+        // Hiển thị thông báo lỗi nếu có trường không hợp lệ
+        $scope.showNotification(
+          "Vui lòng điền đầy đủ tất cả các thông tin cài đặt.",
+          "error"
+        );
+        return; // Dừng lại nếu có trường không hợp lệ
+      }
 
-      $http
-        .post(API_BASE_URL + "/Setting/update", data, {
-          headers: {
-            Authorization: "Bearer " + token, // Include the token if needed
-          },
-        })
-        .then(function (response) {
-          // Success callback
-          console.log("Settings updated successfully", response.data);
-          $scope.showNotification("Cài đặt đã được lưu thành công.", "success");
-        })
-        .catch(function (error) {
-          // Error callback
-          console.error("Error updating settings", error);
-          $scope.showNotification("Đã có lỗi xảy ra khi lưu cài đặt.", "error");
-        });
+      // Kiểm tra định dạng email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!$scope.settings.email.match(emailRegex)) {
+        // Hiển thị thông báo lỗi nếu email không hợp lệ
+        $scope.showNotification(
+          "Địa chỉ email không hợp lệ. Vui lòng kiểm tra lại.",
+          "error"
+        );
+        return;
+      }
+
+      // Hiển thị thông báo hỏi trước khi lưu cài đặt
+      Swal.fire({
+        title: "Bạn có chắc chắn muốn lưu các cài đặt này không?",
+        text: "Hành động này sẽ lưu các thay đổi của bạn.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Có, lưu!",
+        cancelButtonText: "Hủy",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Dữ liệu cài đặt cần lưu
+          const data = {
+            logo: $scope.settings.logo,
+            nameshop: $scope.settings.nameshop,
+            apikey: $scope.settings.apikey,
+            valuebank: $scope.settings.valuebank,
+            stk: $scope.settings.stk,
+            hotline: $scope.settings.hotline,
+            fullname: $scope.settings.fullname,
+            email: $scope.settings.email,
+            address: $scope.settings.address,
+          };
+
+          // Gửi yêu cầu lưu cài đặt lên server
+          $http
+            .post(API_BASE_URL + "/Setting/update", data, {
+              headers: {
+                Authorization: "Bearer " + token, // Include the token if needed
+              },
+            })
+            .then(function (response) {
+              // Success callback
+              console.log("Settings updated successfully", response.data);
+              $scope.showNotification(
+                "Cài đặt đã được lưu thành công.",
+                "success"
+              );
+            })
+            .catch(function (error) {
+              // Error callback
+              console.error("Error updating settings", error);
+              $scope.showNotification(
+                "Đã có lỗi xảy ra khi lưu cài đặt.",
+                "error"
+              );
+            });
+        } else {
+          // Nếu người dùng hủy bỏ, không làm gì cả
+          console.log("Hành động bị hủy.");
+        }
+      });
     };
 
     // Function to get settings from the backend (if needed)

@@ -112,15 +112,12 @@
                         <span
                           class="badge"
                           ng-class="{
-                        'bg-success': order.status === 'Hoàn thành',
-                        'bg-warning': order.status === 'Chờ thanh toán',
-                        'bg-danger': order.status === 'Huỷ Đơn',
-                        'bg-info': order.status === 'Chưa Thanh Toán',
-                        'bg-primary': order.status === 'Chờ Duyệt Đơn',
-                        'bg-secondary': order.status === 'Đơn Chờ',
-                        'bg-light': order.status === 'Chờ lấy hàng',
-                        'bg-dark': order.status === 'Đã lấy hàng',
-                        'bg-muted': order.status === 'Giao hàng'
+                            'bg-success': order.status === 'Hoàn thành' || order.status === 'Đã lấy hàng' || order.status === 'Giao hàng',
+                            'bg-warning': order.status === 'Chờ thanh toán' || order.status === 'Chưa Thanh Toán',
+                            'bg-danger': order.status === 'Huỷ Đơn' || order.status === 'Đơn Chờ',
+                            'bg-info': order.status === 'Chờ Duyệt Đơn' || order.status === 'Chờ lấy hàng',
+                            'bg-primary': order.status === 'Chờ Duyệt Đơn',  
+                            'bg-secondary': order.status === 'Đơn Chờ',  
                       }"
                         >
                           {{ order.status }}

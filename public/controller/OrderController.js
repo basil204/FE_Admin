@@ -464,40 +464,62 @@ app.controller("OrderController", function ($scope, $http) {
 
   // Update invoice details
   $scope.updateInvoice = function () {
-    // Đảm bảo rằng chúng ta sẽ thực hiện cả hai tác vụ cùng một lúc
-    const updateQuantityPromises = $scope.updateAllItemQuantities();
-    const a = $scope.updateInvoiceTotalAmount($scope.id);
-    // Cập nhật thông tin hóa đơn
-    const updateInvoicePromise = $http({
-      method: "PUT",
-      url: `${baseUrl}/Invoice/update/${$scope.id}`,
-      headers: { Authorization: `Bearer ${token}` },
-      data: {
-        deliveryaddress: $scope.deliveryAddress,
-        phonenumber: $scope.phoneNumber,
-        fullname: $scope.fullname,
-      },
-    });
+    // Hiển thị thông báo hỏi trước khi thực hiện cập nhật
+    Swal.fire({
+      title: "Bạn có chắc chắn muốn cập nhật hóa đơn và số lượng này?",
+      text: "Các thay đổi sẽ được lưu và không thể hoàn tác.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Có, cập nhật!",
+      cancelButtonText: "Hủy",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Đảm bảo rằng chúng ta sẽ thực hiện cả hai tác vụ cùng một lúc
+        const updateQuantityPromises = $scope.updateAllItemQuantities();
+        const a = $scope.updateInvoiceTotalAmount($scope.id);
 
-    // Sử dụng Promise.all để xử lý cả hai thao tác (cập nhật số lượng và hóa đơn)
-    Promise.all([...updateQuantityPromises, updateInvoicePromise, a])
-      .then(function (responses) {
-        // Tất cả các yêu cầu thành công
-        $scope.getInvoices(); // Lấy danh sách hóa đơn mới
-        console.log("Invoice and item quantities updated successfully!");
-        $scope.showNotification(
-          "Cập nhật hóa đơn và số lượng thành công!",
-          "success"
-        );
-      })
-      .catch(function (error) {
-        // Nếu có lỗi trong bất kỳ yêu cầu nào
-        console.error("Error during update:", error);
-        $scope.showNotification(
-          "Có lỗi khi cập nhật hóa đơn hoặc số lượng!",
-          "error"
-        );
-      });
+        // Cập nhật thông tin hóa đơn
+        const updateInvoicePromise = $http({
+          method: "PUT",
+          url: `${baseUrl}/Invoice/update/${$scope.id}`,
+          headers: { Authorization: `Bearer ${token}` },
+          data: {
+            deliveryaddress: $scope.deliveryAddress,
+            phonenumber: $scope.phoneNumber,
+            fullname: $scope.fullname,
+          },
+        });
+
+        // Sử dụng Promise.all để xử lý cả hai thao tác (cập nhật số lượng và hóa đơn)
+        Promise.all([updateQuantityPromises, updateInvoicePromise, a])
+          .then(function (responses) {
+            // Tất cả các yêu cầu thành công
+            $scope.getInvoices(); // Lấy danh sách hóa đơn mới
+            console.log("Invoice and item quantities updated successfully!");
+
+            // Hiển thị thông báo thành công
+            $scope.showNotification(
+              "Cập nhật hóa đơn và số lượng thành công!",
+              "success"
+            );
+
+            // Ẩn modal sau khi hoàn tất
+            $("#ModalInvoiceUpdate").modal("hide");
+          })
+          .catch(function (error) {
+            // Nếu có lỗi trong bất kỳ yêu cầu nào
+            console.error("Error during update:", error);
+            $scope.showNotification(
+              "Có lỗi khi cập nhật hóa đơn hoặc số lượng!",
+              "error"
+            );
+          });
+      } else {
+        // Nếu người dùng hủy bỏ, không làm gì cả
+        console.log("Hành động bị hủy.");
+      }
+    });
   };
 
   $scope.updateAllItemQuantities = function () {

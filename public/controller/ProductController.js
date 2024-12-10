@@ -165,48 +165,70 @@ app.controller(
 
     // Chức năng Thêm và Cập nhật Sản phẩm
     $scope.saveProduct = function () {
-      const isUpdating = $scope.formData.id; // Kiểm tra xem là cập nhật hay thêm mới
+      // Kiểm tra xem là cập nhật hay thêm mới
+      const isUpdating = $scope.formData.id;
 
-      // Xây dựng cấu trúc dữ liệu để gửi lên server
-      const productData = {
-        productname: $scope.formData.productname,
-        milkType: { id: $scope.formData.milkType },
-        milkBrand: { id: $scope.formData.milkBrand },
-        targetUser: { id: $scope.formData.targetUser },
-        imgUrl: $scope.formData.imgUrl,
-      };
+      // Hiển thị thông báo hỏi trước khi thực hiện hành động
+      Swal.fire({
+        title: isUpdating
+          ? "Bạn có chắc chắn muốn cập nhật sản phẩm này?"
+          : "Bạn có chắc chắn muốn thêm sản phẩm này?",
+        text: "Các thay đổi sẽ được lưu và không thể hoàn tác.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Có, thực hiện!",
+        cancelButtonText: "Hủy",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Xây dựng cấu trúc dữ liệu để gửi lên server
+          const productData = {
+            productname: $scope.formData.productname,
+            milkType: { id: $scope.formData.milkType },
+            milkBrand: { id: $scope.formData.milkBrand },
+            targetUser: { id: $scope.formData.targetUser },
+            imgUrl: $scope.formData.imgUrl,
+          };
 
-      const apiUrl = isUpdating
-        ? `${API_BASE_URL}/Product/update/${$scope.formData.id}` // Cập nhật sản phẩm
-        : `${API_BASE_URL}/Product/add`; // Thêm mới sản phẩm
+          const apiUrl = isUpdating
+            ? `${API_BASE_URL}/Product/update/${$scope.formData.id}` // Cập nhật sản phẩm
+            : `${API_BASE_URL}/Product/add`; // Thêm mới sản phẩm
 
-      const method = isUpdating ? "PUT" : "POST"; // Sử dụng PUT cho cập nhật, POST cho thêm mới
+          const method = isUpdating ? "PUT" : "POST"; // Sử dụng PUT cho cập nhật, POST cho thêm mới
 
-      // Gửi yêu cầu lên server
-      $http({
-        method: method,
-        url: apiUrl,
-        data: productData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          const successMessage = isUpdating
-            ? "Cập nhật sản phẩm thành công"
-            : "Thêm sản phẩm mới thành công";
-          $scope.showNotification(successMessage, "success");
-          $scope.resetForm(); // Reset form sau khi lưu
-          $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể lưu sản phẩm"
+          // Gửi yêu cầu lên server
+          $http({
+            method: method,
+            url: apiUrl,
+            data: productData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }).then(
+            function (response) {
+              const successMessage = isUpdating
+                ? "Cập nhật sản phẩm thành công"
+                : "Thêm sản phẩm mới thành công";
+              $scope.showNotification(successMessage, "success");
+              $scope.resetForm(); // Reset form sau khi lưu
+              $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
+
+              // Ẩn modal sau khi hoàn tất
+              $("#ModalProduct").modal("hide");
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(
+                error,
+                "Không thể lưu sản phẩm"
+              );
+              $scope.showNotification(errorMessage, "error");
+            }
           );
-          $scope.showNotification(errorMessage, "error");
+        } else {
+          // Nếu người dùng hủy bỏ, không làm gì cả
+          console.log("Hành động bị hủy.");
         }
-      );
+      });
     };
 
     // Chức năng tải ảnh
@@ -272,30 +294,46 @@ app.controller(
       return defaultMessage;
     }
     $scope.deleteItem = function (id) {
-      if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
-        $http({
-          method: "DELETE",
-          url: `${API_BASE_URL}/Product/delete/${id}`,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then(
-          function (response) {
-            const message =
-              response.data.message || "Xóa đối tượng sử dụng thành công";
-            $scope.showNotification(message, "success");
-            $scope.getProducts();
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(
-              error,
-              "Không thể xóa đối tượng sử dụng"
-            );
-            $scope.showNotification(errorMessage, "error");
-          }
-        );
-      }
+      // Hiển thị thông báo hỏi trước khi xóa
+      Swal.fire({
+        title: "Bạn có chắc chắn muốn thực hiện hành động này không?",
+        text: "Hành động này sẽ xóa vĩnh viễn đối tượng.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Có, xóa!",
+        cancelButtonText: "Hủy",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Gửi yêu cầu DELETE nếu người dùng xác nhận
+          $http({
+            method: "DELETE",
+            url: `${API_BASE_URL}/Product/delete/${id}`,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }).then(
+            function (response) {
+              const message =
+                response.data.message || "Xóa đối tượng sử dụng thành công";
+              $scope.showNotification(message, "success");
+              $scope.getProducts(); // Làm mới danh sách sản phẩm
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(
+                error,
+                "Không thể xóa đối tượng sử dụng"
+              );
+              $scope.showNotification(errorMessage, "error");
+            }
+          );
+        } else {
+          // Nếu người dùng hủy bỏ, không làm gì cả
+          console.log("Hành động bị hủy.");
+        }
+      });
     };
+
     ClassicEditor.create(document.querySelector("#editor"), {
       toolbar: [
         "heading",

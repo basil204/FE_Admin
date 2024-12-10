@@ -76,6 +76,7 @@ app.run(function ($rootScope, $location, socket) {
         "/check-log-he-thong",
         "/ban-hang-tai-quay",
         "/settings",
+        "/duyen-don",
       ];
 
       const staffRoutes = [
@@ -88,6 +89,7 @@ app.run(function ($rootScope, $location, socket) {
         "/table-data-product",
         "/ban-hang-tai-quay",
         "/settings",
+        "/duyen-don",
       ];
 
       const userRoutes =
@@ -174,6 +176,10 @@ app.config(function ($routeProvider, $locationProvider) {
     })
     .when("/check-log-he-thong", {
       templateUrl: "/views/check-log-he-thong.html",
+      resolve: { auth: requireAuth },
+    })
+    .when("/duyen-don", {
+      templateUrl: "/views/table-data-oder-NV.html",
       resolve: { auth: requireAuth },
     })
     .otherwise({
