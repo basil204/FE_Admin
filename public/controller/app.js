@@ -175,7 +175,6 @@ app.config(function ($routeProvider, $locationProvider) {
     })
     .when("/duyen-don", {
       templateUrl: "/views/DoiHang.html",
-      controller: DonHangController,
       resolve: { auth: requireAuth },
     })
     .otherwise({
