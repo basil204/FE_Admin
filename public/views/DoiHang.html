@@ -18,48 +18,24 @@
               <!-- First row: Invoice Code, Delivery Address, Phone Number, Payment Method -->
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="invoiceCode">Tìm kiếm theo Mã hóa đơn:</label>
-                <input
-                  type="text"
-                  ng-model="search.invoiceCode"
-                  class="form-control"
-                  placeholder="Mã hóa đơn"
-                  ng-change="searchInvoices()"
-                />
+                <input type="text" ng-model="search.invoiceCode" class="form-control" placeholder="Mã hóa đơn"
+                  ng-change="searchInvoices()" />
               </div>
               <div class="col-sm-6 col-md-3 mb-2">
-                <label for="deliveryAddress"
-                  >Tìm kiếm theo Địa chỉ giao hàng:</label
-                >
-                <input
-                  type="text"
-                  ng-model="search.deliveryAddress"
-                  class="form-control"
-                  placeholder="Địa chỉ giao hàng"
-                  ng-change="searchInvoices()"
-                />
+                <label for="deliveryAddress">Tìm kiếm theo Địa chỉ giao hàng:</label>
+                <input type="text" ng-model="search.deliveryAddress" class="form-control"
+                  placeholder="Địa chỉ giao hàng" ng-change="searchInvoices()" />
               </div>
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="phoneNumber">Tìm kiếm theo Số điện thoại:</label>
-                <input
-                  type="text"
-                  ng-model="search.phonenumber"
-                  class="form-control"
-                  placeholder="Số điện thoại"
-                  ng-change="searchInvoices()"
-                />
+                <input type="text" ng-model="search.phonenumber" class="form-control" placeholder="Số điện thoại"
+                  ng-change="searchInvoices()" />
               </div>
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="paymentMethod">Phương thức thanh toán:</label>
-                <select
-                  ng-model="search.paymentMethod"
-                  class="form-control"
-                  ng-change="searchInvoices()"
-                >
+                <select ng-model="search.paymentMethod" class="form-control" ng-change="searchInvoices()">
                   <option value="">Chọn phương thức thanh toán</option>
-                  <option
-                    ng-repeat="method in availablePaymentMethods"
-                    value="{{method.code}}"
-                  >
+                  <option ng-repeat="method in availablePaymentMethods" value="{{method.code}}">
                     {{method.name}}
                   </option>
                 </select>
@@ -70,65 +46,41 @@
               <!-- Second row: Start Date, End Date, Status -->
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="startDate">Tìm kiếm theo Ngày bắt đầu:</label>
-                <input
-                  type="datetime-local"
-                  ng-model="search.startDate"
-                  class="form-control"
-                  placeholder="Ngày bắt đầu"
-                  ng-change="searchInvoices()"
-                />
+                <input type="datetime-local" ng-model="search.startDate" class="form-control" placeholder="Ngày bắt đầu"
+                  ng-change="searchInvoices()" />
               </div>
 
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="endDate">Tìm kiếm theo Ngày kết thúc:</label>
-                <input
-                  type="datetime-local"
-                  ng-model="search.endDate"
-                  class="form-control"
-                  placeholder="Ngày kết thúc"
-                  ng-change="searchInvoices()"
-                />
+                <input type="datetime-local" ng-model="search.endDate" class="form-control" placeholder="Ngày kết thúc"
+                  ng-change="searchInvoices()" />
               </div>
 
               <div class="col-sm-6 col-md-3 mb-2">
                 <label for="status">Tìm kiếm theo trạng thái:</label>
-                <select
-                  ng-model="search.status"
-                  class="form-control"
-                  ng-options="status.code as status.name for status in availableStatuses"
-                  ng-change="searchInvoices()"
-                >
+                <select ng-model="search.status" class="form-control"
+                  ng-options="status.code as status.name for status in availableStatuses" ng-change="searchInvoices()">
                   <option value="">Tất cả trạng thái</option>
                 </select>
               </div>
             </div>
 
             <!-- Display error if start date and end date are mismatched -->
-            <div
-              ng-if="search.startDate && !search.endDate"
-              class="alert alert-warning mt-2"
-            >
+            <div ng-if="search.startDate && !search.endDate" class="alert alert-warning mt-2">
               <strong>Thông báo:</strong> Bạn phải chọn ngày kết thúc khi chọn
               ngày bắt đầu.
             </div>
-            <div
-              ng-if="!search.startDate && search.endDate"
-              class="alert alert-warning mt-2"
-            >
+            <div ng-if="!search.startDate && search.endDate" class="alert alert-warning mt-2">
               <strong>Thông báo:</strong> Bạn phải chọn ngày bắt đầu khi chọn
               ngày kết thúc.
             </div>
 
             <!-- Invoice Table -->
             <div style="overflow-x: auto; max-height: 600px; margin-top: 10px">
-              <table
-                class="table table-hover table-bordered"
-                id="sampleTable"
-                style="width: 100%; table-layout: auto"
-              >
+              <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%; table-layout: auto">
                 <thead>
                   <tr>
-                    <th>Số thứ tự</th>
+                    <th>ID</th>
                     <th>Mã hóa đơn</th>
                     <th>Địa chỉ giao hàng</th>
                     <th>Phương thức thanh toán</th>
@@ -141,47 +93,29 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="invoice in invoices track by $index">
-                    <td>{{ $index + 1 }}</td>
+                  <tr ng-repeat="invoice in invoices">
+                    <td>{{ invoice.invoiceID}}</td>
                     <td>{{ invoice.invoiceCode }}</td>
-                    <td>{{ invoice.deliveryAddress }}</td>
-                    <td>{{ invoice.paymentMethod }}</td>
-                    <td>{{ invoice.phoneNumber }}</td>
+                    <td>{{ invoice.deliveryaddress }}</td>
+                    <td>{{ invoice.paymentmethod }}</td>
+                    <td>{{ invoice.phonenumber }}</td>
                     <td>
-                      {{ invoice.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}
+                      {{ invoice.ngayTao | date:'yyyy-MM-dd HH:mm:ss' }}
                     </td>
-                    <td>{{ invoice.discountAmount | currency }}</td>
-                    <td>{{ invoice.totalAmount | number:'' }} VNĐ</td>
+                    <td>{{ invoice.sotienGiamGia | number:'' }} VNĐ</td>
+                    <td>{{ invoice.tongTien | number:'' }} VNĐ</td>
                     <td>
-                      <!-- Filter available statuses based on current status of the invoice -->
-                      <select
-                        ng-model="invoice.status"
-                        ng-options="status.code as status.name for status in filterAvailableStatuses(invoice.status)"
-                        class="form-control"
-                        ng-change="updateInvoiceStatus(invoice)"
-                      ></select>
+                      {{getStatus(invoice.trangThai) }}
                     </td>
                     <td>
-                      <button
-                        ng-click="checkZalo(invoice.phoneNumber)"
-                        class="btn btn-info btn-sm"
-                      >
+                      <button ng-click="invoiceOk(invoice.invoiceID)" class="btn btn-info btn-sm">
                         <i class="fas fa-check"></i>
                       </button>
-                      <button
-                        ng-click="deleteOrRollbackItem('Invoice', invoice.id)"
-                        class="btn btn-danger btn-sm"
-                      >
+                      <button ng-click="deleteOrRollbackItem('Invoice', invoice.id)" class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i>
                       </button>
-                      <button
-                        class="btn btn-primary btn-sm edit"
-                        type="button"
-                        title="Sửa"
-                        data-toggle="modal"
-                        data-target="#ModalUP"
-                        ng-click="getInvoiceDetailById(invoice.id)"
-                      >
+                      <button class="btn btn-primary btn-sm edit" type="button" title="Sửa" data-toggle="modal"
+                        data-target="#ModalUP" ng-click="getInvoiceDetailById(invoice.id)">
                         <i class="fas fa-edit"></i>
                       </button>
                     </td>
@@ -191,38 +125,20 @@
             </div>
 
             <!-- Pagination Controls -->
-            <div
-              class="pagination-controls d-flex justify-content-center align-items-center my-3"
-            >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="goToFirstPage()"
-              >
+            <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">
                 First
               </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="previousPage()"
-              >
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">
                 Previous
               </button>
-              <span class="mx-2"
-                >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span
-              >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="nextPage()"
-              >
+              <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="nextPage()">
                 Next
               </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="goToLastPage()"
-              >
+              <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="goToLastPage()">
                 Last
               </button>
             </div>
@@ -232,26 +148,14 @@
     </div>
   </main>
   <!-- Modal Structure -->
-  <div
-    class="modal fade"
-    id="ModalUP"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="ModalUPLabel"
-    aria-hidden="true"
-  >
+  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-labelledby="ModalUPLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="ModalUPLabel">
             Cập nhật thông tin đơn hàng
           </h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -259,58 +163,27 @@
           <form id="updateForm">
             <div class="form-group">
               <label for="invoiceCode">Mã hóa đơn</label>
-              <input
-                type="hidden"
-                class="form-control"
-                id="id"
-                ng-model="id"
-                disabled
-              />
-              <input
-                type="text"
-                class="form-control"
-                id="invoiceCode"
-                ng-model="invoiceCode"
-                disabled
-              />
+              <input type="hidden" class="form-control" id="id" ng-model="id" disabled />
+              <input type="text" class="form-control" id="invoiceCode" ng-model="invoiceCode" disabled />
             </div>
             <div class="form-group">
               <label for="fullname">fullname</label>
-              <input
-                type="text"
-                class="form-control"
-                id="fullname"
-                ng-model="fullname"
-                ng-disabled="!isEditable"
-              />
+              <input type="text" class="form-control" id="fullname" ng-model="fullname" ng-disabled="!isEditable" />
             </div>
             <div class="form-group">
               <label for="deliveryAddress">Địa chỉ giao hàng</label>
-              <input
-                type="text"
-                class="form-control"
-                id="deliveryAddress"
-                ng-model="deliveryAddress"
-                ng-disabled="!isEditable"
-              />
+              <input type="text" class="form-control" id="deliveryAddress" ng-model="deliveryAddress"
+                ng-disabled="!isEditable" />
             </div>
 
             <div class="form-group">
               <label for="phoneNumber">Số điện thoại</label>
-              <input
-                type="text"
-                class="form-control"
-                id="phoneNumber"
-                ng-model="phoneNumber"
-                ng-disabled="!isEditable"
-              />
+              <input type="text" class="form-control" id="phoneNumber" ng-model="phoneNumber"
+                ng-disabled="!isEditable" />
             </div>
 
             <h6>Chi tiết sản phẩm:</h6>
-            <div
-              class="table-responsive"
-              style="max-height: 400px; overflow-x: auto"
-            >
+            <div class="table-responsive" style="max-height: 400px; overflow-x: auto">
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -328,34 +201,18 @@
                     <td>{{ item.milkDetailDescription }}</td>
 
                     <td>
-                      <div
-                        class="input-group input-group-sm"
-                        ng-show="isEditable"
-                      >
+                      <div class="input-group input-group-sm" ng-show="isEditable">
                         <div class="input-group-prepend">
-                          <button
-                            class="btn btn-outline-secondary btn-sm"
-                            type="button"
-                            ng-click="decreaseQuantity(item)"
-                          >
+                          <button class="btn btn-outline-secondary btn-sm" type="button"
+                            ng-click="decreaseQuantity(item)">
                             -
                           </button>
                         </div>
-                        <input
-                          type="number"
-                          class="form-control form-control-sm"
-                          ng-model="item.quantity"
-                          min="0"
-                          style="width: 50px"
-                          ng-change="checkStockQuantity(item)"
-                          required
-                        />
+                        <input type="number" class="form-control form-control-sm" ng-model="item.quantity" min="0"
+                          style="width: 50px" ng-change="checkStockQuantity(item)" required />
                         <div class="input-group-append">
-                          <button
-                            class="btn btn-outline-secondary btn-sm"
-                            type="button"
-                            ng-click="increaseQuantity(item)"
-                          >
+                          <button class="btn btn-outline-secondary btn-sm" type="button"
+                            ng-click="increaseQuantity(item)">
                             +
                           </button>
                         </div>
@@ -370,12 +227,7 @@
                     <td>{{ item.totalAmount | number:'' }} VNĐ</td>
 
                     <td ng-show="isEditable">
-                      <button
-                        class="btn-danger btn-sm"
-                        type="button"
-                        ng-show="isEditable"
-                        ng-click="removeItem(item)"
-                      >
+                      <button class="btn-danger btn-sm" type="button" ng-show="isEditable" ng-click="removeItem(item)">
                         xóa
                       </button>
                     </td>
@@ -388,9 +240,7 @@
                   <strong>Tổng tiền hóa đơn:</strong>
                 </td>
                 <td>
-                  <strong
-                    >{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ</strong
-                  >
+                  <strong>{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ</strong>
                 </td>
               </tr>
             </div>
@@ -400,12 +250,7 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Đóng
           </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            ng-click="updateInvoice()"
-            ng-show="isEditable"
-          >
+          <button type="button" class="btn btn-primary" ng-click="updateInvoice()" ng-show="isEditable">
             Lưu thay đổi
           </button>
         </div>

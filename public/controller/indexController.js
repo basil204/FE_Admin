@@ -6,30 +6,8 @@ app.controller("indexController", [
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
     $scope.showWarning = true;
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-right',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-    });
-
-    if (userInfo) {
-      socket.connect().then(function () {
-        socket.subscribe(`/user/${userInfo.sub}/queue/messages`, function (message) {
-          console.log(message);
-          localStorage.setItem('invoice', JSON.stringify(message));
-        });
-        socket.subscribe("/topic/messages", function (message) {
-          Toast.fire({
-            icon: 'info',
-            title: `Hóa đơn #${message} đã được đặt!`
-          });
-        })
-      });
-    }
-    // Hide warning after 5 seconds
+    
+      // Hide warning after 5 seconds
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.showWarning = false;
