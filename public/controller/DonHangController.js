@@ -1,7 +1,6 @@
 app.controller('DonHangController', function ($scope, $http, socket) {
 
     const token = localStorage.getItem("authToken");
-    const urlInvoice = "http://160.30.21.47:1234/api/Invoice/"
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     $scope.invoices = []
     const Toast = Swal.mixin({
@@ -14,8 +13,6 @@ app.controller('DonHangController', function ($scope, $http, socket) {
     console.log($scope.invoices)
     const config = {
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
         },
     };
@@ -52,15 +49,52 @@ app.controller('DonHangController', function ($scope, $http, socket) {
         });
     }
     $scope.invoiceOk = function (invoiceID) {
-        $http
-            .put(urlInvoice + "waiting/" + invoiceID, config)
-            .then((response) => {
-                console.log(response.data)
-                $scope.invoices = JSON.parse(localStorage.getItem('invoice'))
-            })
-            .catch((error) => {
-                console.error(error.data)
-            });
+        Swal.fire({
+            title: "Bạn có chắc muốn duyệt hóa đơn này?", // Question text
+            text: "Hành động này không thể hoàn tác!", // Optional extra text
+            icon: "question", // Icon type (question icon)
+            showCancelButton: true, // Show cancel button
+            confirmButtonText: "Duyệt", // Text for the confirm button
+            cancelButtonText: "Hủy", // Text for the cancel button
+            reverseButtons: true, // Optional: makes the cancel button appear on the left
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`;
+
+                // Use Angular's $http for better integration
+                $http
+                    .put(url, {}, config)
+                    .then((response) => {
+                        if (response.data.success) {
+                            socket.sendMessage('/app/cod', "a")
+                            $scope.showNotification("Duyệt hóa đơn thành công!", "success");
+                        } else {
+                            $scope.showNotification(
+                                "Có lỗi xảy ra khi duyệt hóa đơn.",
+                                "error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        $scope.showNotification("Lỗi kết nối hoặc lỗi server.", "error");
+                        console.error("Error:", error);
+                    });
+            } else {
+                console.log("Hủy duyệt hóa đơn.");
+            }
+        });
+    };
+
+    // Function to show notifications using Swal
+    $scope.showNotification = function (message, type) {
+        Swal.fire({
+            title: type === "success" ? "Thành công!" : "Lỗi!",
+            text: message,
+            icon: type,
+            confirmButtonText: "OK",
+            timer: 3000,
+            timerProgressBar: true,
+        });
     }
     $scope.loadInvoice = function (invoice) {
         $scope.invoices = invoice
