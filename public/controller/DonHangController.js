@@ -45,7 +45,8 @@ app.controller('DonHangController', function ($scope, $http, socket) {
                     icon: 'info',
                     title: `Hóa đơn #${message} đã được đặt!`
                 });
-            })
+            });
+            socket.sendMessage('/app/cod', "a")
         });
     }
     $scope.invoiceOk = function (invoiceID) {
