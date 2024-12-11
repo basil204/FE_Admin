@@ -14,110 +14,8 @@
         <div class="tile">
           <div class="tile-body">
             <!-- Search Form -->
-            <div class="row element-button mt-2">
-              <!-- First row: Invoice Code, Delivery Address, Phone Number, Payment Method -->
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="invoiceCode">Tìm kiếm theo Mã hóa đơn:</label>
-                <input
-                  type="text"
-                  ng-model="search.invoiceCode"
-                  class="form-control"
-                  placeholder="Mã hóa đơn"
-                  ng-change="searchInvoices()"
-                />
-              </div>
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="deliveryAddress"
-                  >Tìm kiếm theo Địa chỉ giao hàng:</label
-                >
-                <input
-                  type="text"
-                  ng-model="search.deliveryAddress"
-                  class="form-control"
-                  placeholder="Địa chỉ giao hàng"
-                  ng-change="searchInvoices()"
-                />
-              </div>
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="phoneNumber">Tìm kiếm theo Số điện thoại:</label>
-                <input
-                  type="text"
-                  ng-model="search.phonenumber"
-                  class="form-control"
-                  placeholder="Số điện thoại"
-                  ng-change="searchInvoices()"
-                />
-              </div>
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="paymentMethod">Phương thức thanh toán:</label>
-                <select
-                  ng-model="search.paymentMethod"
-                  class="form-control"
-                  ng-change="searchInvoices()"
-                >
-                  <option value="">Chọn phương thức thanh toán</option>
-                  <option
-                    ng-repeat="method in availablePaymentMethods"
-                    value="{{method.code}}"
-                  >
-                    {{method.name}}
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row element-button">
-              <!-- Second row: Start Date, End Date, Status -->
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="startDate">Tìm kiếm theo Ngày bắt đầu:</label>
-                <input
-                  type="datetime-local"
-                  ng-model="search.startDate"
-                  class="form-control"
-                  placeholder="Ngày bắt đầu"
-                  ng-change="searchInvoices()"
-                />
-              </div>
-
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="endDate">Tìm kiếm theo Ngày kết thúc:</label>
-                <input
-                  type="datetime-local"
-                  ng-model="search.endDate"
-                  class="form-control"
-                  placeholder="Ngày kết thúc"
-                  ng-change="searchInvoices()"
-                />
-              </div>
-
-              <div class="col-sm-6 col-md-3 mb-2">
-                <label for="status">Tìm kiếm theo trạng thái:</label>
-                <select
-                  ng-model="search.status"
-                  class="form-control"
-                  ng-options="status.code as status.name for status in availableStatuses"
-                  ng-change="searchInvoices()"
-                >
-                  <option value="">Tất cả trạng thái</option>
-                </select>
-              </div>
-            </div>
 
             <!-- Display error if start date and end date are mismatched -->
-            <div
-              ng-if="search.startDate && !search.endDate"
-              class="alert alert-warning mt-2"
-            >
-              <strong>Thông báo:</strong> Bạn phải chọn ngày kết thúc khi chọn
-              ngày bắt đầu.
-            </div>
-            <div
-              ng-if="!search.startDate && search.endDate"
-              class="alert alert-warning mt-2"
-            >
-              <strong>Thông báo:</strong> Bạn phải chọn ngày bắt đầu khi chọn
-              ngày kết thúc.
-            </div>
 
             <!-- Invoice Table -->
             <div style="overflow-x: auto; max-height: 600px; margin-top: 10px">
@@ -178,43 +76,6 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-
-            <!-- Pagination Controls -->
-            <div
-              class="pagination-controls d-flex justify-content-center align-items-center my-3"
-            >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="goToFirstPage()"
-              >
-                First
-              </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === 0"
-                ng-click="previousPage()"
-              >
-                Previous
-              </button>
-              <span class="mx-2"
-                >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span
-              >
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="nextPage()"
-              >
-                Next
-              </button>
-              <button
-                class="btn btn-primary mx-2"
-                ng-disabled="currentPage === pageInfo.totalPages - 1"
-                ng-click="goToLastPage()"
-              >
-                Last
-              </button>
             </div>
           </div>
         </div>

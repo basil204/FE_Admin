@@ -31,6 +31,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
           if (response.status === 200) {
             // If the stock check is successful and the quantity can be decreased
             item.quantity--;
+            item.quantity = 1;
             $scope.updateTotalAmount(item); // Recalculate total after quantity change
           }
         })

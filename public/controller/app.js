@@ -177,6 +177,10 @@ app.config(function ($routeProvider, $locationProvider) {
       templateUrl: "/views/DoiHang.html",
       resolve: { auth: requireAuth },
     })
+    .when("/settings", {
+      templateUrl: "/views/setting.html",
+      resolve: { auth: requireAuth },
+    })
     .otherwise({
       redirectTo: "/home",
     });
