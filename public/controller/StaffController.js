@@ -45,29 +45,41 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
   };
 
   $scope.deleteItem = function (id) {
-    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không")) {
-      $http({
-        method: "DELETE",
-        url: `${API_BASE_URL}/user/delete/${id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          const message = response.data.message || "Xóa nguoi dung thành công";
-          $scope.showNotification(message, "success");
-          $scope.GetCustomers();
-          $scope.GetStaffs();
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể xóa nguoi dung"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
-      );
-    }
+    // Ask for confirmation before deleting
+    Swal.fire({
+      title: "Xác nhận",
+      text: "Bạn có chắc chắn muốn thực hiện hành động này không?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có",
+      cancelButtonText: "Không",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with the deletion if confirmed
+        $http({
+          method: "DELETE",
+          url: `${API_BASE_URL}/user/delete/${id}`,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then(
+          function (response) {
+            const message =
+              response.data.message || "Xóa người dùng thành công";
+            $scope.showNotification(message, "success");
+            $scope.GetCustomers();
+            $scope.GetStaffs();
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(
+              error,
+              "Không thể xóa người dùng"
+            );
+            $scope.showNotification(errorMessage, "error");
+          }
+        );
+      }
+    });
   };
 
   $scope.getItemById = function (id) {
@@ -124,48 +136,62 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
   };
 
   $scope.updateItem = function () {
-    try {
-      console.log($scope.formData);
-      const url = `${API_BASE_URL}/user/update/${$scope.formData.id}`;
-      const data = {
-        fullname: $scope.formData.fullname,
-        phonenumber: $scope.formData.phonenumber,
-        email: $scope.formData.email,
-        role: { id: $scope.formData.role },
-      };
+    // Ask for confirmation before updating
+    Swal.fire({
+      title: "Xác nhận",
+      text: "Bạn có chắc chắn muốn cập nhật tài khoản này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có",
+      cancelButtonText: "Không",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with the update if confirmed
+        try {
+          console.log($scope.formData);
+          const url = `${API_BASE_URL}/user/update/${$scope.formData.id}`;
+          const data = {
+            fullname: $scope.formData.fullname,
+            phonenumber: $scope.formData.phonenumber,
+            email: $scope.formData.email,
+            role: { id: $scope.formData.role },
+          };
 
-      $http({
-        method: "PUT",
-        url: url,
-        data: data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          const message =
-            response.data.message || "Cập nhật tài khoản thành công";
-          $scope.showNotification(message, "success");
-          $scope.GetCustomers();
-          $scope.GetStaffs();
-          $scope.resetForm(); // Clear form after success
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể cập nhật tài khoản"
+          $http({
+            method: "PUT",
+            url: url,
+            data: data,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }).then(
+            function (response) {
+              const message =
+                response.data.message || "Cập nhật tài khoản thành công";
+              $scope.showNotification(message, "success");
+              $scope.GetCustomers();
+              $scope.GetStaffs();
+              $scope.resetForm(); // Clear form after success
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(
+                error,
+                "Không thể cập nhật tài khoản"
+              );
+              $scope.showNotification(errorMessage, "error");
+            }
           );
-          $scope.showNotification(errorMessage, "error");
+        } catch (exception) {
+          console.error("Unexpected error:", exception);
+          $scope.showNotification(
+            "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+            "error"
+          );
         }
-      );
-    } catch (exception) {
-      console.error("Unexpected error:", exception);
-      $scope.showNotification(
-        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-        "error"
-      );
-    }
+      }
+    });
   };
+
   $scope.GetCustomers();
   $scope.getRoles();
   $scope.GetStaffs();

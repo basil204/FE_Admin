@@ -1,15 +1,20 @@
-app.controller("OrderController", function ($scope, $http) {
+app.controller("DonHangController", function ($scope, $http, socket) {
   const token = localStorage.getItem("authToken");
-
-  // Define base URL for API
-  const baseUrl = "http://160.30.21.47:1234/api";
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  $scope.invoices = [];
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-right",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+  });
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  // Increase quantity
-  // Decrease quantity
+  const baseUrl = "http://160.30.21.47:1234/api";
 
   $scope.decreaseQuantity = function (item) {
     if (item.quantity > 0) {
@@ -24,6 +29,7 @@ app.controller("OrderController", function ($scope, $http) {
           if (response.status === 200) {
             // If the stock check is successful and the quantity can be decreased
             item.quantity--;
+            item.quantity = 1;
             $scope.updateTotalAmount(item); // Recalculate total after quantity change
           }
         })
@@ -115,20 +121,6 @@ app.controller("OrderController", function ($scope, $http) {
   $scope.updateTotalAmount = function (item) {
     item.totalAmount = item.quantity * item.price; // Tính lại tổng tiền (quantity * price)
   };
-
-  // List of possible order statuses
-  $scope.availableStatuses = [
-    { code: 301, name: "Chờ Duyệt Đơn" },
-    { code: 305, name: "Thanh toán thành công" },
-    { code: 336, name: "Huỷ Đơn" },
-    { code: 337, name: "Chưa Thanh Toán" },
-    { code: 338, name: "Đơn Chờ" },
-    { code: 901, name: "Chờ lấy hàng" },
-    { code: 903, name: "Đã lấy hàng" },
-    { code: 904, name: "Giao hàng" },
-    { code: 913, name: "Hoàn thành" },
-  ];
-
   $scope.calculateTotalInvoiceAmount = function () {
     let total = 0;
     // Sum up the totalAmount for each item
@@ -137,28 +129,6 @@ app.controller("OrderController", function ($scope, $http) {
     });
     return total;
   };
-  // Update the total amount of the invoice
-
-  $scope.filterAvailableStatuses = function (currentStatusCode) {
-    const hiddenStatuses = [901, 903, 904, 913, 336]; // Trạng thái cần ẩn
-
-    // Nếu trạng thái hiện tại nằm trong nhóm cần ẩn, chỉ hiển thị trạng thái hiện tại
-    if (hiddenStatuses.includes(currentStatusCode)) {
-      // Chỉ trả về trạng thái hiện tại, không cho phép thay đổi
-      return $scope.availableStatuses.filter(
-        (status) => status.code === currentStatusCode
-      );
-    }
-
-    // Nếu không, hiển thị các trạng thái từ trạng thái hiện tại trở lên
-    return $scope.availableStatuses.filter(
-      (status) => status.code >= currentStatusCode
-    );
-  };
-
-  // Example usage of filter in updating an invoice status
-
-  // Optionally, you can filter available statuses when retrieving an invoice or performing any other actions
   $scope.getFilteredStatusesForInvoice = function (invoiceId) {
     // Fetch the invoice details and filter statuses based on the current status
     $http({
@@ -181,286 +151,6 @@ app.controller("OrderController", function ($scope, $http) {
       }
     );
   };
-
-  // Show notification
-  $scope.showNotification = function (message, type) {
-    Swal.fire({
-      title: type === "success" ? "Thành công!" : "Lỗi!",
-      text: message,
-      icon: type,
-      confirmButtonText: "OK",
-      timer: 3000,
-      timerProgressBar: true,
-    });
-  };
-
-  $scope.currentPage = 0;
-  $scope.pageSize = 10;
-  function formatDate(date) {
-    const d = new Date(date); // Convert to Date object
-    const year = d.getFullYear();
-    const month = ("0" + (d.getMonth() + 1)).slice(-2); // Add leading 0 for months < 10
-    const day = ("0" + d.getDate()).slice(-2); // Add leading 0 for days < 10
-    const hours = ("0" + d.getHours()).slice(-2); // Add leading 0 for hours < 10
-    const minutes = ("0" + d.getMinutes()).slice(-2); // Add leading 0 for minutes < 10
-    const seconds = ("0" + d.getSeconds()).slice(-2); // Add leading 0 for seconds < 10
-
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-  }
-  $scope.searchInvoices = function () {
-    // Check if both start and end dates are selected properly
-    if ($scope.search.startDate && !$scope.search.endDate) {
-      $scope.showNotification(
-        "Bạn phải chọn cả ngày bắt đầu và ngày kết thúc",
-        "error"
-      );
-      return;
-    }
-    if (!$scope.search.startDate && $scope.search.endDate) {
-      $scope.showNotification(
-        "Bạn phải chọn cả ngày bắt đầu và ngày kết thúc",
-        "error"
-      );
-      return;
-    }
-
-    let queryParams = [];
-
-    // Collect filters from search model
-    if ($scope.search.invoiceCode) {
-      queryParams.push(`invoiceCode=${$scope.search.invoiceCode}`);
-    }
-    if ($scope.search.phonenumber) {
-      queryParams.push(`phonenumber=${$scope.search.phonenumber}`);
-    }
-    if ($scope.search.deliveryAddress) {
-      queryParams.push(`deliveryAddress=${$scope.search.deliveryAddress}`);
-    }
-    if ($scope.search.paymentMethod) {
-      queryParams.push(`paymentmethod=${$scope.search.paymentMethod}`);
-    }
-
-    if ($scope.search.startDate) {
-      queryParams.push(`startDate=${formatDate($scope.search.startDate)}`);
-    }
-    if ($scope.search.endDate) {
-      queryParams.push(`endDate=${formatDate($scope.search.endDate)}`);
-    }
-    if ($scope.search.status) {
-      queryParams.push(`status=${$scope.search.status}`);
-    }
-
-    let queryString = queryParams.join("&");
-
-    // Send the GET request with the query string parameters
-    $http({
-      method: "GET",
-      url: `${baseUrl}/Invoice/search?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(
-      function (response) {
-        const data = response.data;
-        if (data && data.content) {
-          // Map the response data to the invoices array
-          $scope.invoices = data.content.map((invoice) => ({
-            id: invoice[0],
-            invoiceCode: invoice[1],
-            creationDate: invoice[2],
-            deliveryAddress: invoice[5],
-            discountAmount: invoice[6],
-            totalAmount: invoice[4],
-            paymentMethod: invoice[8],
-            status: invoice[9],
-            phoneNumber: invoice[10],
-          }));
-          $scope.pageInfo = data.page;
-        }
-      },
-      function (error) {
-        console.error("Error fetching invoices:", error);
-        $scope.showNotification(
-          "Có lỗi khi tìm kiếm hóa đơn. Vui lòng thử lại!",
-          "error"
-        );
-      }
-    );
-  };
-
-  // Available payment methods for the dropdown
-  $scope.availablePaymentMethods = [
-    { code: "NetBanking", name: "NetBanking" },
-    { code: "COD", name: "COD" },
-  ];
-
-  // Fetch invoices with pagination
-  $scope.getInvoices = function () {
-    $http({
-      method: "GET",
-      url: `${baseUrl}/Invoice/search?page=${$scope.currentPage}&size=${$scope.pageSize}`,
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(
-      function (response) {
-        const data = response.data;
-        if (data && data.content) {
-          // Initialize an empty array for invoices
-          $scope.invoices = [];
-
-          // Loop through all content items
-          for (let i = 0; i < data.content.length; i++) {
-            const invoice = data.content[i];
-
-            // Push each invoice into $scope.invoices
-            $scope.invoices.push({
-              id: invoice[0],
-              invoiceCode: invoice[1],
-              creationDate: invoice[2],
-              deliveryAddress: invoice[5],
-              discountAmount: invoice[6],
-              totalAmount: invoice[4],
-              paymentMethod: invoice[8],
-              status: invoice[9],
-              phoneNumber: invoice[10],
-            });
-          }
-
-          // Set page information for pagination
-          $scope.pageInfo = data.page;
-
-          // Log invoice codes
-          console.log("Danh sách hóa đơn:");
-          $scope.invoices.forEach(function (invoice) {
-            console.log(invoice.invoiceCode);
-          });
-        }
-      },
-      function (error) {
-        console.error("Error fetching invoices:", error);
-      }
-    );
-  };
-
-  // Handle pagination controls
-  $scope.nextPage = function () {
-    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
-      $scope.currentPage++;
-      // Check if searchInvoices is being used, otherwise call getInvoices
-      if (
-        $scope.search &&
-        ($scope.search.invoiceCode ||
-          $scope.search.phoneNumber ||
-          $scope.search.deliveryAddress ||
-          $scope.search.paymentMethod ||
-          $scope.search.startDate ||
-          $scope.search.endDate ||
-          $scope.search.status)
-      ) {
-        $scope.searchInvoices();
-      } else {
-        $scope.getInvoices();
-      }
-    }
-  };
-
-  $scope.previousPage = function () {
-    if ($scope.currentPage > 0) {
-      $scope.currentPage--;
-      // Check if searchInvoices is being used, otherwise call getInvoices
-      if (
-        $scope.search &&
-        ($scope.search.invoiceCode ||
-          $scope.search.phoneNumber ||
-          $scope.search.deliveryAddress ||
-          $scope.search.paymentMethod ||
-          $scope.search.startDate ||
-          $scope.search.endDate ||
-          $scope.search.status)
-      ) {
-        $scope.searchInvoices();
-      } else {
-        $scope.getInvoices();
-      }
-    }
-  };
-
-  $scope.goToFirstPage = function () {
-    $scope.currentPage = 0;
-    // Check if searchInvoices is being used, otherwise call getInvoices
-    if (
-      $scope.search &&
-      ($scope.search.invoiceCode ||
-        $scope.search.phoneNumber ||
-        $scope.search.deliveryAddress ||
-        $scope.search.paymentMethod ||
-        $scope.search.startDate ||
-        $scope.search.endDate ||
-        $scope.search.status)
-    ) {
-      $scope.searchInvoices();
-    } else {
-      $scope.getInvoices();
-    }
-  };
-
-  $scope.goToLastPage = function () {
-    $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    // Check if searchInvoices is being used, otherwise call getInvoices
-    if (
-      $scope.search &&
-      ($scope.search.invoiceCode ||
-        $scope.search.phoneNumber ||
-        $scope.search.deliveryAddress ||
-        $scope.search.paymentMethod ||
-        $scope.search.startDate ||
-        $scope.search.endDate ||
-        $scope.search.status)
-    ) {
-      $scope.searchInvoices();
-    } else {
-      $scope.getInvoices();
-    }
-  };
-
-  // Fetch invoice details by ID
-
-  // Update invoice status
-  $scope.updateInvoiceStatus = function (invoice) {
-    $http({
-      method: "PUT",
-      url: `${baseUrl}/Invoice/update/${invoice.id}`,
-      headers: { Authorization: `Bearer ${token}` },
-      data: { status: invoice.status },
-    }).then(
-      function () {
-        $scope.showNotification(
-          "Cập nhật trạng thái đơn hàng thành công!",
-          "success"
-        );
-      },
-      function (error) {
-        $scope.showNotification(
-          "Cập nhật trạng thái đơn hàng thất bại!",
-          "error"
-        );
-      }
-    );
-  };
-
-  // Show notification
-  $scope.showNotification = function (message, type) {
-    Swal.fire({
-      title: type === "success" ? "Thành công!" : "Lỗi!",
-      text: message,
-      icon: type,
-      confirmButtonText: "OK",
-      timer: 3000,
-      timerProgressBar: true,
-    });
-  };
-
-  // Initialize invoices
-  $scope.getInvoices();
-
-  // Update invoice details
   $scope.updateInvoice = function () {
     // Hiển thị thông báo hỏi trước khi thực hiện cập nhật
     Swal.fire({
@@ -646,50 +336,90 @@ app.controller("OrderController", function ($scope, $http) {
       }
     );
   };
-
-  // Check Zalo account by phone number
-  $scope.checkZalo = function (phoneNumber) {
-    const apiUrl = `http://160.30.21.47:3030/api/customerinfo?phone=${phoneNumber}`;
-
-    $http({
-      method: "GET",
-      url: apiUrl,
-    }).then(
-      function (response) {
-        if (response.status === 200) {
-          const zaloName = response.data.user.zalo_name;
-          console.log("Zalo name:", response);
-
-          if (zaloName) {
-            $scope.showNotification(
-              `Số điện thoại tồn tại trên Zalo! \n Tên Zalo: ${zaloName}`,
-              "success"
-            );
-          } else {
-            $scope.showNotification(
-              "Số điện thoại tồn tại trên Zalo, nhưng không có tên Zalo.",
-              "warning"
-            );
-          }
-        } else if (response.status === 404) {
-          $scope.showNotification(
-            "Số điện thoại không tồn tại trên Zalo.",
-            "error"
-          );
-        } else {
-          $scope.showNotification(
-            "Số điện thoại không hợp lệ hoặc có lỗi xảy ra.",
-            "error"
-          );
+  $scope.statusMap = {
+    0: "Không hoạt động",
+    1: "Hoạt động",
+    336: "Huỷ Đơn",
+    913: "Hoàn thành",
+    901: "Chờ lấy hàng",
+    903: "Đã lấy hàng",
+    904: "Giao hàng",
+    301: "Chờ Duyệt Đơn",
+    337: "Chưa Thanh Toán",
+    338: "Đơn Chờ",
+    305: "Thanh toán thành công",
+  };
+  // Hàm lấy trạng thái từ mã trạng thái
+  $scope.getStatus = function (statusCode) {
+    return $scope.statusMap[statusCode] || "Không xác định";
+  };
+  if (!socket.isConnected) {
+    socket.connect().then(function () {
+      socket.subscribe(
+        `/user/${userInfo.sub}/queue/messages`,
+        function (message) {
+          console.log(message);
+          $scope.loadInvoice(message);
         }
-      },
-      function (error) {
-        console.error("Có lỗi khi kiểm tra Zalo:", error);
-        $scope.showNotification(
-          "Có lỗi khi kiểm tra số điện thoại Zalo. Vui lòng thử lại!",
-          "error"
-        );
+      );
+      socket.subscribe("/topic/messages", function (message) {
+        Toast.fire({
+          icon: "info",
+          title: `Hóa đơn #${message} đã được đặt!`,
+        });
+      });
+      socket.sendMessage("/app/cod", "a");
+    });
+  }
+  $scope.invoiceOk = function (invoiceID) {
+    Swal.fire({
+      title: "Bạn có chắc muốn duyệt hóa đơn này?", // Question text
+      text: "Hành động này không thể hoàn tác!", // Optional extra text
+      icon: "question", // Icon type (question icon)
+      showCancelButton: true, // Show cancel button
+      confirmButtonText: "Duyệt", // Text for the confirm button
+      cancelButtonText: "Hủy", // Text for the cancel button
+      reverseButtons: true, // Optional: makes the cancel button appear on the left
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`
+        // Use Angular's $http for better integration
+        $http
+          .put(url, Number(userInfo.id), config)
+          .then((response) => {
+            if (response.data.success) {
+              socket.sendMessage("/app/cod", "a");
+              $scope.showNotification("Duyệt hóa đơn thành công!", "success");
+            } else {
+              $scope.showNotification(
+                "Có lỗi xảy ra khi duyệt hóa đơn.",
+                "error"
+              );
+            }
+          })
+          .catch((error) => {
+            $scope.showNotification("Lỗi kết nối hoặc lỗi server.", "error");
+            console.error("Error:", error);
+          });
+      } else {
+        console.log("Hủy duyệt hóa đơn.");
       }
-    );
+    });
+  };
+
+  // Function to show notifications using Swal
+  $scope.showNotification = function (message, type) {
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+  $scope.loadInvoice = function (invoice) {
+    $scope.invoices = invoice;
+    $scope.$apply();
   };
 });

@@ -29,77 +29,105 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
   };
 
   $scope.addOrUpdateItem = function () {
-    try {
-      const method = $scope.formData.id ? "PUT" : "POST";
-      const url = $scope.formData.id
-        ? `${API_BASE_URL}/update/${$scope.formData.id}`
-        : `${API_BASE_URL}/add`;
+    // Ask for confirmation before adding or updating
+    Swal.fire({
+      title: "Xác nhận",
+      text: $scope.formData.id
+        ? "Bạn có chắc chắn muốn cập nhật thương hiệu này?"
+        : "Bạn có chắc chắn muốn thêm thương hiệu mới?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có",
+      cancelButtonText: "Không",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          const method = $scope.formData.id ? "PUT" : "POST";
+          const url = $scope.formData.id
+            ? `${API_BASE_URL}/update/${$scope.formData.id}`
+            : `${API_BASE_URL}/add`;
 
-      const data = {
-        milkbrandname: $scope.formData.milkbrandname,
-        description: $scope.formData.description,
-      };
+          const data = {
+            milkbrandname: $scope.formData.milkbrandname,
+            description: $scope.formData.description,
+          };
 
-      $http({
-        method,
-        url,
-        data: data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          const message =
-            response.data.message ||
-            (method === "POST"
-              ? "Thêm thương hiệu thành công"
-              : "Cập nhật thương hiệu thành công");
-          $scope.showNotification(message, "success");
-          $scope.getBrands();
-          $scope.resetForm(); // Clear form after success
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            method === "POST"
-              ? "Không thể thêm thương hiệu"
-              : "Không thể cập nhật thương hiệu"
+          $http({
+            method,
+            url,
+            data: data,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }).then(
+            function (response) {
+              const message =
+                response.data.message ||
+                (method === "POST"
+                  ? "Thêm thương hiệu thành công"
+                  : "Cập nhật thương hiệu thành công");
+              $scope.showNotification(message, "success");
+              $scope.getBrands();
+              $scope.resetForm(); // Clear form after success
+            },
+            function (error) {
+              const errorMessage = parseErrorMessages(
+                error,
+                method === "POST"
+                  ? "Không thể thêm thương hiệu"
+                  : "Không thể cập nhật thương hiệu"
+              );
+              $scope.showNotification(errorMessage, "error");
+            }
           );
-          $scope.showNotification(errorMessage, "error");
+        } catch (exception) {
+          console.error("Unexpected error:", exception);
+          $scope.showNotification(
+            "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+            "error"
+          );
         }
-      );
-    } catch (exception) {
-      console.error("Unexpected error:", exception);
-      $scope.showNotification(
-        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-        "error"
-      );
-    }
+      }
+    });
   };
-
   $scope.deleteItem = function (id) {
-    if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không?")) {
-      $http({
-        method: "DELETE",
-        url: `${API_BASE_URL}/delete/${id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          const message = response.data.message || "Xóa thương hiệu thành công";
-          $scope.showNotification(message, "success");
-          $scope.getBrands();
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể xóa thương hiệu"
-          );
-          $scope.showNotification(errorMessage, "error");
-        }
-      );
-    }
+    Swal.fire({
+      title: "Bạn có chắc chắn muốn thực hiện hành động này không?",
+      text: "Hành động này không thể hoàn tác!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có, xóa!",
+      cancelButtonText: "Hủy",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Nếu người dùng xác nhận, thực hiện xóa
+        $http({
+          method: "DELETE",
+          url: `${API_BASE_URL}/delete/${id}`,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then(
+          function (response) {
+            const message =
+              response.data.message || "Xóa thương hiệu thành công";
+            $scope.showNotification(message, "success");
+            $scope.getBrands();
+          },
+          function (error) {
+            const errorMessage = parseErrorMessages(
+              error,
+              "Không thể xóa thương hiệu"
+            );
+            $scope.showNotification(errorMessage, "error");
+          }
+        );
+      } else {
+        // Nếu người dùng hủy bỏ
+        console.log("Hủy xóa thương hiệu");
+      }
+    });
   };
 
   $scope.getItemById = function (id) {
