@@ -696,6 +696,13 @@
                </tbody>
              </table>
            </div>
+           <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+            <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+          </div>
          </div>
   
 
@@ -745,6 +752,10 @@
           <input class="form-control" type="text" ng-model="formData.discountpercentage" required>
         </div>
         <div class="form-group col-md-12">
+          <label class="control-label">Số tiền tối thiểu</label>
+          <input class="form-control" type="text" ng-model="formData.minamount" required>
+        </div>
+        <div class="form-group col-md-12">
           <label class="control-label">Số tiền tối đa</label>
           <input class="form-control" type="text" ng-model="formData.maxamount" required>
         </div>
@@ -775,6 +786,7 @@
                   <th>Ngày bắt đầu</th>
                   <th>Ngày kết thúc</th>
                   <th>Phần trăm giảm giá</th>
+                  <th>Số tiền tối thiểu để sử dụng</th>
                   <th>Số tiền tối đa khi giảm giá</th>
                   <th>Số ần sử dụng</th>
                   <th>Trạng thái</th>
@@ -788,6 +800,7 @@
                   <td>{{ voucher.startdate }}</td>
                   <td>{{ voucher.enddate }}</td>
                   <td>{{ voucher.discountpercentage }}</td>
+                  <td>{{ voucher.minamount }}</td>
                   <td>{{ voucher.maxamount }}</td>
                   <td>{{ voucher.usagecount }}</td>
                   <td ng-class="{'text-success': voucher.status === 1, 'text-danger': voucher.status === 0}">
@@ -806,6 +819,13 @@
                </tbody>
              </table>
            </div>
+           <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPage()">First</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPage()">Previous</button>
+            <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPage()">Next</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPage()">Last</button>
+          </div>
          </div>     
        </div>
   

@@ -2,7 +2,7 @@ app.controller(
   "VoucherController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api/Voucher";
+    const API_BASE_URL = "http://localhost:1234/api/Voucher";
 
     $scope.vouchers = [];
     $scope.deletedvouchers = [];
@@ -66,13 +66,20 @@ app.controller(
             $scope.resetForm(); // Clear form after success
           },
           function (error) {
-            const errorMessage = parseErrorMessages(
-              error,
-              method === "POST"
-                ? "Không thể thêm voucher"
-                : "Không thể cập nhật voucher"
-            );
-            $scope.showNotification(errorMessage, "error");
+            if (error.status === 400 && error.data && error.data.errors) {
+              // Extract and display only the first validation error
+              const firstError = error.data.errors[0];
+              const errorMessage = ` ${firstError.message}`;
+              $scope.showNotification(errorMessage, "error");
+            } else {
+              const errorMessage = parseErrorMessages(
+                error,
+                method === "POST"
+                  ? "Không thể thêm voucher"
+                  : "Không thể cập nhật voucher"
+              );
+              $scope.showNotification(errorMessage, "error");
+            }
           }
         );
       } catch (exception) {
