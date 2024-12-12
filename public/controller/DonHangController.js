@@ -9,7 +9,6 @@ app.controller("DonHangController", function ($scope, $http, socket) {
     timer: 3000,
     timerProgressBar: true,
   });
-  console.log($scope.invoices);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -22,8 +21,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
-            item.milkdetailid
+          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
         )
@@ -57,8 +55,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
-          item.milkdetailid
+        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
       )
@@ -103,7 +100,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
         } else if (response.status === 404) {
           $scope.showNotification(
             "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-              response.data.currentStock,
+            response.data.currentStock,
             "error"
           );
           item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
@@ -385,11 +382,10 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       reverseButtons: true, // Optional: makes the cancel button appear on the left
     }).then((result) => {
       if (result.isConfirmed) {
-        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`;
-
+        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`
         // Use Angular's $http for better integration
         $http
-          .put(url, {}, config)
+          .put(url, Number(userInfo.id), config)
           .then((response) => {
             if (response.data.success) {
               socket.sendMessage("/app/cod", "a");
