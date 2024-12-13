@@ -359,7 +359,6 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       $rootScope.stompClient.subscribe(`/user/${userInfo.sub}/queue/messages`, function (message) {
         handleIncomingMessage(message);
       });
-      $scope.sendMessage("/app/cod", "a")
     }
   });
   $scope.invoiceOk = function (invoiceID) {
@@ -410,10 +409,9 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
     });
   };
   function handleIncomingMessage(message) {
-    console.log("Received message:", message);
-    // Cập nhật dữ liệu hoặc làm điều gì đó với thông điệp
-    $scope.invoices = JSON.parse(message.body); // Ví dụ cập nhật $scope với thông điệp nhận được
-    $scope.$apply(); // Đảm bảo AngularJS nhận ra sự thay đổi dữ liệu
+    console.log("Received message:", JSON.parse(message.body));
+    $scope.invoices = JSON.parse(message.body);
+    $scope.$apply();
   }
   $scope.sendMessage = function (url, message) {
     if ($rootScope.stompClient && $rootScope.stompClient.connected) {
