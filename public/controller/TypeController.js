@@ -2,7 +2,7 @@ app.controller(
   "MilktypeController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://localhost:1234/api/Milktype";
+    const API_BASE_URL = "http://160.30.21.47:1234/api/Milktype";
 
     $scope.types = [];
     $scope.formData = {};

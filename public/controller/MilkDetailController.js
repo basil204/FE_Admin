@@ -3,7 +3,7 @@ app.controller(
   function ($scope, $http, $location, socket) {
     // Notification Setup
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://localhost:1234/api";
+    const API_BASE_URL = "http://160.30.21.47:1234/api";
 
     if (!token) {
       showNotification(

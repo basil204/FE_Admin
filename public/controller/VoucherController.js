@@ -2,7 +2,7 @@ app.controller(
   "VoucherController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://localhost:1234/api/Voucher";
+    const API_BASE_URL = "http://160.30.21.47:1234/api/Voucher";
 
     $scope.vouchers = [];
     $scope.deletedvouchers = [];
