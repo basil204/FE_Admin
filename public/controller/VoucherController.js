@@ -32,63 +32,83 @@ app.controller(
     };
 
     $scope.addOrUpdateItem = function () {
-      try {
-        const method = $scope.formData.id ? "PUT" : "POST";
-        const url = $scope.formData.id
-          ? `${API_BASE_URL}/update/${$scope.formData.id}`
-          : `${API_BASE_URL}/add`;
+      // Hiển thị hộp thoại xác nhận bằng SweetAlert2
+      Swal.fire({
+        title: "Xác nhận",
+        text: $scope.formData.id
+          ? "Bạn có chắc chắn muốn cập nhật voucher này?"
+          : "Bạn có chắc chắn muốn thêm voucher mới?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Có",
+        cancelButtonText: "Không",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Nếu người dùng chọn "Có", thực hiện thêm hoặc cập nhật voucher
 
-        const data = {
-          vouchercode: $scope.formData.vouchercode,
-          startdate: $scope.formData.startdate,
-          enddate: $scope.formData.enddate,
-          discountpercentage: $scope.formData.discountpercentage,
-          maxamount: $scope.formData.maxamount,
-          usagecount: $scope.formData.usagecount,
-        };
+          try {
+            const method = $scope.formData.id ? "PUT" : "POST";
+            const url = $scope.formData.id
+              ? `${API_BASE_URL}/update/${$scope.formData.id}`
+              : `${API_BASE_URL}/add`;
 
-        $http({
-          method,
-          url,
-          data: data,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then(
-          function (response) {
-            const message =
-              response.data.message ||
-              (method === "POST"
-                ? "Thêm voucher thành công"
-                : "Cập nhật voucher thành công");
-            $scope.showNotification(message, "success");
-            $scope.getVouchers();
-            $scope.resetForm(); // Clear form after success
-          },
-          function (error) {
-            if (error.status === 400 && error.data && error.data.errors) {
-              // Extract and display only the first validation error
-              const firstError = error.data.errors[0];
-              const errorMessage = ` ${firstError.message}`;
-              $scope.showNotification(errorMessage, "error");
-            } else {
-              const errorMessage = parseErrorMessages(
-                error,
-                method === "POST"
-                  ? "Không thể thêm voucher"
-                  : "Không thể cập nhật voucher"
-              );
-              $scope.showNotification(errorMessage, "error");
-            }
+            const data = {
+              vouchercode: $scope.formData.vouchercode,
+              startdate: $scope.formData.startdate,
+              enddate: $scope.formData.enddate,
+              discountpercentage: $scope.formData.discountpercentage,
+              maxamount: $scope.formData.maxamount,
+              usagecount: $scope.formData.usagecount,
+            };
+
+            // Gửi yêu cầu HTTP
+            $http({
+              method,
+              url,
+              data: data,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }).then(
+              function (response) {
+                const message =
+                  response.data.message ||
+                  (method === "POST"
+                    ? "Thêm voucher thành công"
+                    : "Cập nhật voucher thành công");
+                $scope.showNotification(message, "success");
+                $scope.getVouchers(); // Lấy lại danh sách voucher
+                $scope.resetForm(); // Clear form after success
+              },
+              function (error) {
+                if (error.status === 400 && error.data && error.data.errors) {
+                  // Extract and display only the first validation error
+                  const firstError = error.data.errors[0];
+                  const errorMessage = ` ${firstError.message}`;
+                  $scope.showNotification(errorMessage, "error");
+                } else {
+                  const errorMessage = parseErrorMessages(
+                    error,
+                    method === "POST"
+                      ? "Không thể thêm voucher"
+                      : "Không thể cập nhật voucher"
+                  );
+                  $scope.showNotification(errorMessage, "error");
+                }
+              }
+            );
+          } catch (exception) {
+            console.error("Unexpected error:", exception);
+            $scope.showNotification(
+              "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+              "error"
+            );
           }
-        );
-      } catch (exception) {
-        console.error("Unexpected error:", exception);
-        $scope.showNotification(
-          "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-          "error"
-        );
-      }
+        } else {
+          // Nếu người dùng chọn "Không", không làm gì cả
+          console.log("Hành động đã bị hủy bỏ");
+        }
+      });
     };
 
     $scope.deleteItem = function (id) {

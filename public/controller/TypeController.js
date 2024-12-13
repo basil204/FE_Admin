@@ -54,59 +54,79 @@ app.controller(
     };
 
     $scope.addOrUpdateItem = function () {
-      try {
-        const method = $scope.formData.id ? "PUT" : "POST";
-        const url = $scope.formData.id
-          ? `${API_BASE_URL}/update/${$scope.formData.id}`
-          : `${API_BASE_URL}/add`;
+      // Hiển thị hộp thoại xác nhận bằng SweetAlert2
+      Swal.fire({
+        title: "Xác nhận",
+        text: $scope.formData.id
+          ? "Bạn có chắc chắn muốn cập nhật loại sữa này?"
+          : "Bạn có chắc chắn muốn thêm loại sữa mới?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Có",
+        cancelButtonText: "Không",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Nếu người dùng chọn "Có", thực hiện thêm hoặc cập nhật
 
-        const data = {
-          milkTypename: $scope.formData.milkTypename,
-          description: $scope.formData.description,
-        };
+          try {
+            const method = $scope.formData.id ? "PUT" : "POST";
+            const url = $scope.formData.id
+              ? `${API_BASE_URL}/update/${$scope.formData.id}`
+              : `${API_BASE_URL}/add`;
 
-        $http({
-          method,
-          url,
-          data: data,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then(
-          function (response) {
-            const message =
-              response.data.message ||
-              (method === "POST"
-                ? "Thêm loại sữa thành công"
-                : "Cập nhật loại sữa thành công");
-            $scope.showNotification(message, "success");
-            $scope.getTypes();
-            $scope.resetForm(); // Clear form after success
-          },
-          function (error) {
-            if (error.status === 400 && error.data && error.data.errors) {
-              // Extract and display only the first validation error
-              const firstError = error.data.errors[0];
-              const errorMessage = ` ${firstError.message}`;
-              $scope.showNotification(errorMessage, "error");
-            } else {
-              const errorMessage = parseErrorMessages(
-                error,
-                method === "POST"
-                  ? "Không thể thêm loại sữa"
-                  : "Không thể cập nhật loại sữa"
-              );
-              $scope.showNotification(errorMessage, "error");
-            }
+            const data = {
+              milkTypename: $scope.formData.milkTypename,
+              description: $scope.formData.description,
+            };
+
+            // Gửi yêu cầu HTTP
+            $http({
+              method,
+              url,
+              data: data,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }).then(
+              function (response) {
+                const message =
+                  response.data.message ||
+                  (method === "POST"
+                    ? "Thêm loại sữa thành công"
+                    : "Cập nhật loại sữa thành công");
+                $scope.showNotification(message, "success");
+                $scope.getTypes();
+                $scope.resetForm(); // Clear form after success
+              },
+              function (error) {
+                if (error.status === 400 && error.data && error.data.errors) {
+                  // Extract and display only the first validation error
+                  const firstError = error.data.errors[0];
+                  const errorMessage = ` ${firstError.message}`;
+                  $scope.showNotification(errorMessage, "error");
+                } else {
+                  const errorMessage = parseErrorMessages(
+                    error,
+                    method === "POST"
+                      ? "Không thể thêm loại sữa"
+                      : "Không thể cập nhật loại sữa"
+                  );
+                  $scope.showNotification(errorMessage, "error");
+                }
+              }
+            );
+          } catch (exception) {
+            console.error("Unexpected error:", exception);
+            $scope.showNotification(
+              "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+              "error"
+            );
           }
-        );
-      } catch (exception) {
-        console.error("Unexpected error:", exception);
-        $scope.showNotification(
-          "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-          "error"
-        );
-      }
+        } else {
+          // Nếu người dùng chọn "Không", không làm gì cả
+          console.log("Hành động đã bị hủy bỏ");
+        }
+      });
     };
 
     $scope.deleteItem = function (id) {
