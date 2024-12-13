@@ -1,6 +1,6 @@
 app.controller(
   "MilkDetailController",
-  function ($scope, $http, $location, socket) {
+  function ($scope, $http, $location) {
     // Notification Setup
     const token = localStorage.getItem("authToken");
     const API_BASE_URL = "http://160.30.21.47:1234/api";
@@ -381,9 +381,8 @@ app.controller(
 
     $scope.saveMilkdetail = function (formData) {
       const isUpdate = !!formData.id; // Kiểm tra xem có phải là cập nhật không
-      const url = `${API_BASE_URL}/Milkdetail/${
-        isUpdate ? "update/" + formData.id : "add"
-      }`;
+      const url = `${API_BASE_URL}/Milkdetail/${isUpdate ? "update/" + formData.id : "add"
+        }`;
       const method = isUpdate ? "PUT" : "POST";
 
       const datas = {

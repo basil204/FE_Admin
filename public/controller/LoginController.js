@@ -1,6 +1,6 @@
 app.controller(
   "LoginController",
-  function ($scope, $http, $rootScope, $location, socket) {
+  function ($scope, $http, $rootScope, $location) {
     $scope.user = {};
     $scope.loading = false;
 

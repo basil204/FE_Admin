@@ -1,4 +1,4 @@
-app.controller("DonHangController", function ($scope, $http, socket) {
+app.controller("DonHangController", function ($scope, $http, $rootScope) {
   const token = localStorage.getItem("authToken");
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   $scope.invoices = [];
@@ -353,24 +353,15 @@ app.controller("DonHangController", function ($scope, $http, socket) {
   $scope.getStatus = function (statusCode) {
     return $scope.statusMap[statusCode] || "Không xác định";
   };
-  if (!socket.isConnected) {
-    socket.connect().then(function () {
-      socket.subscribe(
-        `/user/${userInfo.sub}/queue/messages`,
-        function (message) {
-          console.log(message);
-          $scope.loadInvoice(message);
-        }
-      );
-      socket.subscribe("/topic/messages", function (message) {
-        Toast.fire({
-          icon: "info",
-          title: `Hóa đơn #${message} đã được đặt!`,
-        });
+  $rootScope.$on('$viewContentLoaded', function () {
+    if ($rootScope.stompClient && $rootScope.stompClient.connected) {
+      // Đăng ký subscription để nhận thông điệp từ WebSocket
+      $rootScope.stompClient.subscribe(`/user/${userInfo.sub}/queue/messages`, function (message) {
+        handleIncomingMessage(message);
       });
-      socket.sendMessage("/app/cod", "a");
-    });
-  }
+      $scope.sendMessage("/app/cod", "a")
+    }
+  });
   $scope.invoiceOk = function (invoiceID) {
     Swal.fire({
       title: "Bạn có chắc muốn duyệt hóa đơn này?", // Question text
@@ -388,7 +379,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
           .put(url, Number(userInfo.id), config)
           .then((response) => {
             if (response.data.success) {
-              socket.sendMessage("/app/cod", "a");
+              $scope.sendMessage("/app/cod", "a")
               $scope.showNotification("Duyệt hóa đơn thành công!", "success");
             } else {
               $scope.showNotification(
@@ -418,8 +409,17 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       timerProgressBar: true,
     });
   };
-  $scope.loadInvoice = function (invoice) {
-    $scope.invoices = invoice;
-    $scope.$apply();
+  function handleIncomingMessage(message) {
+    console.log("Received message:", message);
+    // Cập nhật dữ liệu hoặc làm điều gì đó với thông điệp
+    $scope.invoices = JSON.parse(message.body); // Ví dụ cập nhật $scope với thông điệp nhận được
+    $scope.$apply(); // Đảm bảo AngularJS nhận ra sự thay đổi dữ liệu
+  }
+  $scope.sendMessage = function (url, message) {
+    if ($rootScope.stompClient && $rootScope.stompClient.connected) {
+      $rootScope.stompClient.send(url, {}, JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
   };
 });

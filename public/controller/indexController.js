@@ -1,13 +1,12 @@
 app.controller("indexController", [
   "$scope",
   "$http",
-  "$location",
-  "socket", // Inject $location to handle page redirection
-  function ($scope, $http, $location, socket) {
+  "$location", // Inject $location to handle page redirection
+  function ($scope, $http, $location) {
     const token = localStorage.getItem("authToken");
     $scope.showWarning = true;
-    
-      // Hide warning after 5 seconds
+
+    // Hide warning after 5 seconds
     setTimeout(function () {
       $scope.$apply(function () {
         $scope.showWarning = false;

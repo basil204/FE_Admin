@@ -1,6 +1,6 @@
 app.controller(
   "MilktasteController",
-  function ($scope, $http, $location, socket) {
+  function ($scope, $http, $location) {
     const token = localStorage.getItem("authToken");
     const API_BASE_URL = "http://160.30.21.47:1234/api/Milktaste";
 
