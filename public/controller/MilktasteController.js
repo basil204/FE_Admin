@@ -2,13 +2,13 @@ app.controller(
   "MilktasteController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api/Milktaste";
+    const API_BASE_URL = "http://localhost:1234/api/Milktaste";
 
     $scope.milktastes = [];
     $scope.deletedMilktastes = [];
     $scope.formData = {};
     $scope.currentPage = 0;
-    $scope.pageSize = 4;
+    $scope.pageSize = 5;
     $scope.getMilktastes = function () {
       $http({
         method: "GET",
@@ -86,6 +86,8 @@ app.controller(
                       : "Không thể cập nhật vị sữa"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getMilktastes();
+                  $scope.resetForm();
                 }
               }
             );
@@ -175,26 +177,87 @@ app.controller(
     $scope.nextPage = function () {
       if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
         $scope.currentPage++;
-        $scope.getMilktastes();
+        if ($scope.formData.milktastename) {
+          $scope.search();
+        } else {
+          $scope.getMilktastes();
+        }
       }
     };
 
     $scope.previousPage = function () {
       if ($scope.currentPage > 0) {
         $scope.currentPage--;
-        $scope.getMilktastes();
+        if ($scope.formData.milktastename) {
+          $scope.search();
+        } else {
+          $scope.getMilktastes();
+        }
       }
     };
 
     $scope.goToFirstPage = function () {
       $scope.currentPage = 0;
-      $scope.getMilktastes();
+      if ($scope.formData.milktastename) {
+        $scope.search();
+      } else {
+        $scope.getMilktastes();
+      }
     };
 
     $scope.goToLastPage = function () {
       $scope.currentPage = $scope.pageInfo.totalPages - 1;
-      $scope.getMilktastes();
+      if ($scope.formData.milktastename) {
+        $scope.search();
+      } else {
+        $scope.getMilktastes();
+      }
     };
     $scope.getMilktastes();
+
+    $scope.search = function () {
+      const searchQuery = $scope.formData.milktastename;
+
+      if (!searchQuery || searchQuery.trim() === "") {
+        $scope.showNotification(
+          "Vui lòng nhập tên vị sữa để tìm kiếm.",
+          "error"
+        );
+        $scope.getMilktastes();
+        $scope.resetForm();
+        return;
+      }
+
+      $http({
+        method: "GET",
+        url: `${API_BASE_URL}/getMilktastePageByName?milktasteName=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          $scope.pageInfo = response.data.page;
+          $scope.milktastes = response.data.content;
+
+          if ($scope.brands.length === 0) {
+            $scope.showNotification(
+              "Không tìm thấy vị sữa nào phù hợp.",
+              "warning"
+            );
+            $scope.getMilktastes();
+            $scope.resetForm();
+          }
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể tìm kiếm vị sữa."
+          );
+          $scope.showNotification(errorMessage, "error");
+          $scope.getMilktastes();
+          $scope.resetForm();
+        }
+      );
+    };
   }
 );

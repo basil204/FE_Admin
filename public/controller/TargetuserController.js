@@ -111,6 +111,8 @@ app.controller(
                       : "Không thể cập nhật đối tượng sử dụng"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getTargets(); // Lấy lại danh sách đối tượng
+                  $scope.resetForm();
                 }
               }
             );

@@ -94,6 +94,8 @@ app.controller(
                       : "Không thể cập nhật voucher"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getVouchers(); // Lấy lại danh sách voucher
+                  $scope.resetForm();
                 }
               }
             );

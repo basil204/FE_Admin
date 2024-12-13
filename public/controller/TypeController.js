@@ -2,7 +2,7 @@ app.controller(
   "MilktypeController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api/Milktype";
+    const API_BASE_URL = "http://localhost:1234/api/Milktype";
 
     $scope.types = [];
     $scope.formData = {};
@@ -28,29 +28,6 @@ app.controller(
           $scope.showNotification(errorMessage, "error");
         }
       );
-    };
-    $scope.nextPage = function () {
-      if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
-        $scope.currentPage++;
-        $scope.getTypes();
-      }
-    };
-
-    $scope.previousPage = function () {
-      if ($scope.currentPage > 0) {
-        $scope.currentPage--;
-        $scope.getTypes();
-      }
-    };
-
-    $scope.goToFirstPage = function () {
-      $scope.currentPage = 0;
-      $scope.getTypes();
-    };
-
-    $scope.goToLastPage = function () {
-      $scope.currentPage = $scope.pageInfo.totalPages - 1;
-      $scope.getTypes();
     };
 
     $scope.addOrUpdateItem = function () {
@@ -112,6 +89,8 @@ app.controller(
                       : "Không thể cập nhật loại sữa"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getTypes();
+                  $scope.resetForm();
                 }
               }
             );
@@ -198,6 +177,89 @@ app.controller(
       }
       return defaultMessage;
     }
+
+    $scope.nextPage = function () {
+      if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+        $scope.currentPage++;
+        if ($scope.formData.milkTypename) {
+          $scope.search();
+        } else {
+          $scope.getTypes();
+        }
+      }
+    };
+
+    $scope.previousPage = function () {
+      if ($scope.currentPage > 0) {
+        $scope.currentPage--;
+        if ($scope.formData.milkTypename) {
+          $scope.search();
+        } else {
+          $scope.getTypes();
+        }
+      }
+    };
+
+    $scope.goToFirstPage = function () {
+      $scope.currentPage = 0;
+      if ($scope.formData.milkTypename) {
+        $scope.search();
+      } else {
+        $scope.getTypes();
+      }
+    };
+
+    $scope.goToLastPage = function () {
+      $scope.currentPage = $scope.pageInfo.totalPages - 1;
+      if ($scope.formData.milkTypename) {
+        $scope.search();
+      } else {
+        $scope.getTypes();
+      }
+    };
+
+    $scope.search = function () {
+      const searchQuery = $scope.formData.milkTypename;
+
+      if (!searchQuery || searchQuery.trim() === "") {
+        $scope.showNotification(
+          "Vui lòng nhập tên loại sữa để tìm kiếm.",
+          "error"
+        );
+        return;
+      }
+
+      $http({
+        method: "GET",
+        url: `${API_BASE_URL}/getTypePageByName?milkTypeName=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then(
+        function (response) {
+          $scope.pageInfo = response.data.page;
+          $scope.types = response.data.content;
+
+          if ($scope.brands.length === 0) {
+            $scope.showNotification(
+              "Không tìm thấy loại sữa nào phù hợp.",
+              "warning"
+            );
+            $scope.getTypes();
+            $scope.resetForm();
+          }
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể tìm kiếm loại sữa."
+          );
+          $scope.showNotification(errorMessage, "error");
+          $scope.getTypes();
+          $scope.resetForm();
+        }
+      );
+    };
 
     $scope.getTypes();
   }

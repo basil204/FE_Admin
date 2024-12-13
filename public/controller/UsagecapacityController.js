@@ -112,6 +112,8 @@ app.controller(
                       : "Không thể cập nhật đơn vị đóng gói"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getUsages(); // Lấy lại danh sách đơn vị đóng gói
+                  $scope.resetForm();
                 }
               }
             );
