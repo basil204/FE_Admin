@@ -71,13 +71,20 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
               $scope.resetForm(); // Clear form after success
             },
             function (error) {
-              const errorMessage = parseErrorMessages(
-                error,
-                method === "POST"
-                  ? "Không thể thêm thương hiệu"
-                  : "Không thể cập nhật thương hiệu"
-              );
-              $scope.showNotification(errorMessage, "error");
+              if (error.status === 400 && error.data && error.data.errors) {
+                // Extract and display only the first validation error
+                const firstError = error.data.errors[0];
+                const errorMessage = ` ${firstError.message}`;
+                $scope.showNotification(errorMessage, "error");
+              } else {
+                const errorMessage = parseErrorMessages(
+                  error,
+                  method === "POST"
+                    ? "Không thể thêm thương hiệu"
+                    : "Không thể cập nhật thương hiệu"
+                );
+                $scope.showNotification(errorMessage, "error");
+              }
             }
           );
         } catch (exception) {
@@ -90,6 +97,7 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
       }
     });
   };
+
   $scope.deleteItem = function (id) {
     Swal.fire({
       title: "Bạn có chắc chắn muốn thực hiện hành động này không?",

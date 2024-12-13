@@ -274,6 +274,16 @@ app.controller(
         }
       );
     };
+    $scope.showNotification = function (message, type) {
+      Swal.fire({
+        title: type === "success" ? "Thành công!" : "Lỗi!",
+        text: message,
+        icon: type,
+        confirmButtonText: "OK",
+        timer: 3000,
+        timerProgressBar: true,
+      });
+    };
 
     $scope.getMilkdetails = function () {
       $http({
@@ -370,7 +380,7 @@ app.controller(
     };
 
     $scope.saveMilkdetail = function (formData) {
-      const isUpdate = !!formData.id;
+      const isUpdate = !!formData.id; // Kiểm tra xem có phải là cập nhật không
       const url = `${API_BASE_URL}/Milkdetail/${
         isUpdate ? "update/" + formData.id : "add"
       }`;
@@ -401,53 +411,75 @@ app.controller(
         confirmButtonText: "Có, thực hiện!",
         cancelButtonText: "Hủy",
         reverseButtons: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Nếu người dùng xác nhận, thực hiện gửi yêu cầu API
-          $http({
-            method: method,
-            url: url,
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            data: datas,
-          }).then(
-            function (response) {
-              if (response.status === 200) {
-                showNotification(
-                  isUpdate
-                    ? "Milkdetail updated successfully."
-                    : "Milkdetail added successfully.",
-                  "success"
-                );
-                $scope.getMilkdetails(); // Refresh the list
-                $scope.resetForm(); // Clear the form data
-                $("#ModalUP").modal("hide"); // Đóng modal khi thành công
-              } else {
-                showNotification(
-                  isUpdate
-                    ? "Failed to update Milkdetail."
-                    : "Failed to add Milkdetail.",
+      })
+        .then((result) => {
+          if (result.isConfirmed) {
+            // Nếu người dùng xác nhận, gửi yêu cầu API
+            $http({
+              method: method,
+              url: url,
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              data: datas,
+            })
+              .then(
+                function (response) {
+                  if (response.status === 200) {
+                    showNotification(
+                      isUpdate
+                        ? "Cập nhật thông tin sản phẩm thành công."
+                        : "Thêm sản phẩm thành công.",
+                      "success"
+                    );
+                    $scope.getMilkdetails(); // Làm mới danh sách
+                    $scope.resetForm(); // Xóa dữ liệu trong form
+                    $("#ModalUP").modal("hide"); // Đóng modal khi thành công
+                  } else {
+                    showNotification(
+                      isUpdate
+                        ? "Cập nhật thông tin sản phẩm thất bại."
+                        : "Thêm sản phẩm thất bại.",
+                      "error"
+                    );
+                  }
+                },
+                function (error) {
+                  // Xử lý lỗi validation và lỗi từ API
+                  if (error.status === 400 && error.data && error.data.errors) {
+                    const firstError = error.data.errors[0];
+                    const errorMessage = ` ${firstError.message}`;
+                    $scope.showNotification(errorMessage, "error");
+                  } else {
+                    const errorMessage = parseErrorMessages(
+                      error,
+                      method === "POST"
+                        ? "Không thể thêm sản phẩm"
+                        : "Không thể cập nhật sản phẩm"
+                    );
+                    $scope.showNotification(errorMessage, "error");
+                  }
+                }
+              )
+              .catch(function (exception) {
+                console.error("Lỗi không mong muốn:", exception);
+                $scope.showNotification(
+                  "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
                   "error"
                 );
-              }
-            },
-            function (error) {
-              const errorMessage = parseErrorMessages(
-                error,
-                isUpdate
-                  ? "Could not update Milkdetail. Please try again later."
-                  : "Could not add Milkdetail. Please try again later."
-              );
-              showNotification(errorMessage, "error");
-            }
+              });
+          } else {
+            console.log("Người dùng đã hủy thao tác.");
+          }
+        })
+        .catch(function (exception) {
+          console.error("Lỗi không mong muốn với Swal:", exception);
+          $scope.showNotification(
+            "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+            "error"
           );
-        } else {
-          // Nếu người dùng hủy bỏ, không làm gì cả
-          console.log("Hành động bị hủy.");
-        }
-      });
+        });
     };
 
     $scope.getMilkdetailById = function (id) {

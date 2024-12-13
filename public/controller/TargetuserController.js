@@ -53,52 +53,79 @@ app.controller(
       $scope.getTargets();
     };
     $scope.addOrUpdateItem = function () {
-      try {
-        const method = $scope.formData.id ? "PUT" : "POST";
-        const url = $scope.formData.id
-          ? `${API_BASE_URL}/update/${$scope.formData.id}`
-          : `${API_BASE_URL}/add`;
+      // Hiển thị hộp thoại xác nhận bằng SweetAlert2
+      Swal.fire({
+        title: "Xác nhận",
+        text: $scope.formData.id
+          ? "Bạn có chắc chắn muốn cập nhật đối tượng sử dụng này?"
+          : "Bạn có chắc chắn muốn thêm đối tượng sử dụng mới?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Có",
+        cancelButtonText: "Không",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Nếu người dùng chọn "Có", thực hiện thêm hoặc cập nhật
 
-        const data = {
-          targetuser: $scope.formData.targetuser,
-          description: $scope.formData.description,
-        };
+          try {
+            const method = $scope.formData.id ? "PUT" : "POST";
+            const url = $scope.formData.id
+              ? `${API_BASE_URL}/update/${$scope.formData.id}`
+              : `${API_BASE_URL}/add`;
 
-        $http({
-          method,
-          url,
-          data: data,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }).then(
-          function (response) {
-            const message =
-              response.data.message ||
-              (method === "POST"
-                ? "Thêm đối tượng sử dụng thành công"
-                : "Cập nhật đối tượng sử dụng thành công");
-            $scope.showNotification(message, "success");
-            $scope.getTargets();
-            $scope.resetForm(); // Clear form after success
-          },
-          function (error) {
-            const errorMessage = parseErrorMessages(
-              error,
-              method === "POST"
-                ? "Không thể thêm đối tượng sử dụng"
-                : "Không thể cập nhật đối tượng sử dụng"
+            const data = {
+              targetuser: $scope.formData.targetuser,
+              description: $scope.formData.description,
+            };
+
+            // Gửi yêu cầu HTTP
+            $http({
+              method,
+              url,
+              data: data,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }).then(
+              function (response) {
+                const message =
+                  response.data.message ||
+                  (method === "POST"
+                    ? "Thêm đối tượng sử dụng thành công"
+                    : "Cập nhật đối tượng sử dụng thành công");
+                $scope.showNotification(message, "success");
+                $scope.getTargets(); // Lấy lại danh sách đối tượng
+                $scope.resetForm(); // Clear form after success
+              },
+              function (error) {
+                if (error.status === 400 && error.data && error.data.errors) {
+                  // Extract and display only the first validation error
+                  const firstError = error.data.errors[0];
+                  const errorMessage = ` ${firstError.message}`;
+                  $scope.showNotification(errorMessage, "error");
+                } else {
+                  const errorMessage = parseErrorMessages(
+                    error,
+                    method === "POST"
+                      ? "Không thể thêm đối tượng sử dụng"
+                      : "Không thể cập nhật đối tượng sử dụng"
+                  );
+                  $scope.showNotification(errorMessage, "error");
+                }
+              }
             );
-            $scope.showNotification(errorMessage, "error");
+          } catch (exception) {
+            console.error("Unexpected error:", exception);
+            $scope.showNotification(
+              "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+              "error"
+            );
           }
-        );
-      } catch (exception) {
-        console.error("Unexpected error:", exception);
-        $scope.showNotification(
-          "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-          "error"
-        );
-      }
+        } else {
+          // Nếu người dùng chọn "Không", không làm gì cả
+          console.log("Hành động đã bị hủy bỏ");
+        }
+      });
     };
 
     $scope.deleteItem = function (id) {
