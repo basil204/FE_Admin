@@ -2,7 +2,7 @@ app.controller(
   "ProductController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api";
+    const API_BASE_URL = "http://localhost:1234/api";
 
     $scope.targets = [];
     $scope.deletedtargets = [];
@@ -179,65 +179,83 @@ app.controller(
         confirmButtonText: "Có, thực hiện!",
         cancelButtonText: "Hủy",
         reverseButtons: true,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Xây dựng cấu trúc dữ liệu để gửi lên server
-          const productData = {
-            productname: $scope.formData.productname,
-            milkType: { id: $scope.formData.milkType },
-            milkBrand: { id: $scope.formData.milkBrand },
-            targetUser: { id: $scope.formData.targetUser },
-            imgUrl: $scope.formData.imgUrl,
-          };
+      })
+        .then((result) => {
+          if (result.isConfirmed) {
+            // Xây dựng cấu trúc dữ liệu để gửi lên server
+            const productData = {
+              productname: $scope.formData.productname,
+              milkType: { id: $scope.formData.milkType },
+              milkBrand: { id: $scope.formData.milkBrand },
+              targetUser: { id: $scope.formData.targetUser },
+              imgUrl: $scope.formData.imgUrl,
+            };
 
-          const apiUrl = isUpdating
-            ? `${API_BASE_URL}/Product/update/${$scope.formData.id}` // Cập nhật sản phẩm
-            : `${API_BASE_URL}/Product/add`; // Thêm mới sản phẩm
+            const apiUrl = isUpdating
+              ? `${API_BASE_URL}/Product/update/${$scope.formData.id}` // Cập nhật sản phẩm
+              : `${API_BASE_URL}/Product/add`; // Thêm mới sản phẩm
 
-          const method = isUpdating ? "PUT" : "POST"; // Sử dụng PUT cho cập nhật, POST cho thêm mới
+            const method = isUpdating ? "PUT" : "POST"; // Sử dụng PUT cho cập nhật, POST cho thêm mới
 
-          // Gửi yêu cầu lên server
-          $http({
-            method: method,
-            url: apiUrl,
-            data: productData,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }).then(
-            function (response) {
-              const successMessage = isUpdating
-                ? "Cập nhật sản phẩm thành công"
-                : "Thêm sản phẩm mới thành công";
-              $scope.showNotification(successMessage, "success");
-              $scope.resetForm(); // Reset form sau khi lưu
-              $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
+            // Gửi yêu cầu lên server
+            $http({
+              method: method,
+              url: apiUrl,
+              data: productData,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+              .then(
+                function (response) {
+                  const successMessage = isUpdating
+                    ? "Cập nhật sản phẩm thành công"
+                    : "Thêm sản phẩm mới thành công";
+                  $scope.showNotification(successMessage, "success");
+                  $scope.resetForm(); // Reset form sau khi lưu
+                  $scope.getProducts(); // Cập nhật lại danh sách sản phẩm
 
-              // Ẩn modal sau khi hoàn tất
-              $("#ModalProduct").modal("hide");
-            },
-            function (error) {
-              if (error.status === 400 && error.data && error.data.errors) {
-                // Extract and display only the first validation error
-                const firstError = error.data.errors[0];
-                const errorMessage = ` ${firstError.message}`;
-                $scope.showNotification(errorMessage, "error");
-              } else {
-                const errorMessage = parseErrorMessages(
-                  error,
-                  method === "POST"
-                    ? "Không thể thêm sản phẩm "
-                    : "Không thể cập nhật sản phẩm "
+                  // Ẩn modal sau khi hoàn tất
+                  $("#ModalProduct").modal("hide");
+                },
+                function (error) {
+                  if (error.status === 400 && error.data && error.data.errors) {
+                    // Lấy lỗi đầu tiên trong danh sách lỗi
+                    const firstError = error.data.errors[0];
+                    const errorMessage = ` ${firstError.message}`;
+                    $scope.showNotification(errorMessage, "error");
+                  } else {
+                    const errorMessage = parseErrorMessages(
+                      error,
+                      method === "POST"
+                        ? "Không thể thêm sản phẩm"
+                        : "Không thể cập nhật sản phẩm"
+                    );
+                    $scope.showNotification(errorMessage, "error");
+                  }
+                }
+              )
+              .catch(function (exception) {
+                // Xử lý lỗi không mong muốn
+                console.error("Lỗi không mong muốn:", exception);
+                $scope.showNotification(
+                  "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+                  "error"
                 );
-                $scope.showNotification(errorMessage, "error");
-              }
-            }
+              });
+          } else {
+            // Nếu người dùng chọn "Không", không làm gì cả
+            console.log("Hành động đã bị hủy bỏ");
+          }
+        })
+        .catch(function (exception) {
+          // Xử lý lỗi không mong muốn của Swal
+          console.error("Lỗi không mong muốn với Swal:", exception);
+          $scope.showNotification(
+            "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+            "error"
           );
-        } else {
-          // Nếu người dùng hủy bỏ, không làm gì cả
-          console.log("Hành động bị hủy.");
-        }
-      });
+        });
     };
 
     // Chức năng tải ảnh
