@@ -222,21 +222,28 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
       $scope.getBrands();
     }
   };
-  $scope.search = function () {
-    const searchQuery = $scope.formData.milkbrandname;
 
-    if (!searchQuery || searchQuery.trim() === "") {
-      $scope.showNotification(
-        "Vui lòng nhập tên thương hiệu để tìm kiếm.",
-        "error"
-      );
-      $scope.resetForm();
-      return;
+  $scope.search = function () {
+    let queryParams = [];
+    const searchQuery = $scope.formData.milkbrandname || "";
+    const status = $scope.formData.status;
+
+    // Xây dựng queryParams
+    if (searchQuery.trim() !== "") {
+      queryParams.push(`milkbrandname=${searchQuery}`);
     }
+
+    // Kiểm tra nếu status không phải là rỗng hoặc undefined
+    if (status !== undefined && status !== "") {
+      queryParams.push(`status=${status}`);
+    }
+
+    // Tạo chuỗi query
+    const queryString = queryParams.length > 0 ? queryParams.join("&") : "";
 
     $http({
       method: "GET",
-      url: `${API_BASE_URL}/getMilkBrandsearch?milkbrandname=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      url: `${API_BASE_URL}/getMilkBrandsearch?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -250,8 +257,6 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
             "Không tìm thấy thương hiệu nào phù hợp.",
             "warning"
           );
-          $scope.resetForm();
-          $scope.getBrands();
         }
       },
       function (error) {
@@ -260,11 +265,14 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
           "Không thể tìm kiếm thương hiệu."
         );
         $scope.showNotification(errorMessage, "error");
-        $scope.resetForm();
-        $scope.getBrands();
       }
     );
   };
 
+  $scope.availableStatuses = [
+    { code: "", name: "Tất cả trạng thái" },
+    { code: 1, name: "Hoạt động" },
+    { code: 0, name: "Không hoạt động" },
+  ];
   $scope.getBrands();
 });
