@@ -1,6 +1,6 @@
 app.controller("BrandController", function ($scope, $http, $location) {
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://160.30.21.47:1234/api/Milkbrand";
+  const API_BASE_URL = "http://localhost:1234/api/Milkbrand";
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   $scope.brands = [];
   $scope.formData = {};
@@ -24,6 +24,8 @@ app.controller("BrandController", function ($scope, $http, $location) {
           "Không thể tải danh sách thương hiệu"
         );
         $scope.showNotification(errorMessage, "error");
+        $scope.getBrands();
+        $scope.resetForm();
       }
     );
   };
@@ -84,6 +86,8 @@ app.controller("BrandController", function ($scope, $http, $location) {
                     : "Không thể cập nhật thương hiệu"
                 );
                 $scope.showNotification(errorMessage, "error");
+                $scope.getBrands();
+                $scope.resetForm();
               }
             }
           );
@@ -181,29 +185,136 @@ app.controller("BrandController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
+
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
-      $scope.getBrands();
+      if ($scope.formData.milkbrandname) {
+        $scope.search();
+      } else {
+        $scope.getBrands();
+      }
     }
   };
-
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
-      $scope.getBrands();
+      if ($scope.formData.milkbrandname) {
+        $scope.search();
+      } else {
+        $scope.getBrands();
+      }
     }
   };
 
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
-    $scope.getBrands();
+    if ($scope.formData.milkbrandname) {
+      $scope.search();
+    } else {
+      $scope.getBrands();
+    }
   };
 
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    $scope.getBrands();
+    if ($scope.formData.milkbrandname) {
+      $scope.search();
+    } else {
+      $scope.getBrands();
+    }
+  };
+  $scope.search = function () {
+    const searchQuery = $scope.formData.milkbrandname;
+    if (!searchQuery || searchQuery.trim() === "") {
+      $scope.showNotification(
+        "Vui lòng nhập tên thương hiệu để tìm kiếm.",
+        "error"
+      );
+      $scope.resetForm();
+      return;
+    }
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getMilkBrandsearch?milkbrandname=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.brands = response.data.content;
+        if ($scope.brands.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy thương hiệu nào phù hợp.",
+            "warning"
+          );
+          $scope.resetForm();
+          $scope.getBrands();
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm thương hiệu."
+        );
+        $scope.showNotification(errorMessage, "error");
+        $scope.resetForm();
+        $scope.getBrands();
+      }
+    );
   };
 
+  $scope.search = function () {
+    let queryParams = [];
+    const searchQuery = $scope.formData.milkbrandname || "";
+    const status = $scope.formData.status;
+
+    // Xây dựng queryParams
+    if (searchQuery.trim() !== "") {
+      queryParams.push(`milkbrandname=${searchQuery}`);
+    }
+
+    // Kiểm tra nếu status không phải là rỗng hoặc undefined
+    if (status !== undefined && status !== "") {
+      queryParams.push(`status=${status}`);
+    }
+
+    // Tạo chuỗi query
+    const queryString = queryParams.length > 0 ? queryParams.join("&") : "";
+
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getMilkBrandsearch?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.brands = response.data.content;
+
+        if ($scope.brands.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy thương hiệu nào phù hợp.",
+            "warning"
+          );
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm thương hiệu."
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+
+  $scope.availableStatuses = [
+    { code: "", name: "Tất cả trạng thái" },
+    { code: 1, name: "Hoạt động" },
+    { code: 0, name: "Không hoạt động" },
+  ];
   $scope.getBrands();
 });

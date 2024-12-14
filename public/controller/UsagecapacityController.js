@@ -2,7 +2,7 @@ app.controller(
   "UsagecapacityController",
   function ($scope, $http, $location) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api/Usagecapacity";
+    const API_BASE_URL = "http://localhost:1234/api/Usagecapacity";
 
     $scope.usages = [];
     $scope.formData = {};
@@ -112,6 +112,8 @@ app.controller(
                       : "Không thể cập nhật đơn vị đóng gói"
                   );
                   $scope.showNotification(errorMessage, "error");
+                  $scope.getUsages(); // Lấy lại danh sách đơn vị đóng gói
+                  $scope.resetForm();
                 }
               }
             );

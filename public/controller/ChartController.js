@@ -1,15 +1,19 @@
 app.controller("ChartController", [
   "$scope",
-  "$http", // Thêm $http để gọi API
-  function ($scope, $http) {
+  "$http",
+  "socket", // Thêm $http để gọi API
+  function ($scope, $http, socket) {
     const token = localStorage.getItem("authToken");
     const API_BASE_URL =
-      "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";
-    const API_REVENUE_BY_DAY_URL = "http://160.30.21.47:1234/api/Thongke/by-month"; // API mới
+      "http://localhost:1234/api/Invoicedetail/monthly-sales-growth";
+    const API_REVENUE_BY_DAY_URL = "http://localhost:1234/api/Thongke/by-month"; // API mới
 
     // Cập nhật tháng hiện tại
     const currentDate = new Date();
-    const currentMonth = currentDate.toLocaleString('default', { month: 'long' }) + " " + currentDate.getFullYear();
+    const currentMonth =
+      currentDate.toLocaleString("default", { month: "long" }) +
+      " " +
+      currentDate.getFullYear();
     $scope.currentMonth = currentMonth;
 
     // Dữ liệu mặc định của chart
@@ -109,7 +113,9 @@ app.controller("ChartController", [
           });
 
           // Dữ liệu cho doanh thu theo ngày
-          $scope.dailyRevenueChartData.datasets[0].data = data.map(function (item) {
+          $scope.dailyRevenueChartData.datasets[0].data = data.map(function (
+            item
+          ) {
             return item.totalRevenue;
           });
 

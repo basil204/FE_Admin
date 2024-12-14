@@ -204,28 +204,33 @@ app.run(function ($rootScope, $http, $location) {
     }
 
     const token = localStorage.getItem("authToken"); // Lấy token từ localStorage
-    const socketUrl = `http://160.30.21.47:1234/api/ws?token=${encodeURIComponent(token)}`;
+    const socketUrl = `http://160.30.21.47:1234/api/ws?token=${encodeURIComponent(
+      token
+    )}`;
 
     socket = new SockJS(socketUrl); // Tạo kết nối SockJS
     stompClient = Stomp.over(socket); // Tạo đối tượng Stomp client
 
-    stompClient.connect({}, function (frame) {
-      isConnected = true;
-      console.log("WebSocket connected: " + frame);
+    stompClient.connect(
+      {},
+      function (frame) {
+        isConnected = true;
+        console.log("WebSocket connected: " + frame);
 
-      // Đăng ký các subscriptions tại đây
-      stompClient.subscribe("/topic/messages", function (message) {
-        console.log("Received message: ", message.body);
-        // Xử lý thông điệp ở đây (ví dụ: hiển thị Toast)
-        Toast.fire({
-          icon: 'info',
-          title: `Hóa đơn #${message.body} đã được đặt!`
+        // Đăng ký các subscriptions tại đây
+        stompClient.subscribe("/topic/messages", function (message) {
+          console.log("Received message: ", message.body);
+          // Xử lý thông điệp ở đây (ví dụ: hiển thị Toast)
+          Toast.fire({
+            icon: "info",
+            title: `Hóa đơn #${message.body} đã được đặt!`,
+          });
         });
-      });
-
-    }, function (error) {
-      console.error("Error: " + error);
-    });
+      },
+      function (error) {
+        console.error("Error: " + error);
+      }
+    );
 
     // Gắn stompClient vào $rootScope để sử dụng ở các controller khác
     $rootScope.stompClient = stompClient;
@@ -244,7 +249,7 @@ app.run(function ($rootScope, $http, $location) {
   connectWebSocket();
 
   // Đảm bảo ngắt kết nối WebSocket khi ứng dụng bị hủy
-  $rootScope.$on('$destroy', function () {
+  $rootScope.$on("$destroy", function () {
     disconnectWebSocket();
   });
 });

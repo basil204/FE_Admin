@@ -14,14 +14,15 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       Authorization: `Bearer ${token}`,
     },
   };
-  const baseUrl = "http://160.30.21.47:1234/api";
+  const baseUrl = "http://localhost:1234/api";
 
   $scope.decreaseQuantity = function (item) {
     if (item.quantity > 0) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+          `http://localhost:1234/api/Milkdetail/checkcount/${
+            item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
         )
@@ -55,7 +56,8 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+        `http://localhost:1234/api/Milkdetail/checkcount/${
+          item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
       )
@@ -87,7 +89,7 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
   };
 
   $scope.checkStockQuantity = function (item) {
-    const apiUrl = `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
+    const apiUrl = `http://localhost:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
 
     // Gửi yêu cầu kiểm tra số lượng từ API
     $http
@@ -100,7 +102,7 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
         } else if (response.status === 404) {
           $scope.showNotification(
             "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-            response.data.currentStock,
+              response.data.currentStock,
             "error"
           );
           item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
@@ -123,10 +125,15 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
   };
   $scope.calculateTotalInvoiceAmount = function () {
     let total = 0;
-    // Sum up the totalAmount for each item
-    $scope.items.forEach(function (item) {
-      total += item.totalAmount;
-    });
+
+    // Ensure that $scope.items is an array before calling forEach
+    if (Array.isArray($scope.items)) {
+      $scope.items.forEach(function (item) {
+        if (item.totalAmount) {
+          total += item.totalAmount;
+        }
+      });
+    }
     return total;
   };
   $scope.getFilteredStatusesForInvoice = function (invoiceId) {
@@ -372,7 +379,7 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       reverseButtons: true, // Optional: makes the cancel button appear on the left
     }).then((result) => {
       if (result.isConfirmed) {
-        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`
+        const url = `http://localhost:1234/api/Invoice/waiting/${invoiceID}`;
         // Use Angular's $http for better integration
         $http
           .put(url, Number(userInfo.id), config)
