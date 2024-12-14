@@ -3,7 +3,7 @@ app.controller(
   function ($scope, $http, $location, socket) {
     // Notification Setup
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://160.30.21.47:1234/api";
+    const API_BASE_URL = "http://localhost:1234/api";
 
     if (!token) {
       showNotification(
@@ -424,50 +424,57 @@ app.controller(
               },
               data: datas,
             })
-              .then(
-                function (response) {
-                  if (response.status === 200) {
-                    showNotification(
-                      isUpdate
-                        ? "Cập nhật thông tin sản phẩm thành công."
-                        : "Thêm sản phẩm thành công.",
-                      "success"
-                    );
-                    $scope.getMilkdetails(); // Làm mới danh sách
-                    $scope.resetForm(); // Xóa dữ liệu trong form
-                    $("#ModalUP").modal("hide"); // Đóng modal khi thành công
-                  } else {
-                    showNotification(
-                      isUpdate
-                        ? "Cập nhật thông tin sản phẩm thất bại."
-                        : "Thêm sản phẩm thất bại.",
-                      "error"
-                    );
-                  }
-                },
-                function (error) {
-                  // Xử lý lỗi validation và lỗi từ API
-                  if (error.status === 400 && error.data && error.data.errors) {
-                    const firstError = error.data.errors[0];
-                    const errorMessage = ` ${firstError.message}`;
-                    $scope.showNotification(errorMessage, "error");
-                  } else {
-                    const errorMessage = parseErrorMessages(
-                      error,
-                      method === "POST"
-                        ? "Không thể thêm sản phẩm"
-                        : "Không thể cập nhật sản phẩm"
-                    );
-                    $scope.showNotification(errorMessage, "error");
-                  }
+              .then(function (response) {
+                // Kiểm tra nếu status là 200
+                if (response.status === 200) {
+                  // Xử lý thành công (status 200)
+                  console.log("Add milk detail successful:", response.data);
+
+                  // Thông báo thành công sử dụng Swal.fire
+                  Swal.fire({
+                    title: "Thành công!",
+                    text:
+                      "Thông tin sản phẩm đã được " +
+                      (isUpdate ? "cập nhật" : "thêm") +
+                      " thành công.",
+                    icon: "success",
+                    confirmButtonText: "Đóng",
+                  }).then(() => {
+                    // Sau khi thông báo thành công, gọi lại danh sách các sản phẩm
+                    $scope.getMilkdetails(); // Tải lại danh sách sữa
+                    $scope.resetForm(); // Reset lại form
+                    $("#ModalUP").modal("hide"); // Đóng modal
+                  });
                 }
-              )
-              .catch(function (exception) {
-                console.error("Lỗi không mong muốn:", exception);
-                $scope.showNotification(
-                  "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-                  "error"
-                );
+              })
+              .catch(function (error) {
+                // Kiểm tra nếu có lỗi 400
+                if (error.status === 400) {
+                  // Xử lý lỗi (status 400)
+                  console.error(
+                    "Bad request, please check the data:",
+                    error.data
+                  );
+
+                  // Thông báo lỗi 400 bằng Swal.fire
+                  Swal.fire({
+                    title: "Lỗi yêu cầu",
+                    text:
+                      error.data.message ||
+                      "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.",
+                    icon: "error",
+                    confirmButtonText: "Đóng",
+                  });
+                } else {
+                  // Xử lý các lỗi khác
+                  console.error("Error occurred:", error);
+                  Swal.fire({
+                    title: "Lỗi không xác định",
+                    text: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+                    icon: "error",
+                    confirmButtonText: "Đóng",
+                  });
+                }
               });
           } else {
             console.log("Người dùng đã hủy thao tác.");
@@ -475,10 +482,12 @@ app.controller(
         })
         .catch(function (exception) {
           console.error("Lỗi không mong muốn với Swal:", exception);
-          $scope.showNotification(
-            "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
-            "error"
-          );
+          Swal.fire({
+            title: "Lỗi hệ thống",
+            text: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+            icon: "error",
+            confirmButtonText: "Đóng",
+          });
         });
     };
 

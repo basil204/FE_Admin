@@ -200,7 +200,7 @@ app.factory("socket", [
         var deferred = $q.defer();
         var token = localStorage.getItem("authToken");
         var socketUrl =
-          "http://160.30.21.47:1234/api/ws?token=" + encodeURIComponent(token);
+          "http://localhost:1234/api/ws?token=" + encodeURIComponent(token);
 
         socket = new SockJS(socketUrl);
         stompClient = Stomp.over(socket);
