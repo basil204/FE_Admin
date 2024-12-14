@@ -178,6 +178,7 @@ app.controller(
       }
       return defaultMessage;
     }
+
     $scope.nextPage = function () {
       if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
         $scope.currentPage++;

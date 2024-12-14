@@ -86,6 +86,8 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
                     : "Không thể cập nhật thương hiệu"
                 );
                 $scope.showNotification(errorMessage, "error");
+                $scope.getBrands();
+                $scope.resetForm();
               }
             }
           );
@@ -183,6 +185,7 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
     }
     return defaultMessage;
   }
+
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
@@ -193,7 +196,6 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
       }
     }
   };
-
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
@@ -263,5 +265,56 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
     );
   };
 
+  $scope.search = function () {
+    let queryParams = [];
+    const searchQuery = $scope.formData.milkbrandname || "";
+    const status = $scope.formData.status;
+
+    // Xây dựng queryParams
+    if (searchQuery.trim() !== "") {
+      queryParams.push(`milkbrandname=${searchQuery}`);
+    }
+
+    // Kiểm tra nếu status không phải là rỗng hoặc undefined
+    if (status !== undefined && status !== "") {
+      queryParams.push(`status=${status}`);
+    }
+
+    // Tạo chuỗi query
+    const queryString = queryParams.length > 0 ? queryParams.join("&") : "";
+
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getMilkBrandsearch?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.brands = response.data.content;
+
+        if ($scope.brands.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy thương hiệu nào phù hợp.",
+            "warning"
+          );
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm thương hiệu."
+        );
+        $scope.showNotification(errorMessage, "error");
+      }
+    );
+  };
+
+  $scope.availableStatuses = [
+    { code: "", name: "Tất cả trạng thái" },
+    { code: 1, name: "Hoạt động" },
+    { code: 0, name: "Không hoạt động" },
+  ];
   $scope.getBrands();
 });
