@@ -45,8 +45,7 @@ app.controller(
                   confirmButtonText: "OK",
                   timer: 3000,
                 }).then(() => {
-                  $location.path("/home");
-                  $scope.$apply();
+                  window.location.href = "/home";
                 });
               } else {
                 Swal.fire({
