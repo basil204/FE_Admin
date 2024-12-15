@@ -23,8 +23,7 @@
               <table class="table table-hover table-bordered js-copytextarea" cellpadding="0" cellspacing="0" border="0" id="sampleTable" style="width: 100%;">
                 <thead>
                 <tr>
-                  <th width="10"><input type="checkbox" id="all"></th>
-                  <th>ID nhân viên</th>
+                  <th>STT</th>
                   <th>Tên đăng nhập</th>
                   <th>Họ và tên</th>
                   <th>Email</th>
@@ -38,7 +37,6 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in staffs track by $index">
-                  <td width="10"><input type="checkbox" name="check1" value="1"></td>
                   <td width="10">{{$index +1}}</td>
                   <td width="100">{{item.username}}</td>
                   <td width="100">{{item.fullname}}</td>
@@ -61,6 +59,42 @@
                 </tr>
                 </tbody>
               </table>
+               <div
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
             </div>
 
           </div>

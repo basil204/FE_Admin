@@ -76,22 +76,8 @@ app.controller(
                 $scope.resetForm(); // Clear form after success
               },
               function (error) {
-                if (error.status === 400 && error.data && error.data.errors) {
-                  // Extract and display only the first validation error
-                  const firstError = error.data.errors[0];
-                  const errorMessage = ` ${firstError.message}`;
-                  $scope.showNotification(errorMessage, "error");
-                } else {
-                  const errorMessage = parseErrorMessages(
-                    error,
-                    method === "POST"
-                      ? "Không thể thêm loại đóng gói"
-                      : "Không thể cập nhật loại đóng gói"
-                  );
-                  $scope.showNotification(errorMessage, "error");
-                  $scope.getPackas(); // Lấy lại danh sách loại đóng gói
-                  $scope.resetForm();
-                }
+                $scope.showNotification(error.data.error, "error");
+                $scope.resetForm();
               }
             );
           } catch (exception) {
@@ -178,88 +164,28 @@ app.controller(
       }
       return defaultMessage;
     }
-
     $scope.nextPage = function () {
       if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
         $scope.currentPage++;
-        if ($scope.formData.packagingunitname) {
-          $scope.search();
-        } else {
-          $scope.getPackas();
-        }
+        $scope.getPackas();
       }
     };
 
     $scope.previousPage = function () {
       if ($scope.currentPage > 0) {
         $scope.currentPage--;
-        if ($scope.formData.packagingunitname) {
-          $scope.search();
-        } else {
-          $scope.getPackas();
-        }
+        $scope.getPackas();
       }
     };
 
     $scope.goToFirstPage = function () {
       $scope.currentPage = 0;
-      if ($scope.formData.packagingunitname) {
-        $scope.search();
-      } else {
-        $scope.getPackas();
-      }
+      $scope.getPackas();
     };
 
     $scope.goToLastPage = function () {
       $scope.currentPage = $scope.pageInfo.totalPages - 1;
-      if ($scope.formData.packagingunitname) {
-        $scope.search();
-      } else {
-        $scope.getPackas();
-      }
-    };
-
-    $scope.search = function () {
-      const searchQuery = $scope.formData.packagingunitname;
-
-      if (!searchQuery || searchQuery.trim() === "") {
-        $scope.showNotification(
-          "Vui lòng nhập tên loại đóng gói để tìm kiếm.",
-          "error"
-        );
-        return;
-      }
-
-      $http({
-        method: "GET",
-        url: `${API_BASE_URL}/getPackagingunitPageByName?packagingunitName=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          $scope.pageInfo = response.data.page;
-          $scope.packas = response.data.content;
-
-          if ($scope.brands.length === 0) {
-            $scope.showNotification(
-              "Không tìm thấy loại đóng gói nào phù hợp.",
-              "warning"
-            );
-            $scope.getPackas(); // Lấy lại danh sách loại đóng gói
-            $scope.resetForm();
-          }
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể tìm kiếm loại đóng gói."
-          );
-          $scope.showNotification(errorMessage, "error");
-          $scope.getPackas(); // Lấy lại danh sách loại đóng gói
-          $scope.resetForm();
-        }
-      );
+      $scope.getPackas();
     };
 
     $scope.getPackas();

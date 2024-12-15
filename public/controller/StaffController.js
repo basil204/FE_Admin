@@ -1,6 +1,6 @@
 app.controller("StaffController", function ($scope, $http, $location, socket) {
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://160.30.21.47:1234/api";
+  const API_BASE_URL = "http://localhost:1234/api";
 
   // Authorization Header
   const config = {
@@ -8,40 +8,105 @@ app.controller("StaffController", function ($scope, $http, $location, socket) {
       Authorization: `Bearer ${token}`,
     },
   };
+  $scope.currentPage = 0;
+  $scope.pageSize = 5;
   $scope.formData = {};
   // Fetch staff list
   $scope.GetStaffs = function () {
-    $http.get(`${API_BASE_URL}/user/lst`, config).then(
-      function (response) {
-        console.log(response.data);
-        $scope.staffs = response.data.filter((staff) => staff.role.id !== 1);
-        console.log($scope.staffs);
-      },
-      function (error) {
-        const errorMessage = parseErrorMessages(
-          error,
-          "Không thể tải danh sách nhân viên"
-        );
-        $scope.showNotification(errorMessage, "error");
-      }
-    );
+    $http
+      .get(
+        `${API_BASE_URL}/user/Userpage?page=${$scope.currentPage}&size=${$scope.pageSize}`,
+        config
+      )
+      .then(
+        function (response) {
+          console.log(response.data);
+          $scope.pageInfo = response.data.page;
+          $scope.staffs = response.data.content;
+          console.log($scope.pageInfo);
+          console.log($scope.staffs);
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể tải danh sách nhân viên"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+  };
+
+  $scope.nextPage = function () {
+    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+      $scope.currentPage++;
+      $scope.GetStaffs();
+    }
+  };
+
+  $scope.previousPage = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      $scope.GetStaffs();
+    }
+  };
+
+  $scope.goToFirstPage = function () {
+    $scope.currentPage = 0;
+    $scope.GetStaffs();
+  };
+
+  $scope.goToLastPage = function () {
+    $scope.currentPage = $scope.pageInfo.totalPages - 1;
+
+    $scope.GetStaffs();
   };
 
   $scope.GetCustomers = function () {
-    $http.get(`${API_BASE_URL}/user/lst`, config).then(
-      function (response) {
-        console.log(response.data);
-        $scope.customers = response.data.filter((staff) => staff.role.id === 2);
-        console.log($scope.customers);
-      },
-      function (error) {
-        const errorMessage = parseErrorMessages(
-          error,
-          "Không thể tải danh sách nhân viên"
-        );
-        $scope.showNotification(errorMessage, "error");
-      }
-    );
+    $http
+      .get(
+        `${API_BASE_URL}/user/Customerpage?page=${$scope.currentPage}&size=${$scope.pageSize}`,
+        config
+      )
+      .then(
+        function (response) {
+          console.log(response.data);
+          $scope.pageInfos = response.data.page;
+          $scope.customers = response.data.content;
+          console.log($scope.customers);
+        },
+        function (error) {
+          const errorMessage = parseErrorMessages(
+            error,
+            "Không thể tải danh sách nhân viên"
+          );
+          $scope.showNotification(errorMessage, "error");
+        }
+      );
+  };
+
+  $scope.nextPageC = function () {
+    if ($scope.currentPage < $scope.pageInfos.totalPages - 1) {
+      $scope.currentPage++;
+      $scope.GetCustomers();
+    }
+  };
+
+  $scope.previousPageC = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      $scope.GetCustomers();
+    }
+  };
+
+  $scope.goToFirstPageC = function () {
+    $scope.currentPage = 0;
+    $scope.GetCustomers();
+  };
+
+  $scope.goToLastPageC = function () {
+    $scope.currentPage = $scope.pageInfos.totalPages - 1;
+
+    $scope.GetCustomers();
   };
 
   $scope.deleteItem = function (id) {

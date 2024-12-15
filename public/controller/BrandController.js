@@ -1,6 +1,6 @@
 app.controller("BrandController", function ($scope, $http, $location, socket) {
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://localhost:1234/api/Milkbrand";
+  const API_BASE_URL = "http://160.30.21.47:1234/api/Milkbrand";
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   $scope.brands = [];
   $scope.formData = {};
@@ -84,8 +84,6 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
                     : "Không thể cập nhật thương hiệu"
                 );
                 $scope.showNotification(errorMessage, "error");
-                $scope.getBrands();
-                $scope.resetForm();
               }
             }
           );
@@ -183,39 +181,28 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
     }
     return defaultMessage;
   }
-
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
-      if ($scope.formData.milkbrandname) {
-        $scope.search();
-      } else {
-        $scope.getBrands();
-      }
+      $scope.getBrands();
     }
   };
+
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
-      if ($scope.formData.milkbrandname) {
-        $scope.search();
-      } else {
-        $scope.getBrands();
-      }
+      $scope.getBrands();
     }
   };
 
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
-    if ($scope.formData.milkbrandname) {
-      $scope.search();
-    } else {
-      $scope.getBrands();
-    }
+    $scope.getBrands();
   };
 
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
+
     if ($scope.formData.milkbrandname) {
       $scope.search();
     } else {
@@ -267,6 +254,7 @@ app.controller("BrandController", function ($scope, $http, $location, socket) {
         $scope.showNotification(errorMessage, "error");
       }
     );
+    $scope.getBrands();
   };
 
   $scope.availableStatuses = [

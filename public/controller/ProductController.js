@@ -2,7 +2,7 @@ app.controller(
   "ProductController",
   function ($scope, $http, $location, socket) {
     const token = localStorage.getItem("authToken");
-    const API_BASE_URL = "http://localhost:1234/api";
+    const API_BASE_URL = "http://160.30.21.47:1234/api";
 
     $scope.targets = [];
     $scope.deletedtargets = [];
@@ -114,6 +114,29 @@ app.controller(
         }
       );
     };
+    $scope.nextPage = function () {
+      if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+        $scope.currentPage++;
+        $scope.getProducts();
+      }
+    };
+
+    $scope.previousPage = function () {
+      if ($scope.currentPage > 0) {
+        $scope.currentPage--;
+        $scope.getProducts();
+      }
+    };
+
+    $scope.goToFirstPage = function () {
+      $scope.currentPage = 0;
+      $scope.getProducts();
+    };
+
+    $scope.goToLastPage = function () {
+      $scope.currentPage = $scope.pageInfo.totalPages - 1;
+      $scope.getProducts();
+    };
 
     // Lấy thông tin sản phẩm theo ID
     $scope.getItemById = function (id) {
@@ -209,8 +232,6 @@ app.controller(
                         : "Không thể cập nhật sản phẩm"
                     );
                     $scope.showNotification(errorMessage, "error");
-                    $scope.resetForm(); // Reset form sau khi lưu
-                    $scope.getProducts();
                   }
                 }
               )
@@ -387,89 +408,6 @@ app.controller(
       .catch((error) => {
         console.error(error);
       });
-
-    $scope.nextPage = function () {
-      if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
-        $scope.currentPage++;
-        if ($scope.formData.productname) {
-          $scope.search();
-        } else {
-          $scope.getProducts();
-        }
-      }
-    };
-
-    $scope.previousPage = function () {
-      if ($scope.currentPage > 0) {
-        $scope.currentPage--;
-        if ($scope.formData.productname) {
-          $scope.search();
-        } else {
-          $scope.getProducts();
-        }
-      }
-    };
-
-    $scope.goToFirstPage = function () {
-      $scope.currentPage = 0;
-      if ($scope.formData.productname) {
-        $scope.search();
-      } else {
-        $scope.getProducts();
-      }
-    };
-
-    $scope.goToLastPage = function () {
-      $scope.currentPage = $scope.pageInfo.totalPages - 1;
-      if ($scope.formData.productname) {
-        $scope.search();
-      } else {
-        $scope.getProducts();
-      }
-    };
-
-    $scope.search = function () {
-      const searchQuery = $scope.formData.productname;
-
-      if (!searchQuery || searchQuery.trim() === "") {
-        $scope.showNotification(
-          "Vui lòng nhập tên sản phẩm để tìm kiếm.",
-          "error"
-        );
-        return;
-      }
-
-      $http({
-        method: "GET",
-        url: `${API_BASE_URL}/Product/productPageByName?productname=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(
-        function (response) {
-          $scope.pageInfo = response.data.page;
-          $scope.products = response.data.content;
-
-          if ($scope.brands.length === 0) {
-            $scope.showNotification(
-              "Không tìm thấy sản phẩm nào phù hợp.",
-              "warning"
-            );
-            $scope.getProducts();
-            $scope.resetForm();
-          }
-        },
-        function (error) {
-          const errorMessage = parseErrorMessages(
-            error,
-            "Không thể tìm kiếm sản phẩm."
-          );
-          $scope.showNotification(errorMessage, "error");
-          $scope.getProducts();
-          $scope.resetForm();
-        }
-      );
-    };
 
     // Add any initial content or other logic
     $scope.editorContent = "";

@@ -22,7 +22,7 @@
                 <thead>
                 <tr>
                   
-                  <th>ID nhân viên</th>
+                  <th>STT</th>
                   <th>Tên đăng nhập</th>
                   <th>Họ và tên</th>
                   <th>Email</th>
@@ -37,7 +37,7 @@
                 <tbody>
                 <tr ng-repeat="item in customers track by $index">
                   
-                  <td width="10">{{item.id}}</td>
+                  <td width="10">{{$index +1}}</td>
                   <td width="100">{{item.username}}</td>
                   <td width="100">{{item.fullname}}</td>
                   <td width="100">{{item.email}}</td>
@@ -59,6 +59,42 @@
                 </tr>
                 </tbody>
               </table>
+              <div
+              class="pagination-controls d-flex justify-content-center align-items-center my-3"
+            >
+              <button
+                class="btn btn-primary mx-2"
+                ng-disabled="currentPage === 0"
+                ng-click="goToFirstPageC()"
+              >
+                First
+              </button>
+              <button
+                class="btn btn-primary mx-2"
+                ng-disabled="currentPage === 0"
+                ng-click="previousPageC()"
+              >
+                Previous
+              </button>
+              <span class="mx-2"
+                >Page {{ currentPage + 1 }} of {{ pageInfos.totalPages
+                }}</span
+              >
+              <button
+                class="btn btn-primary mx-2"
+                ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="nextPageC()"
+              >
+                Next
+              </button>
+              <button
+                class="btn btn-primary mx-2"
+                ng-disabled="currentPage === pageInfo.totalPages - 1"
+                ng-click="goToLastPageC()"
+              >
+                Last
+              </button>
+            </div>
             </div>
 
           </div>
