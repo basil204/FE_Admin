@@ -208,7 +208,7 @@ app.controller("StaffController", function ($scope, $http, $location) {
           const data = {
             fullname: $scope.formData.fullname,
             phonenumber: $scope.formData.phonenumber,
-            email: $scope.formData.email,
+            address: $scope.formData.address,
             role: { id: $scope.formData.role },
           };
 
