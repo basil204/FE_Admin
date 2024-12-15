@@ -660,9 +660,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       $scope.currentPage++;
       if (
         $scope.filters &&
-        ($scope.filters.milkTasteId ||
-          $scope.filters.packagingUnitId ||
-          $scope.filters.usageCapacityId ||
+        ($scope.filters.productname ||
           $scope.filters.milkBrandId ||
           $scope.filters.targetUserId ||
           $scope.filters.milkTypeId)
@@ -679,9 +677,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       $scope.currentPage--;
       if (
         $scope.filters &&
-        ($scope.filters.milkTasteId ||
-          $scope.filters.packagingUnitId ||
-          $scope.filters.usageCapacityId ||
+        ($scope.filters.productname ||
           $scope.filters.milkBrandId ||
           $scope.filters.targetUserId ||
           $scope.filters.milkTypeId)
@@ -697,9 +693,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     $scope.currentPage = 0;
     if (
       $scope.filters &&
-      ($scope.filters.milkTasteId ||
-        $scope.filters.packagingUnitId ||
-        $scope.filters.usageCapacityId ||
+      ($scope.filters.productname ||
         $scope.filters.milkBrandId ||
         $scope.filters.targetUserId ||
         $scope.filters.milkTypeId)
@@ -714,9 +708,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     if (
       $scope.filters &&
-      ($scope.filters.milkTasteId ||
-        $scope.filters.packagingUnitId ||
-        $scope.filters.usageCapacityId ||
+      ($scope.filters.productname ||
         $scope.filters.milkBrandId ||
         $scope.filters.targetUserId ||
         $scope.filters.milkTypeId)

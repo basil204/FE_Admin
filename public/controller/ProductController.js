@@ -353,8 +353,14 @@ app.controller("ProductController", function ($scope, $http, $location) {
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
-      if ($scope.formData.productname) {
-        $scope.search();
+      if (
+        $scope.filters &&
+        ($scope.filters.productname ||
+          $scope.filters.milkBrand ||
+          $scope.filters.targetUser ||
+          $scope.filters.milkType)
+      ) {
+        $scope.searchInvoices();
       } else {
         $scope.getProducts();
       }
@@ -363,8 +369,14 @@ app.controller("ProductController", function ($scope, $http, $location) {
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
-      if ($scope.formData.productname) {
-        $scope.search();
+      if (
+        $scope.filters &&
+        ($scope.filters.productname ||
+          $scope.filters.milkBrand ||
+          $scope.filters.targetUser ||
+          $scope.filters.milkType)
+      ) {
+        $scope.searchInvoices();
       } else {
         $scope.getProducts();
       }
@@ -372,16 +384,28 @@ app.controller("ProductController", function ($scope, $http, $location) {
   };
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
-    if ($scope.formData.productname) {
-      $scope.search();
+    if (
+      $scope.filters &&
+      ($scope.filters.productname ||
+        $scope.filters.milkBrand ||
+        $scope.filters.targetUser ||
+        $scope.filters.milkType)
+    ) {
+      $scope.searchInvoices();
     } else {
       $scope.getProducts();
     }
   };
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    if ($scope.formData.productname) {
-      $scope.search();
+    if (
+      $scope.filters &&
+      ($scope.filters.productname ||
+        $scope.filters.milkBrand ||
+        $scope.filters.targetUser ||
+        $scope.filters.milkType)
+    ) {
+      $scope.searchInvoices();
     } else {
       $scope.getProducts();
     }
@@ -425,6 +449,61 @@ app.controller("ProductController", function ($scope, $http, $location) {
       }
     );
   };
+
+  $scope.searchInvoices = function () {
+    let queryParams = [];
+
+    // Lấy các bộ lọc từ mô hình tìm kiếm
+    if ($scope.filters.productname) {
+      queryParams.push(`productname=${$scope.filters.productname}`);
+    }
+    if ($scope.filters.milkBrand) {
+      queryParams.push(`milkBrand=${$scope.filters.milkBrand}`);
+    }
+    if ($scope.filters.targetUser) {
+      queryParams.push(`targetUser=${$scope.filters.targetUser}`);
+    }
+    if ($scope.filters.milkType) {
+      queryParams.push(`milkType=${$scope.filters.milkType}`);
+    }
+
+    // Mặc định giá trị phân trang nếu không có giá trị
+    const currentPage = $scope.currentPage > 0 ? $scope.currentPage - 1 : 0; // API bắt đầu từ 0
+    const pageSize = $scope.pageSize || 10; // Mặc định là 10 kết quả mỗi trang
+
+    // Thêm tham số phân trang
+    queryParams.push(`page=${currentPage}`);
+    queryParams.push(`size=${pageSize}`);
+
+    // Nối các tham số lại thành chuỗi query string
+    let queryString = queryParams.join("&");
+
+    // Gửi yêu cầu GET với chuỗi query string
+    $http({
+      method: "GET",
+      url: `http://localhost:1234/api/Product/filter?${queryString}`,
+      headers: { Authorization: `Bearer ${token}` }, // Đảm bảo token đúng
+    }).then(
+      function (response) {
+        const data = response.data;
+        if (data && data.message && data.message.content) {
+          $scope.products = data.message.content; // Lấy danh sách sản phẩm
+          $scope.pageInfo = data.message.page; // Lấy thông tin phân trang
+          console.log("Products loaded:", $scope.products);
+        } else {
+          console.error("Invalid API response structure:", data);
+          $scope.products = []; // Không có dữ liệu
+          $scope.pageInfo = null;
+        }
+      },
+      function (error) {
+        console.error("Error fetching milk details:", error);
+        $scope.showNotification("Không thể tải sản phẩm", "error");
+        $scope.resetForm();
+      }
+    );
+  };
+
   // Add any initial content or other logic
   $scope.editorContent = "";
   // Gọi các hàm lấy dữ liệu ban đầu
