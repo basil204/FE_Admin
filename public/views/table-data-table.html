@@ -2,7 +2,9 @@
   <main class="app-content">
     <div class="app-title">
       <ul class="app-breadcrumb breadcrumb side">
-        <li class="breadcrumb-item active"><a href="#"><b>Danh sách Người Dùng</b></a></li>
+        <li class="breadcrumb-item active">
+          <a href="#"><b>Danh sách Người Dùng</b></a>
+        </li>
       </ul>
       <div id="clock"></div>
     </div>
@@ -11,58 +13,117 @@
       <div class="col-md-12">
         <div class="tile">
           <div class="tile-body">
-
-            
-            
-            <div style="overflow-x: auto; margin-top: 10px;">
+            <div style="overflow-x: auto; margin-top: 10px">
               <div ng-if="notification.message" class="form-group col-md-12">
-                <div class="alert" ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}">
+                <div
+                  class="alert"
+                  ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}"
+                >
                   {{ notification.message }}
                 </div>
               </div>
-              <table class="table table-hover table-bordered js-copytextarea" cellpadding="0" cellspacing="0" border="0" id="sampleTable" style="width: 100%;">
+              <table
+                class="table table-hover table-bordered js-copytextarea"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                id="sampleTable"
+                style="width: 100%"
+              >
                 <thead>
-                <tr>
-                  <th width="10"><input type="checkbox" id="all"></th>
-                  <th>ID nhân viên</th>
-                  <th>Tên đăng nhập</th>
-                  <th>Họ và tên</th>
-                  <th>Email</th>
-                  <th>Địa chỉ</th>
-                  <th>Số điện thoại</th>
-                  <th>Ngày tạo</th>
-                  <th>Chức vụ</th>
-                  <th>Trạng thái</th>
-                  <th width="100">Tính năng</th>
-                </tr>
+                  <tr>
+                    <th width="10"><input type="checkbox" id="all" /></th>
+                    <th>ID nhân viên</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày tạo</th>
+                    <th>Chức vụ</th>
+                    <th>Trạng thái</th>
+                    <th width="100">Tính năng</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="item in staffs track by $index">
-                  <td width="10"><input type="checkbox" name="check1" value="1"></td>
-                  <td width="10">{{$index +1}}</td>
-                  <td width="100">{{item.username}}</td>
-                  <td width="100">{{item.fullname}}</td>
-                  <td width="100">{{item.email}}</td>
-                  <td width="100">{{item.address}}</td>
-                  <td width="100">{{item.phonenumber}}</td>
-                  <td width="100">{{item.registrationdate}}</td>
-                  <td width="100">{{item.role.roleName}}</td>
-                  <td width="100" ng-class="{'text-success': item.status === 1, 'text-danger': item.status !== 1}">
-                    <span ng-if="item.status === 1">Hoạt động</span>
-                    <span ng-if="item.status !== 1">Dừng hoạt động</span>
-                </td>
-                  <td class="table-td-center">
-                    <button ng-click="deleteItem(item.id)" class="btn btn-danger btn-sm">Xóa</button>
-                    <button ng-click="getItemById(item.id)" class="btn btn-primary btn-sm edit" type="button" title="Sửa" id="show-emp" data-toggle="modal" data-target="#ModalUP">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <!-- <button ng-click="getItemById(user.id)" class="btn btn-primary btn-sm" data-target="#ModalUP">Chỉnh sửa</button> -->
-                  </td>
-                </tr>
+                  <tr ng-repeat="item in staffs track by $index">
+                    <td width="10">
+                      <input type="checkbox" name="check1" value="1" />
+                    </td>
+                    <td width="10">{{$index +1}}</td>
+                    <td width="100">{{item.username}}</td>
+                    <td width="100">{{item.fullname}}</td>
+                    <td width="100">{{item.email}}</td>
+                    <td width="100">{{item.address}}</td>
+                    <td width="100">{{item.phonenumber}}</td>
+                    <td width="100">{{item.registrationdate}}</td>
+                    <td width="100">{{item.role.roleName}}</td>
+                    <td
+                      width="100"
+                      ng-class="{'text-success': item.status === 1, 'text-danger': item.status !== 1}"
+                    >
+                      <span ng-if="item.status === 1">Hoạt động</span>
+                      <span ng-if="item.status !== 1">Dừng hoạt động</span>
+                    </td>
+                    <td class="table-td-center">
+                      <button
+                        ng-click="deleteItem(item.id)"
+                        class="btn btn-danger btn-sm"
+                      >
+                        Xóa
+                      </button>
+                      <button
+                        ng-click="getItemById(item.id)"
+                        class="btn btn-primary btn-sm edit"
+                        type="button"
+                        title="Sửa"
+                        id="show-emp"
+                        data-toggle="modal"
+                        data-target="#ModalUP"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <!-- <button ng-click="getItemById(user.id)" class="btn btn-primary btn-sm" data-target="#ModalUP">Chỉnh sửa</button> -->
+                    </td>
+                  </tr>
                 </tbody>
               </table>
+              <div
+                class="pagination-controls d-flex justify-content-center align-items-center my-3"
+              >
+                <button
+                  class="btn btn-primary mx-2"
+                  ng-disabled="currentPage === 0"
+                  ng-click="goToFirstPage()"
+                >
+                  First
+                </button>
+                <button
+                  class="btn btn-primary mx-2"
+                  ng-disabled="currentPage === 0"
+                  ng-click="previousPage()"
+                >
+                  Previous
+                </button>
+                <span class="mx-2"
+                  >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span
+                >
+                <button
+                  class="btn btn-primary mx-2"
+                  ng-disabled="currentPage === pageInfo.totalPages - 1"
+                  ng-click="nextPage()"
+                >
+                  Next
+                </button>
+                <button
+                  class="btn btn-primary mx-2"
+                  ng-disabled="currentPage === pageInfo.totalPages - 1"
+                  ng-click="goToLastPage()"
+                >
+                  Last
+                </button>
+              </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -72,53 +133,84 @@
   <!--
   MODAL
   -->
-  <div class="modal fade" id="ModalUP" tabindex="-1" role="dialog" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="ModalUP"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
-
         <div class="modal-body">
           <div class="row">
-            <div class="form-group  col-md-12">
+            <div class="form-group col-md-12">
               <span class="thong-tin-thanh-toan">
                 <h5>Chỉnh sửa thông tin nhân viên cơ bản</h5>
               </span>
             </div>
           </div>
           <div ng-if="notification.message" class="form-group col-md-12">
-            <div class="alert" ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}">
+            <div
+              class="alert"
+              ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}"
+            >
               {{ notification.message }}
             </div>
           </div>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">ID nhân viên</label>
-              <input class="form-control" type="text"  ng-model="formData.id" required  disabled>
+              <input
+                class="form-control"
+                type="text"
+                ng-model="formData.id"
+                required
+                disabled
+              />
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Họ và tên</label>
-              <input class="form-control" type="text"  ng-model="formData.fullname" required >
+              <input
+                class="form-control"
+                type="text"
+                ng-model="formData.fullname"
+                required
+              />
             </div>
-            <div class="form-group  col-md-6">
+            <div class="form-group col-md-6">
               <label class="control-label">Số điện thoại</label>
-              <input class="form-control" type="text"  ng-model="formData.phonenumber" required >
+              <input
+                class="form-control"
+                type="text"
+                ng-model="formData.phonenumber"
+                required
+              />
             </div>
-           
-            <div class="form-group  col-md-6">
+
+            <div class="form-group col-md-6">
               <label for="exampleSelect1" class="control-label">Chức vụ</label>
-              <select class="form-control" id="targetSelect" ng-model="formData.role">
-                <option ng-repeat="role in roles" ng-value="role.id">{{role.roleName}}</option>
-            </select>
+              <select
+                class="form-control"
+                id="targetSelect"
+                ng-model="formData.role"
+              >
+                <option ng-repeat="role in roles" ng-value="role.id">
+                  {{role.roleName}}
+                </option>
+              </select>
             </div>
           </div>
-          <BR>
-          <BR>
-          <BR>
-            <button class="btn btn-success" type="button" ng-click="updateItem()">Lưu lại</button>
+          <br />
+          <br />
+          <br />
+          <button class="btn btn-success" type="button" ng-click="updateItem()">
+            Lưu lại
+          </button>
           <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
-          <BR>
+          <br />
         </div>
-        <div class="modal-footer">
-        </div>
+        <div class="modal-footer"></div>
       </div>
     </div>
   </div>
