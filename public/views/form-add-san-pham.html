@@ -1460,7 +1460,7 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -1487,6 +1487,7 @@
                         type="text"
                         ng-model="formData.vouchercode"
                         required
+                        ng-disabled="formData.id"
                       />
                     </div>
                     <div class="form-group col-md-12">
