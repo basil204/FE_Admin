@@ -40,7 +40,7 @@
               <table class="table table-hover table-bordered" id="sampleTable" style="width: 100%;">
                 <thead>
                 <tr>
-                  <th width="10"><input type="checkbox" id="all"></th>
+                  <th>STT</th>
                   <th>Mã sản phẩm</th>
                   <th>Tên sản phẩm</th>
                   <th>Loại Sản Phẩm</th>
@@ -57,8 +57,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter}">
-                  <td width="10"><input type="checkbox" name="check1" value="1"></td>
+                <tr ng-repeat="milkdetail in Milkdetails | filter:searchQuery | filter:{status: statusFilter} track by $index">
+                  <td>{{$index +1}}</td>
                   <td>{{milkdetail.milkdetailcode}}</td>
                   <td>{{milkdetail.product.productname}}</td>
                   <td>{{milkdetail.product.milkType.milkTypename}}</td>

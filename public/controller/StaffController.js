@@ -229,11 +229,10 @@ app.controller("StaffController", function ($scope, $http, $location) {
               $scope.resetForm(); // Clear form after success
             },
             function (error) {
-              const errorMessage = parseErrorMessages(
-                error,
-                "Không thể cập nhật tài khoản"
-              );
-              $scope.showNotification(errorMessage, "error");
+              $scope.showNotification(error.data.error, "error");
+              $scope.GetCustomers();
+              $scope.GetStaffs();
+              $scope.resetForm();
             }
           );
         } catch (exception) {
