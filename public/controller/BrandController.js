@@ -73,22 +73,9 @@ app.controller("BrandController", function ($scope, $http, $location) {
               $scope.resetForm(); // Clear form after success
             },
             function (error) {
-              if (error.status === 400 && error.data && error.data.errors) {
-                // Extract and display only the first validation error
-                const firstError = error.data.errors[0];
-                const errorMessage = ` ${firstError.message}`;
-                $scope.showNotification(errorMessage, "error");
-              } else {
-                const errorMessage = parseErrorMessages(
-                  error,
-                  method === "POST"
-                    ? "Không thể thêm thương hiệu"
-                    : "Không thể cập nhật thương hiệu"
-                );
-                $scope.showNotification(errorMessage, "error");
-                $scope.getBrands();
-                $scope.resetForm();
-              }
+              $scope.showNotification(error.data.error, "error");
+              $scope.getBrands();
+              $scope.resetForm();
             }
           );
         } catch (exception) {
@@ -123,7 +110,7 @@ app.controller("BrandController", function ($scope, $http, $location) {
         }).then(
           function (response) {
             const message =
-              response.data.message || "Xóa thương hiệu thành công";
+              response.data.success || "Xóa thương hiệu thành công";
             $scope.showNotification(message, "success");
             $scope.getBrands();
           },
