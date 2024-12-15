@@ -1,4 +1,4 @@
-app.controller("DonHangController", function ($scope, $http, socket) {
+app.controller("DonHangController", function ($scope, $http, $rootScope) {
   const token = localStorage.getItem("authToken");
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   $scope.invoices = [];
@@ -14,14 +14,15 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       Authorization: `Bearer ${token}`,
     },
   };
-  const baseUrl = "http://160.30.21.47:1234/api";
+  const baseUrl = "http://localhost:1234/api";
 
   $scope.decreaseQuantity = function (item) {
     if (item.quantity > 0) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+          `http://localhost:1234/api/Milkdetail/checkcount/${
+            item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
         )
@@ -55,7 +56,8 @@ app.controller("DonHangController", function ($scope, $http, socket) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+        `http://localhost:1234/api/Milkdetail/checkcount/${
+          item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
       )
@@ -87,7 +89,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
   };
 
   $scope.checkStockQuantity = function (item) {
-    const apiUrl = `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
+    const apiUrl = `http://localhost:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
 
     // Gửi yêu cầu kiểm tra số lượng từ API
     $http
@@ -100,7 +102,7 @@ app.controller("DonHangController", function ($scope, $http, socket) {
         } else if (response.status === 404) {
           $scope.showNotification(
             "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-            response.data.currentStock,
+              response.data.currentStock,
             "error"
           );
           item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
@@ -123,10 +125,15 @@ app.controller("DonHangController", function ($scope, $http, socket) {
   };
   $scope.calculateTotalInvoiceAmount = function () {
     let total = 0;
-    // Sum up the totalAmount for each item
-    $scope.items.forEach(function (item) {
-      total += item.totalAmount;
-    });
+
+    // Ensure that $scope.items is an array before calling forEach
+    if (Array.isArray($scope.items)) {
+      $scope.items.forEach(function (item) {
+        if (item.totalAmount) {
+          total += item.totalAmount;
+        }
+      });
+    }
     return total;
   };
   $scope.getFilteredStatusesForInvoice = function (invoiceId) {
@@ -353,24 +360,14 @@ app.controller("DonHangController", function ($scope, $http, socket) {
   $scope.getStatus = function (statusCode) {
     return $scope.statusMap[statusCode] || "Không xác định";
   };
-  if (!socket.isConnected) {
-    socket.connect().then(function () {
-      socket.subscribe(
-        `/user/${userInfo.sub}/queue/messages`,
-        function (message) {
-          console.log(message);
-          $scope.loadInvoice(message);
-        }
-      );
-      socket.subscribe("/topic/messages", function (message) {
-        Toast.fire({
-          icon: "info",
-          title: `Hóa đơn #${message} đã được đặt!`,
-        });
+  $rootScope.$on('$viewContentLoaded', function () {
+    if ($rootScope.stompClient && $rootScope.stompClient.connected) {
+      // Đăng ký subscription để nhận thông điệp từ WebSocket
+      $rootScope.stompClient.subscribe(`/user/${userInfo.sub}/queue/messages`, function (message) {
+        handleIncomingMessage(message);
       });
-      socket.sendMessage("/app/cod", "a");
-    });
-  }
+    }
+  });
   $scope.invoiceOk = function (invoiceID) {
     Swal.fire({
       title: "Bạn có chắc muốn duyệt hóa đơn này?", // Question text
@@ -382,13 +379,13 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       reverseButtons: true, // Optional: makes the cancel button appear on the left
     }).then((result) => {
       if (result.isConfirmed) {
-        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`
+        const url = `http://localhost:1234/api/Invoice/waiting/${invoiceID}`;
         // Use Angular's $http for better integration
         $http
           .put(url, Number(userInfo.id), config)
           .then((response) => {
             if (response.data.success) {
-              socket.sendMessage("/app/cod", "a");
+              $scope.sendMessage("/app/cod", "a")
               $scope.showNotification("Duyệt hóa đơn thành công!", "success");
             } else {
               $scope.showNotification(
@@ -418,8 +415,16 @@ app.controller("DonHangController", function ($scope, $http, socket) {
       timerProgressBar: true,
     });
   };
-  $scope.loadInvoice = function (invoice) {
-    $scope.invoices = invoice;
+  function handleIncomingMessage(message) {
+    console.log("Received message:", JSON.parse(message.body));
+    $scope.invoices = JSON.parse(message.body);
     $scope.$apply();
+  }
+  $scope.sendMessage = function (url, message) {
+    if ($rootScope.stompClient && $rootScope.stompClient.connected) {
+      $rootScope.stompClient.send(url, {}, JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
   };
 });

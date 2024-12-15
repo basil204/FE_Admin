@@ -14,7 +14,7 @@ app.run([
     });
   },
 ]);
-app.run(function ($rootScope, $location, socket) {
+app.run(function ($rootScope, $location) {
   const token = localStorage.getItem("authToken");
 
   // Check if token exists and decode user info from token
@@ -37,8 +37,6 @@ app.run(function ($rootScope, $location, socket) {
 
   // Logout function
   $rootScope.logout = function () {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    socket.disconnect();
     localStorage.removeItem("authToken");
     localStorage.removeItem("userInfo");
 
@@ -188,70 +186,70 @@ app.config(function ($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
 });
 
-app.factory("socket", [
-  "$q",
-  function ($q) {
-    var socket = null;
-    var stompClient = null;
-    var subscriptions = {}; // Khai báo biến subscriptions để lưu danh sách topic đã subscribe
-    var isConnected = false;
-    return {
-      connect: function () {
-        var deferred = $q.defer();
-        var token = localStorage.getItem("authToken");
-        var socketUrl =
-          "http://160.30.21.47:1234/api/ws?token=" + encodeURIComponent(token);
+app.run(function ($rootScope, $http, $location) {
+  let socket = null;
+  let stompClient = null;
+  let isConnected = false;
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-right",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+  });
+  // Kết nối WebSocket tự động khi ứng dụng được khởi tạo
+  function connectWebSocket() {
+    if (isConnected) {
+      return; // Nếu đã kết nối rồi thì không cần kết nối lại
+    }
 
-        socket = new SockJS(socketUrl);
-        stompClient = Stomp.over(socket);
+    const token = localStorage.getItem("authToken"); // Lấy token từ localStorage
+    const socketUrl = `http://160.30.21.47:1234/api/ws?token=${encodeURIComponent(
+      token
+    )}`;
 
-        // Kết nối với Stomp server
-        stompClient.connect(
-          {},
-          function (frame) {
-            console.log("Connected: " + frame);
-            isConnected = true;
-            deferred.resolve();
-          },
-          function (error) {
-            console.error("Error: " + error);
-            isConnected = false;
-            deferred.reject(error);
-          }
-        );
+    socket = new SockJS(socketUrl); // Tạo kết nối SockJS
+    stompClient = Stomp.over(socket); // Tạo đối tượng Stomp client
 
-        return deferred.promise;
+    stompClient.connect(
+      {},
+      function (frame) {
+        isConnected = true;
+        console.log("WebSocket connected: " + frame);
+
+        // Đăng ký các subscriptions tại đây
+        stompClient.subscribe("/topic/messages", function (message) {
+          console.log("Received message: ", message.body);
+          // Xử lý thông điệp ở đây (ví dụ: hiển thị Toast)
+          Toast.fire({
+            icon: "info",
+            title: `Hóa đơn #${message.body} đã được đặt!`,
+          });
+        });
       },
+      function (error) {
+        console.error("Error: " + error);
+      }
+    );
 
-      subscribe: function (destination, callback) {
-        if (stompClient) {
-          if (!subscriptions[destination]) {
-            subscriptions[destination] = stompClient.subscribe(
-              destination,
-              function (response) {
-                callback(JSON.parse(response.body));
-              }
-            );
-          }
-        } else {
-          console.error("Stomp client is not connected!");
-        }
-      },
+    // Gắn stompClient vào $rootScope để sử dụng ở các controller khác
+    $rootScope.stompClient = stompClient;
+  }
 
-      sendMessage: function (destination, message) {
-        if (stompClient) {
-          stompClient.send(destination, {}, JSON.stringify(message));
-        }
-      },
+  // Ngắt kết nối WebSocket
+  function disconnectWebSocket() {
+    if (stompClient) {
+      stompClient.disconnect();
+      isConnected = false;
+      console.log("WebSocket disconnected");
+    }
+  }
 
-      disconnect: function () {
-        if (stompClient) {
-          stompClient.disconnect();
-          stompClient = null;
-          subscriptions = {}; // Xóa danh sách subscriptions
-          isConnected = false;
-        }
-      },
-    };
-  },
-]);
+  // Kết nối WebSocket khi ứng dụng được khởi tạo
+  connectWebSocket();
+
+  // Đảm bảo ngắt kết nối WebSocket khi ứng dụng bị hủy
+  $rootScope.$on("$destroy", function () {
+    disconnectWebSocket();
+  });
+});

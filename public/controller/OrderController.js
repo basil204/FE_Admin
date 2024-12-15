@@ -2,7 +2,7 @@ app.controller("OrderController", function ($scope, $http) {
   const token = localStorage.getItem("authToken");
 
   // Define base URL for API
-  const baseUrl = "http://160.30.21.47:1234/api";
+  const baseUrl = "http://localhost:1234/api";
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -16,7 +16,8 @@ app.controller("OrderController", function ($scope, $http) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+          `http://localhost:1234/api/Milkdetail/checkcount/${
+            item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
         )
@@ -49,7 +50,8 @@ app.controller("OrderController", function ($scope, $http) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid
+        `http://localhost:1234/api/Milkdetail/checkcount/${
+          item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
       )
@@ -81,7 +83,7 @@ app.controller("OrderController", function ($scope, $http) {
   };
 
   $scope.checkStockQuantity = function (item) {
-    const apiUrl = `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
+    const apiUrl = `http://localhost:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
 
     // Gửi yêu cầu kiểm tra số lượng từ API
     $http
@@ -94,7 +96,7 @@ app.controller("OrderController", function ($scope, $http) {
         } else if (response.status === 404) {
           $scope.showNotification(
             "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-            response.data.currentStock,
+              response.data.currentStock,
             "error"
           );
           item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
@@ -649,7 +651,7 @@ app.controller("OrderController", function ($scope, $http) {
 
   // Check Zalo account by phone number
   $scope.checkZalo = function (phoneNumber) {
-    const apiUrl = `http://160.30.21.47:3030/api/customerinfo?phone=${phoneNumber}`;
+    const apiUrl = `http://localhost:3030/api/customerinfo?phone=${phoneNumber}`;
 
     $http({
       method: "GET",

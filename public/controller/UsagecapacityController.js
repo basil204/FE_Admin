@@ -1,6 +1,6 @@
 app.controller(
   "UsagecapacityController",
-  function ($scope, $http, $location, socket) {
+  function ($scope, $http, $location) {
     const token = localStorage.getItem("authToken");
     const API_BASE_URL = "http://localhost:1234/api/Usagecapacity";
 

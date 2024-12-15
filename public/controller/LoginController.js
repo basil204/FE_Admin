@@ -1,6 +1,6 @@
 app.controller(
   "LoginController",
-  function ($scope, $http, $rootScope, $location, socket) {
+  function ($scope, $http, $rootScope, $location) {
     $scope.user = {};
     $scope.loading = false;
 
@@ -23,7 +23,7 @@ app.controller(
       $scope.loading = true;
 
       $http
-        .post("http://160.30.21.47:1234/api/user/authenticate", {
+        .post("http://localhost:1234/api/user/authenticate", {
           username: $scope.user.username,
           password: $scope.user.password,
         })
@@ -45,8 +45,7 @@ app.controller(
                   confirmButtonText: "OK",
                   timer: 3000,
                 }).then(() => {
-                  $location.path("/home");
-                  $scope.$apply();
+                  window.location.href = "/home";
                 });
               } else {
                 Swal.fire({
