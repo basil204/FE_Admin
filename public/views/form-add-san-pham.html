@@ -201,13 +201,13 @@
                     ng-model="filters.productname"
                     class="form-control"
                     placeholder="Tìm kiếm theo productname:"
-                    ng-change="searchInvoices()"
+                    ng-change="searchProduct()"
                   />
                 </div>
                 <div class="col-md-2">
                   <select
                     class="form-control"
-                    ng-change="searchInvoices()"
+                    ng-change="searchProduct()"
                     ng-model="filters.milkBrand"
                     ng-options="brand.id as brand.milkbrandname for brand in brands"
                   >
@@ -217,7 +217,7 @@
                 <div class="col-md-2">
                   <select
                     class="form-control"
-                    ng-change="searchInvoices()"
+                    ng-change="searchProduct()"
                     ng-model="filters.targetUser"
                     ng-options="user.id as user.targetuser for user in targets"
                   >
@@ -227,7 +227,7 @@
                 <div class="col-md-2">
                   <select
                     class="form-control"
-                    ng-change="searchInvoices()"
+                    ng-change="searchProduct()"
                     ng-model="filters.milkType"
                     ng-options="type.id as type.milkTypename for type in types"
                   >
@@ -401,7 +401,7 @@
                         <button
                           class="btn btn-primary"
                           type="button"
-                          ng-click="search()"
+                          ng-click="resetFormBrand()"
                         >
                           Tìm kiếm
                         </button>
@@ -490,37 +490,41 @@
                         </table>
                       </div>
                       <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -594,7 +598,7 @@
                         <button
                           class="btn btn-primary"
                           type="button"
-                          ng-click="search()"
+                          ng-click="resetFormTastes()"
                         >
                           Tìm kiếm
                         </button>
@@ -672,37 +676,41 @@
                         </table>
                       </div>
                       <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                     </div>
                   </div>
 
@@ -776,7 +784,7 @@
                           <button
                             class="btn btn-primary"
                             type="button"
-                            ng-click="search()"
+                            ng-click="resetFormType()"
                           >
                             Tìm kiếm
                           </button>
@@ -866,37 +874,41 @@
                         </table>
                       </div>
                       <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                     </div>
                   </div>
 
@@ -969,7 +981,7 @@
                         <button
                           class="btn btn-primary"
                           type="button"
-                          ng-click="search()"
+                          ng-click="resetFormPacka()"
                         >
                           Tìm kiếm
                         </button>
@@ -1051,37 +1063,41 @@
                       </div>
                     </div>
                     <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                  >
+                    <button
+                      class="btn btn-primary mx-2"
+                      ng-disabled="currentPage === 0"
+                      ng-click="goToFirstPage()"
                     >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-click="goToFirstPage()"
-                      >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                      First
+                    </button>
+                    <button
+                      class="btn btn-primary mx-2"
+                      ng-disabled="currentPage === 0"
+                      ng-click="previousPage()"
+                    >
+                      Previous
+                    </button>
+                    <span class="mx-2"
+                      >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                      }}</span
+                    >
+                    <button
+                      class="btn btn-primary mx-2"
+                      ng-disabled="currentPage === pageInfo.totalPages - 1"
+                      ng-click="nextPage()"
+                    >
+                      Next
+                    </button>
+                    <button
+                      class="btn btn-primary mx-2"
+                      ng-disabled="currentPage === pageInfo.totalPages - 1"
+                      ng-click="goToLastPage()"
+                    >
+                      Last
+                    </button>
+                  </div>
                   </div>
 
                   <br />
@@ -1149,6 +1165,15 @@
                         ng-model="formData.targetuser"
                         required
                       />
+                      <div class="input-group-append">
+                        <button
+                          class="btn btn-primary"
+                          type="button"
+                          ng-click="resetFormTaget()"
+                        >
+                          Tìm kiếm
+                        </button>
+                      </div>
                     </div>
                     <div class="form-group col-md-12">
                       <label class="control-label">Thêm mô tả</label>
@@ -1236,39 +1261,41 @@
                         </table>
                       </div>
                       <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                     </div>
                   </div>
 
@@ -1333,10 +1360,19 @@
                       >
                       <input
                         class="form-control"
-                        type="number"
+                        type="text"
                         ng-model="formData.capacity"
                         required
                       />
+                      <div class="input-group-append">
+                        <button
+                          class="btn btn-primary"
+                          type="button"
+                          ng-click="resetFormUsage()"
+                        >
+                          Tìm kiếm
+                        </button>
+                      </div>
                     </div>
                     <div class="form-group col-md-12">
                       <label class="control-label">Thêm đơn vị công suất</label>
@@ -1424,39 +1460,41 @@
                         </table>
                       </div>
                       <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                     </div>
                   </div>
 
@@ -1524,6 +1562,15 @@
                         required
                         ng-disabled="formData.id"
                       />
+                      <div class="input-group-append">
+                        <button
+                          class="btn btn-primary"
+                          type="button"
+                          ng-click="resetFormVoucher()"
+                        >
+                          Tìm kiếm
+                        </button>
+                      </div>
                     </div>
                     <div class="form-group col-md-12">
                       <label class="control-label">Chọn ngày bắt đầu</label>

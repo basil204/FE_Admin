@@ -22,6 +22,67 @@
                   {{ notification.message }}
                 </div>
               </div>
+
+              <div class="row element-button mt-2">
+                <!-- First row: Invoice Code, Delivery Address, Phone Number, Payment Method -->
+                <div class="col-sm-6 col-md-3 mb-2">
+                  <label for="username">Tìm kiếm theo Tên đăng nhập:</label>
+                  <input
+                    type="text"
+                    ng-model="search.username"
+                    class="form-control"
+                    placeholder="Tên đăng nhập"
+                    ng-change="resetFormCustomer()"
+                  />
+                </div>
+                <div class="col-sm-6 col-md-3 mb-2">
+                  <label for="fullname"
+                    >Tìm kiếm theo Họ và tên:</label
+                  >
+                  <input
+                    type="text"
+                    ng-model="search.fullname"
+                    class="form-control"
+                    placeholder="Họ và tên"
+                    ng-change="resetFormCustomer()"
+                  />
+                </div>
+                <div class="col-sm-6 col-md-3 mb-2">
+                  <label for="email"
+                    >Tìm kiếm theo Email:</label
+                  >
+                  <input
+                    type="text"
+                    ng-model="search.email"
+                    class="form-control"
+                    placeholder="Email"
+                    ng-change="resetFormCustomer()"
+                  />
+                </div>
+                <div class="col-sm-6 col-md-3 mb-2">
+                  <label for="address"
+                    >Tìm kiếm theo Địa chỉ:</label
+                  >
+                  <input
+                    type="text"
+                    ng-model="search.address"
+                    class="form-control"
+                    placeholder="Địa chỉ"
+                    ng-change="resetFormCustomer()"
+                  />
+                </div>
+                <div class="col-sm-6 col-md-3 mb-2">
+                  <label for="phonenumber">Tìm kiếm theo Số điện thoại:</label>
+                  <input
+                    type="text"
+                    ng-model="search.phonenumber"
+                    class="form-control"
+                    placeholder="Số điện thoại"
+                    ng-change="resetFormCustomer()"
+                  />
+                </div>
+              </div>
+
               <table
                 class="table table-hover table-bordered js-copytextarea"
                 cellpadding="0"

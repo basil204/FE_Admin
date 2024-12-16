@@ -360,7 +360,7 @@ app.controller("ProductController", function ($scope, $http, $location) {
           $scope.filters.targetUser ||
           $scope.filters.milkType)
       ) {
-        $scope.searchInvoices();
+        $scope.searchProduct();
       } else {
         $scope.getProducts();
       }
@@ -376,7 +376,7 @@ app.controller("ProductController", function ($scope, $http, $location) {
           $scope.filters.targetUser ||
           $scope.filters.milkType)
       ) {
-        $scope.searchInvoices();
+        $scope.searchProduct();
       } else {
         $scope.getProducts();
       }
@@ -391,7 +391,7 @@ app.controller("ProductController", function ($scope, $http, $location) {
         $scope.filters.targetUser ||
         $scope.filters.milkType)
     ) {
-      $scope.searchInvoices();
+      $scope.searchProduct();
     } else {
       $scope.getProducts();
     }
@@ -405,13 +405,18 @@ app.controller("ProductController", function ($scope, $http, $location) {
         $scope.filters.targetUser ||
         $scope.filters.milkType)
     ) {
-      $scope.searchInvoices();
+      $scope.searchProduct();
     } else {
       $scope.getProducts();
     }
   };
-
-  $scope.searchInvoices = function () {
+  $scope.searchProduct = function () {
+    $scope.searchInvoices(true);
+  };
+  $scope.searchInvoices = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
     let queryParams = [];
 
     // Lấy các bộ lọc từ mô hình tìm kiếm

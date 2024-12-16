@@ -30,25 +30,38 @@ app.controller("TargetuserController", function ($scope, $http, $location) {
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
-      $scope.getTargets();
+      if ($scope.formData.targetname) {
+        $scope.resetFormTaget();
+      } else {
+        $scope.getTargets();
+      }
     }
   };
-
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
+      if ($scope.formData.targetname) {
+        $scope.resetFormTaget();
+      } else {
+        $scope.getTargets();
+      }
+    }
+  };
+  $scope.goToFirstPage = function () {
+    $scope.currentPage = 0;
+    if ($scope.formData.targetname) {
+      $scope.resetFormTaget();
+    } else {
       $scope.getTargets();
     }
   };
-
-  $scope.goToFirstPage = function () {
-    $scope.currentPage = 0;
-    $scope.getTargets();
-  };
-
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    $scope.getTargets();
+    if ($scope.formData.targetname) {
+      $scope.resetFormTaget();
+    } else {
+      $scope.getTargets();
+    }
   };
   $scope.addOrUpdateItem = function () {
     // Hiển thị hộp thoại xác nhận bằng SweetAlert2
@@ -185,6 +198,53 @@ app.controller("TargetuserController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
+  $scope.resetFormTaget = function () {
+    $scope.search(true);
+  };
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
+
+    const searchQuery = $scope.formData.targetuser;
+    if (!searchQuery || searchQuery.trim() === "") {
+      $scope.showNotification(
+        "Vui lòng nhập tên loại người dùng để tìm kiếm.",
+        "error"
+      );
+      $scope.getTargets();
+      return;
+    }
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getTargetusersearch?targetname=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.targets = response.data.content;
+        if ($scope.targets.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy loại người dùng nào phù hợp.",
+            "warning"
+          );
+          $scope.getTargets();
+          $scope.resetForm();
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm loại người dùng."
+        );
+        $scope.showNotification(errorMessage, "error");
+        $scope.getTargets();
+        $scope.resetForm();
+      }
+    );
+  };
 
   $scope.getTargets();
 });
