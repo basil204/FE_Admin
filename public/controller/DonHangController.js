@@ -14,14 +14,14 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       Authorization: `Bearer ${token}`,
     },
   };
-  const baseUrl = "http://localhost:1234/api";
+  const baseUrl = "http://160.30.21.47:1234/api";
 
   $scope.decreaseQuantity = function (item) {
     if (item.quantity > 0) {
       // Check the current stock before decreasing
       $http
         .get(
-          `http://localhost:1234/api/Milkdetail/checkcount/${
+          `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
             item.milkdetailid
           }?quantity=${item.quantity - 1}`,
           config
@@ -56,7 +56,7 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
     let currentQuantity = item.quantity;
     $http
       .get(
-        `http://localhost:1234/api/Milkdetail/checkcount/${
+        `http://160.30.21.47:1234/api/Milkdetail/checkcount/${
           item.milkdetailid
         }?quantity=${currentQuantity + 1}`,
         config
@@ -89,7 +89,7 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
   };
 
   $scope.checkStockQuantity = function (item) {
-    const apiUrl = `http://localhost:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
+    const apiUrl = `http://160.30.21.47:1234/api/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity}`;
 
     // Gửi yêu cầu kiểm tra số lượng từ API
     $http
@@ -360,12 +360,15 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
   $scope.getStatus = function (statusCode) {
     return $scope.statusMap[statusCode] || "Không xác định";
   };
-  $rootScope.$on('$viewContentLoaded', function () {
+  $rootScope.$on("$viewContentLoaded", function () {
     if ($rootScope.stompClient && $rootScope.stompClient.connected) {
       // Đăng ký subscription để nhận thông điệp từ WebSocket
-      $rootScope.stompClient.subscribe(`/user/${userInfo.sub}/queue/messages`, function (message) {
-        handleIncomingMessage(message);
-      });
+      $rootScope.stompClient.subscribe(
+        `/user/${userInfo.sub}/queue/messages`,
+        function (message) {
+          handleIncomingMessage(message);
+        }
+      );
     }
   });
   $scope.invoiceOk = function (invoiceID) {
@@ -379,13 +382,13 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       reverseButtons: true, // Optional: makes the cancel button appear on the left
     }).then((result) => {
       if (result.isConfirmed) {
-        const url = `http://localhost:1234/api/Invoice/waiting/${invoiceID}`;
+        const url = `http://160.30.21.47:1234/api/Invoice/waiting/${invoiceID}`;
         // Use Angular's $http for better integration
         $http
           .put(url, Number(userInfo.id), config)
           .then((response) => {
             if (response.data.success) {
-              $scope.sendMessage("/app/cod", "a")
+              $scope.sendMessage("/app/cod", "a");
               $scope.showNotification("Duyệt hóa đơn thành công!", "success");
             } else {
               $scope.showNotification(

@@ -45,35 +45,38 @@ app.controller("indexController", [
     };
 
     // Fetch different API endpoints
-    fetchData("http://localhost:1234/api/user/findTop5", "customers");
+    fetchData("http://160.30.21.47:1234/api/user/findTop5", "customers");
     fetchData(
-      "http://localhost:1234/api/Milkdetail/low-stock-count",
+      "http://160.30.21.47:1234/api/Milkdetail/low-stock-count",
       "countend"
     );
     fetchData(
-      "http://localhost:1234/api/Milkdetail/count-milkdetail",
+      "http://160.30.21.47:1234/api/Milkdetail/count-milkdetail",
       "countmilkdetail"
     );
     fetchData(
-      "http://localhost:1234/api/Invoice/count/current",
+      "http://160.30.21.47:1234/api/Invoice/count/current",
       "countinvoice"
     );
-    fetchData("http://localhost:1234/api/user/count", "countuser");
-    fetchData("http://localhost:1234/api/Userinvoice/user-invoices", "orders");
+    fetchData("http://160.30.21.47:1234/api/user/count", "countuser");
     fetchData(
-      "http://localhost:1234/api/Invoicedetail/milk-sales-details",
+      "http://160.30.21.47:1234/api/Userinvoice/user-invoices",
+      "orders"
+    );
+    fetchData(
+      "http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details",
       "milkSalesDetails"
     );
     fetchData(
-      "http://localhost:1234/api/Invoicedetail/invoice-summary",
+      "http://160.30.21.47:1234/api/Invoicedetail/invoice-summary",
       "invoiceSummary"
     );
-    fetchData("http://localhost:1234/api/Milkdetail/more", "milks");
+    fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
 
     // Fetch the count of online users
     const fetchOnlineUsers = () => {
       $http
-        .get("http://localhost:1234/api/user/online", config)
+        .get("http://160.30.21.47:1234/api/user/online", config)
         .then((response) => {
           $scope.onlineUsers = response.data.length; // Assuming the response is an array of users
         })
@@ -83,7 +86,7 @@ app.controller("indexController", [
     // Fetch the transaction history separately
     const fetchTransactionHistory = () => {
       $http
-        .get("http://localhost:1234/api/payment/historyBank", config)
+        .get("http://160.30.21.47:1234/api/payment/historyBank", config)
         .then((response) => {
           // Assuming the transaction history is inside `data.transactionHistoryList`
           $scope.transactionHistoryList = response.data.transactionHistoryList;
@@ -118,14 +121,14 @@ app.controller("indexController", [
         return; // Exit if dates are not selected
       }
 
-      let url = "http://localhost:1234/api/Thongke/by-month"; // Default URL
+      let url = "http://160.30.21.47:1234/api/Thongke/by-month"; // Default URL
 
       // Convert startDate and endDate to 'YYYY-MM-DDTHH:mm:ss' format
       startDate = new Date($scope.startDate).toISOString();
       endDate = new Date($scope.endDate).toISOString();
 
       // Create URL with startDate and endDate as query params
-      url = `http://localhost:1234/api/Thongke/by-month?startDate=${startDate}&endDate=${endDate}`;
+      url = `http://160.30.21.47:1234/api/Thongke/by-month?startDate=${startDate}&endDate=${endDate}`;
 
       // Call API
       $http
@@ -204,7 +207,7 @@ app.controller("indexController", [
       const id = formData.productId;
 
       if (newQuantity !== null && !isNaN(newQuantity) && newQuantity >= 0) {
-        const url = `http://localhost:1234/api/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
+        const url = `http://160.30.21.47:1234/api/Milkdetail/update-stock/${id}?quantity=${newQuantity}`;
 
         $http({
           method: "PUT",
@@ -223,7 +226,10 @@ app.controller("indexController", [
               );
 
               // Reload milk details (re-fetch data)
-              fetchData("http://localhost:1234/api/Milkdetail/more", "milks");
+              fetchData(
+                "http://160.30.21.47:1234/api/Milkdetail/more",
+                "milks"
+              );
 
               // Close the modal
               $("#ModalStockUpdate").modal("hide");
@@ -260,33 +266,33 @@ app.controller("indexController", [
 
     // Auto-reload every 5 seconds
     setInterval(function () {
-      fetchData("http://localhost:1234/api/user/findTop5", "customers");
+      fetchData("http://160.30.21.47:1234/api/user/findTop5", "customers");
       fetchData(
-        "http://localhost:1234/api/Milkdetail/low-stock-count",
+        "http://160.30.21.47:1234/api/Milkdetail/low-stock-count",
         "countend"
       );
       fetchData(
-        "http://localhost:1234/api/Milkdetail/count-milkdetail",
+        "http://160.30.21.47:1234/api/Milkdetail/count-milkdetail",
         "countmilkdetail"
       );
       fetchData(
-        "http://localhost:1234/api/Invoice/count/current",
+        "http://160.30.21.47:1234/api/Invoice/count/current",
         "countinvoice"
       );
-      fetchData("http://localhost:1234/api/user/count", "countuser");
+      fetchData("http://160.30.21.47:1234/api/user/count", "countuser");
       fetchData(
-        "http://localhost:1234/api/Userinvoice/user-invoices",
+        "http://160.30.21.47:1234/api/Userinvoice/user-invoices",
         "orders"
       );
       fetchData(
-        "http://localhost:1234/api/Invoicedetail/milk-sales-details",
+        "http://160.30.21.47:1234/api/Invoicedetail/milk-sales-details",
         "milkSalesDetails"
       );
       fetchData(
-        "http://localhost:1234/api/Invoicedetail/invoice-summary",
+        "http://160.30.21.47:1234/api/Invoicedetail/invoice-summary",
         "invoiceSummary"
       );
-      fetchData("http://localhost:1234/api/Milkdetail/more", "milks");
+      fetchData("http://160.30.21.47:1234/api/Milkdetail/more", "milks");
       fetchOnlineUsers();
       fetchTransactionHistory(); // Fetch transaction history periodically
     }, 50000);

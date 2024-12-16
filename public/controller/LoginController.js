@@ -23,7 +23,7 @@ app.controller(
       $scope.loading = true;
 
       $http
-        .post("http://localhost:1234/api/user/authenticate", {
+        .post("http://160.30.21.47:1234/api/user/authenticate", {
           username: $scope.user.username,
           password: $scope.user.password,
         })

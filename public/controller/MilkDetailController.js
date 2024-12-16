@@ -1,7 +1,7 @@
 app.controller("MilkDetailController", function ($scope, $http, $location) {
   // Notification Setup
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://localhost:1234/api";
+  const API_BASE_URL = "http://160.30.21.47:1234/api";
 
   if (!token) {
     showNotification(
@@ -405,7 +405,7 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     // Gửi yêu cầu GET với chuỗi query string
     $http({
       method: "GET",
-      url: `http://localhost:1234/api/Milkdetail/filter?${queryString}`,
+      url: `http://160.30.21.47:1234/api/Milkdetail/filter?${queryString}`,
       headers: { Authorization: `Bearer ${token}` },
     }).then(
       function (response) {
