@@ -27,29 +27,6 @@ app.controller("UsagecapacityController", function ($scope, $http, $location) {
       }
     );
   };
-  $scope.nextPage = function () {
-    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
-      $scope.currentPage++;
-      $scope.getUsages();
-    }
-  };
-
-  $scope.previousPage = function () {
-    if ($scope.currentPage > 0) {
-      $scope.currentPage--;
-      $scope.getUsages();
-    }
-  };
-
-  $scope.goToFirstPage = function () {
-    $scope.currentPage = 0;
-    $scope.getUsages();
-  };
-
-  $scope.goToLastPage = function () {
-    $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    $scope.getUsages();
-  };
 
   $scope.addOrUpdateItem = function () {
     // Hiển thị hộp thoại xác nhận bằng SweetAlert2
@@ -186,6 +163,91 @@ app.controller("UsagecapacityController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
+
+  $scope.resetFormUsage = function () {
+    $scope.search(true);
+  };
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
+
+    const searchQuery = $scope.formData.capacity;
+    if (!searchQuery || searchQuery.trim() === "") {
+      $scope.showNotification(
+        "Vui lòng nhập tên công xuất sử dụng  để tìm kiếm.",
+        "error"
+      );
+      $scope.getUsages();
+      return;
+    }
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getUsagecapacityPageByCapacity?capacity=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.usages = response.data.content;
+        if ($scope.usages.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy công xuất sử dụng nào phù hợp.",
+            "warning"
+          );
+          $scope.getUsages();
+          $scope.resetForm();
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm công xuất sử dụng."
+        );
+        $scope.showNotification(errorMessage, "error");
+        $scope.getUsages();
+        $scope.resetForm();
+      }
+    );
+  };
+
+  $scope.nextPage = function () {
+    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+      $scope.currentPage++;
+      if ($scope.formData.capacity) {
+        $scope.resetFormUsage();
+      } else {
+        $scope.getUsages();
+      }
+    }
+  };
+  $scope.previousPage = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      if ($scope.formData.capacity) {
+        $scope.resetFormUsage();
+      } else {
+        $scope.getUsages();
+      }
+    }
+  };
+  $scope.goToFirstPage = function () {
+    $scope.currentPage = 0;
+    if ($scope.formData.capacity) {
+      $scope.resetFormUsage();
+    } else {
+      $scope.getUsages();
+    }
+  };
+  $scope.goToLastPage = function () {
+    $scope.currentPage = $scope.pageInfo.totalPages - 1;
+    if ($scope.formData.capacity) {
+      $scope.resetFormUsage();
+    } else {
+      $scope.getUsages();
+    }
+  };
 
   $scope.getUsages();
 });

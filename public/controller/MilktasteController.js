@@ -164,7 +164,7 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
       if ($scope.formData.milktastename) {
-        $scope.search();
+        $scope.resetFormTastes();
       } else {
         $scope.getMilktastes();
       }
@@ -175,7 +175,7 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
       if ($scope.formData.milktastename) {
-        $scope.search();
+        $scope.resetFormTastes();
       } else {
         $scope.getMilktastes();
       }
@@ -185,7 +185,7 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
     if ($scope.formData.milktastename) {
-      $scope.search();
+      $scope.resetFormTastes();
     } else {
       $scope.getMilktastes();
     }
@@ -194,13 +194,21 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     if ($scope.formData.milktastename) {
-      $scope.search();
+      $scope.resetFormTastes();
     } else {
       $scope.getMilktastes();
     }
   };
   $scope.getMilktastes();
-  $scope.search = function () {
+
+  $scope.resetFormTastes = function () {
+    $scope.search(true);
+  };
+
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
     const searchQuery = $scope.formData.milktastename;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification("Vui lòng nhập tên vị sữa để tìm kiếm.", "error");

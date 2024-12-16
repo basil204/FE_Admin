@@ -177,7 +177,7 @@ app.controller("BrandController", function ($scope, $http, $location) {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
       if ($scope.formData.milkbrandname) {
-        $scope.search();
+        $scope.resetFormBrand();
       } else {
         $scope.getBrands();
       }
@@ -187,7 +187,7 @@ app.controller("BrandController", function ($scope, $http, $location) {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
       if ($scope.formData.milkbrandname) {
-        $scope.search();
+        $scope.resetFormBrand();
       } else {
         $scope.getBrands();
       }
@@ -197,7 +197,7 @@ app.controller("BrandController", function ($scope, $http, $location) {
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
     if ($scope.formData.milkbrandname) {
-      $scope.search();
+      $scope.resetFormBrand();
     } else {
       $scope.getBrands();
     }
@@ -206,12 +206,20 @@ app.controller("BrandController", function ($scope, $http, $location) {
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     if ($scope.formData.milkbrandname) {
-      $scope.search();
+      $scope.resetFormBrand();
     } else {
       $scope.getBrands();
     }
   };
-  $scope.search = function () {
+
+  $scope.resetFormBrand = function () {
+    $scope.search(true);
+  };
+
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
     const searchQuery = $scope.formData.milkbrandname;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
