@@ -1,8 +1,7 @@
 app.controller("ChartController", [
   "$scope",
-  "$http",
-  "socket", // Thêm $http để gọi API
-  function ($scope, $http, socket) {
+  "$http", // Remove socket if not used
+  function ($scope, $http) {
     const token = localStorage.getItem("authToken");
     const API_BASE_URL =
       "http://160.30.21.47:1234/api/Invoicedetail/monthly-sales-growth";

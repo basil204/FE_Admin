@@ -660,10 +660,12 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       $scope.currentPage++;
       if (
         $scope.filters &&
-        ($scope.filters.productname ||
-          $scope.filters.milkBrandId ||
+        ($scope.filters.milkTypeId ||
           $scope.filters.targetUserId ||
-          $scope.filters.milkTypeId)
+          $scope.filters.milkBrandId ||
+          $scope.filters.usageCapacityId ||
+          $scope.filters.packagingUnitId ||
+          $scope.filters.milkTasteId)
       ) {
         $scope.searchInvoices();
       } else {
@@ -677,10 +679,12 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
       $scope.currentPage--;
       if (
         $scope.filters &&
-        ($scope.filters.productname ||
-          $scope.filters.milkBrandId ||
+        ($scope.filters.milkTypeId ||
           $scope.filters.targetUserId ||
-          $scope.filters.milkTypeId)
+          $scope.filters.milkBrandId ||
+          $scope.filters.usageCapacityId ||
+          $scope.filters.packagingUnitId ||
+          $scope.filters.milkTasteId)
       ) {
         $scope.searchInvoices();
       } else {
@@ -693,10 +697,12 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     $scope.currentPage = 0;
     if (
       $scope.filters &&
-      ($scope.filters.productname ||
-        $scope.filters.milkBrandId ||
+      ($scope.filters.milkTypeId ||
         $scope.filters.targetUserId ||
-        $scope.filters.milkTypeId)
+        $scope.filters.milkBrandId ||
+        $scope.filters.usageCapacityId ||
+        $scope.filters.packagingUnitId ||
+        $scope.filters.milkTasteId)
     ) {
       $scope.searchInvoices();
     } else {
@@ -708,10 +714,12 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     if (
       $scope.filters &&
-      ($scope.filters.productname ||
-        $scope.filters.milkBrandId ||
+      ($scope.filters.milkTypeId ||
         $scope.filters.targetUserId ||
-        $scope.filters.milkTypeId)
+        $scope.filters.milkBrandId ||
+        $scope.filters.usageCapacityId ||
+        $scope.filters.packagingUnitId ||
+        $scope.filters.milkTasteId)
     ) {
       $scope.searchInvoices();
     } else {
