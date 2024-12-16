@@ -410,45 +410,6 @@ app.controller("ProductController", function ($scope, $http, $location) {
       $scope.getProducts();
     }
   };
-  $scope.search = function () {
-    const searchQuery = $scope.formData.productname;
-    if (!searchQuery || searchQuery.trim() === "") {
-      $scope.showNotification(
-        "Vui lòng nhập tên sản phẩm để tìm kiếm.",
-        "error"
-      );
-      return;
-    }
-    $http({
-      method: "GET",
-      url: `${API_BASE_URL}/Product/productPageByName?productname=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(
-      function (response) {
-        $scope.pageInfo = response.data.page;
-        $scope.products = response.data.content;
-        if ($scope.brands.length === 0) {
-          $scope.showNotification(
-            "Không tìm thấy sản phẩm nào phù hợp.",
-            "warning"
-          );
-          $scope.getProducts();
-          $scope.resetForm();
-        }
-      },
-      function (error) {
-        const errorMessage = parseErrorMessages(
-          error,
-          "Không thể tìm kiếm sản phẩm."
-        );
-        $scope.showNotification(errorMessage, "error");
-        $scope.getProducts();
-        $scope.resetForm();
-      }
-    );
-  };
 
   $scope.searchInvoices = function () {
     let queryParams = [];
