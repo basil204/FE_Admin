@@ -35,25 +35,70 @@ app.controller("StaffController", function ($scope, $http, $location) {
         }
       );
   };
+
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
-      $scope.GetStaffs();
+      if (
+        $scope.filters &&
+        ($scope.filters.email ||
+          $scope.filters.fullname ||
+          $scope.filters.username ||
+          $scope.filters.address ||
+          $scope.filters.phonenumber)
+      ) {
+        $scope.resetFormUser();
+      } else {
+        $scope.GetStaffs();
+      }
     }
   };
   $scope.previousPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
-      $scope.GetStaffs();
+      if (
+        $scope.filters &&
+        ($scope.filters.email ||
+          $scope.filters.fullname ||
+          $scope.filters.username ||
+          $scope.filters.address ||
+          $scope.filters.phonenumber)
+      ) {
+        $scope.resetFormUser();
+      } else {
+        $scope.GetStaffs();
+      }
     }
   };
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
-    $scope.GetStaffs();
+    if (
+      $scope.filters &&
+      ($scope.filters.email ||
+        $scope.filters.fullname ||
+        $scope.filters.username ||
+        $scope.filters.address ||
+        $scope.filters.phonenumber)
+    ) {
+      $scope.resetFormUser();
+    } else {
+      $scope.GetStaffs();
+    }
   };
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
-    $scope.GetStaffs();
+    if (
+      $scope.filters &&
+      ($scope.filters.email ||
+        $scope.filters.fullname ||
+        $scope.filters.username ||
+        $scope.filters.address ||
+        $scope.filters.phonenumber)
+    ) {
+      $scope.resetFormUser();
+    } else {
+      $scope.GetStaffs();
+    }
   };
 
   $scope.GetCustomers = function () {
@@ -81,22 +126,66 @@ app.controller("StaffController", function ($scope, $http, $location) {
   $scope.nextPageC = function () {
     if ($scope.currentPage < $scope.pageInfos.totalPages - 1) {
       $scope.currentPage++;
-      $scope.GetCustomers();
+      if (
+        $scope.filters &&
+        ($scope.filters.email ||
+          $scope.filters.fullname ||
+          $scope.filters.username ||
+          $scope.filters.address ||
+          $scope.filters.phonenumber)
+      ) {
+        $scope.resetFormCustomer();
+      } else {
+        $scope.GetCustomers();
+      }
     }
   };
   $scope.previousPageC = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
-      $scope.GetCustomers();
+      if (
+        $scope.filters &&
+        ($scope.filters.email ||
+          $scope.filters.fullname ||
+          $scope.filters.username ||
+          $scope.filters.address ||
+          $scope.filters.phonenumber)
+      ) {
+        $scope.resetFormCustomer();
+      } else {
+        $scope.GetCustomers();
+      }
     }
   };
   $scope.goToFirstPageC = function () {
     $scope.currentPage = 0;
-    $scope.GetCustomers();
+    if (
+      $scope.filters &&
+      ($scope.filters.email ||
+        $scope.filters.fullname ||
+        $scope.filters.username ||
+        $scope.filters.address ||
+        $scope.filters.phonenumber)
+    ) {
+      $scope.resetFormCustomer();
+    } else {
+      $scope.GetCustomers();
+    }
   };
   $scope.goToLastPageC = function () {
     $scope.currentPage = $scope.pageInfos.totalPages - 1;
-    $scope.GetCustomers();
+    if (
+      $scope.filters &&
+      ($scope.filters.email ||
+        $scope.filters.fullname ||
+        $scope.filters.username ||
+        $scope.filters.address ||
+        $scope.filters.phonenumber)
+    ) {
+      $scope.resetFormCustomer();
+    } else {
+      $scope.GetCustomers();
+    }
   };
 
   $scope.deleteItem = function (id) {
@@ -246,6 +335,123 @@ app.controller("StaffController", function ($scope, $http, $location) {
     });
   };
 
+  $scope.resetFormUser = function () {
+    $scope.searchUsers(true);
+  };
+  $scope.searchUsers = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
+    let queryParams = [];
+
+    if ($scope.search.phonenumber) {
+      queryParams.push(`phonenumber=${$scope.search.phonenumber}`);
+    }
+    if ($scope.search.username) {
+      queryParams.push(`username=${$scope.search.username}`);
+    }
+    if ($scope.search.fullname) {
+      queryParams.push(`fullname=${$scope.search.fullname}`);
+    }
+    if ($scope.search.email) {
+      queryParams.push(`email=${$scope.search.email}`);
+    }
+    if ($scope.search.address) {
+      queryParams.push(`address=${$scope.search.address}`);
+    }
+    const currentPage = $scope.currentPage > 0 ? $scope.currentPage - 1 : 0; // API bắt đầu từ 0
+    const pageSize = $scope.pageSize || 10; // Mặc định là 10 kết quả mỗi trang
+
+    // Thêm tham số phân trang
+    queryParams.push(`page=${currentPage}`);
+    queryParams.push(`size=${pageSize}`);
+
+    let queryString = queryParams.join("&");
+
+    // Send the GET request with the query string parameters
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/user/Userpages?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(
+      function (response) {
+        const data = response.data;
+        if (data && data.message && data.message.content) {
+          $scope.staffs = data.message.content; // Lấy danh sách sản phẩm
+          $scope.pageInfo = data.message.page; // Lấy thông tin phân trang
+          console.log("Staffs loaded:", $scope.staffs);
+        } else {
+          console.error("Invalid API response structure:", data);
+          $scope.staffs = []; // Không có dữ liệu
+          $scope.pageInfo = null;
+        }
+      },
+      function (error) {
+        console.error("Error fetching milk details:", error);
+        $scope.showNotification("Không thể tải người dùng", "error");
+        $scope.resetForm();
+      }
+    );
+  };
+
+  $scope.resetFormCustomer = function () {
+    $scope.searchCustomers(true);
+  };
+  $scope.searchCustomers = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
+    let queryParams = [];
+
+    if ($scope.search.phonenumber) {
+      queryParams.push(`phonenumber=${$scope.search.phonenumber}`);
+    }
+    if ($scope.search.username) {
+      queryParams.push(`username=${$scope.search.username}`);
+    }
+    if ($scope.search.fullname) {
+      queryParams.push(`fullname=${$scope.search.fullname}`);
+    }
+    if ($scope.search.email) {
+      queryParams.push(`email=${$scope.search.email}`);
+    }
+    if ($scope.search.address) {
+      queryParams.push(`address=${$scope.search.address}`);
+    }
+    const currentPage = $scope.currentPage > 0 ? $scope.currentPage - 1 : 0; // API bắt đầu từ 0
+    const pageSize = $scope.pageSize || 10; // Mặc định là 10 kết quả mỗi trang
+
+    // Thêm tham số phân trang
+    queryParams.push(`page=${currentPage}`);
+    queryParams.push(`size=${pageSize}`);
+
+    let queryString = queryParams.join("&");
+
+    // Send the GET request with the query string parameters
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/user/Customerpages?${queryString}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(
+      function (response) {
+        const data = response.data;
+        if (data && data.message && data.message.content) {
+          $scope.customers = data.message.content; // Lấy danh sách sản phẩm
+          $scope.pageInfo = data.message.page; // Lấy thông tin phân trang
+          console.log("Staffs loaded:", $scope.customers);
+        } else {
+          console.error("Invalid API response structure:", data);
+          $scope.customers = []; // Không có dữ liệu
+          $scope.pageInfo = null;
+        }
+      },
+      function (error) {
+        console.error("Error fetching milk details:", error);
+        $scope.showNotification("Không thể tải người dùng", "error");
+        $scope.resetForm();
+      }
+    );
+  };
   $scope.GetCustomers();
   $scope.getRoles();
   $scope.GetStaffs();

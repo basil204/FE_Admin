@@ -169,6 +169,90 @@ app.controller("VoucherController", function ($scope, $http, $location) {
     }
     return defaultMessage;
   }
+  $scope.resetFormVoucher = function () {
+    $scope.search(true);
+  };
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
+
+    const searchQuery = $scope.formData.vouchercode;
+    if (!searchQuery || searchQuery.trim() === "") {
+      $scope.showNotification(
+        "Vui lòng nhập voucher dùng để tìm kiếm.",
+        "error"
+      );
+      $scope.getVouchers();
+      return;
+    }
+    $http({
+      method: "GET",
+      url: `${API_BASE_URL}/getVouchersearch?vouchercode=${searchQuery}&page=${$scope.currentPage}&size=${$scope.pageSize}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(
+      function (response) {
+        $scope.pageInfo = response.data.page;
+        $scope.vouchers = response.data.content;
+        if ($scope.vouchers.length === 0) {
+          $scope.showNotification(
+            "Không tìm thấy voucher nào phù hợp.",
+            "warning"
+          );
+          $scope.getVouchers();
+          $scope.resetForm();
+        }
+      },
+      function (error) {
+        const errorMessage = parseErrorMessages(
+          error,
+          "Không thể tìm kiếm voucher."
+        );
+        $scope.showNotification(errorMessage, "error");
+        $scope.getVouchers();
+        $scope.resetForm();
+      }
+    );
+  };
+
+  $scope.nextPage = function () {
+    if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
+      $scope.currentPage++;
+      if ($scope.formData.vouchercode) {
+        $scope.resetFormVoucher();
+      } else {
+        $scope.getVouchers();
+      }
+    }
+  };
+  $scope.previousPage = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage--;
+      if ($scope.formData.vouchercode) {
+        $scope.resetFormVoucher();
+      } else {
+        $scope.getVouchers();
+      }
+    }
+  };
+  $scope.goToFirstPage = function () {
+    $scope.currentPage = 0;
+    if ($scope.formData.vouchercode) {
+      $scope.resetFormVoucher();
+    } else {
+      $scope.getVouchers();
+    }
+  };
+  $scope.goToLastPage = function () {
+    $scope.currentPage = $scope.pageInfo.totalPages - 1;
+    if ($scope.formData.vouchercode) {
+      $scope.resetFormVoucher();
+    } else {
+      $scope.getVouchers();
+    }
+  };
 
   $scope.getVouchers();
 });

@@ -166,7 +166,7 @@ app.controller("MilktypeController", function ($scope, $http, $location) {
     if ($scope.currentPage < $scope.pageInfo.totalPages - 1) {
       $scope.currentPage++;
       if ($scope.formData.milkTypename) {
-        $scope.search();
+        $scope.resetFormType();
       } else {
         $scope.getTypes();
       }
@@ -176,7 +176,7 @@ app.controller("MilktypeController", function ($scope, $http, $location) {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
       if ($scope.formData.milkTypename) {
-        $scope.search();
+        $scope.resetFormType();
       } else {
         $scope.getTypes();
       }
@@ -185,7 +185,7 @@ app.controller("MilktypeController", function ($scope, $http, $location) {
   $scope.goToFirstPage = function () {
     $scope.currentPage = 0;
     if ($scope.formData.milkTypename) {
-      $scope.search();
+      $scope.resetFormType();
     } else {
       $scope.getTypes();
     }
@@ -193,12 +193,18 @@ app.controller("MilktypeController", function ($scope, $http, $location) {
   $scope.goToLastPage = function () {
     $scope.currentPage = $scope.pageInfo.totalPages - 1;
     if ($scope.formData.milkTypename) {
-      $scope.search();
+      $scope.resetFormType();
     } else {
       $scope.getTypes();
     }
   };
-  $scope.search = function () {
+  $scope.resetFormType = function () {
+    $scope.search(true);
+  };
+  $scope.search = function (resetPage = false) {
+    if (resetPage) {
+      $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
+    }
     const searchQuery = $scope.formData.milkTypename;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
