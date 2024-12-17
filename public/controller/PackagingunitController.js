@@ -212,12 +212,13 @@ app.controller("PackagingunitController", function ($scope, $http, $location) {
     if (resetPage) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
-    const searchQuery = $scope.formData.packagingunitname;
+    const searchQuery = $scope.formDatas.packagingunitname;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
         "Vui lòng nhập tên loại đóng gói để tìm kiếm.",
         "error"
       );
+      $scope.getPackas();
       return;
     }
     $http({

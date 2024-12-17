@@ -179,7 +179,7 @@ app.controller("UsagecapacityController", function ($scope, $http, $location) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
 
-    const searchQuery = $scope.formData.capacity;
+    const searchQuery = $scope.formDatas.capacity;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
         "Vui lòng nhập tên công xuất sử dụng  để tìm kiếm.",

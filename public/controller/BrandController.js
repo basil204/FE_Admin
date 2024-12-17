@@ -220,7 +220,7 @@ app.controller("BrandController", function ($scope, $http, $location) {
     if (resetPage) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
-    const searchQuery = $scope.formData.milkbrandname;
+    const searchQuery = $scope.formDatas.milkbrandname;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
         "Vui lòng nhập tên thương hiệu để tìm kiếm.",

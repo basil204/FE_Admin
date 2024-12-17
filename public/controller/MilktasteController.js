@@ -209,7 +209,7 @@ app.controller("MilktasteController", function ($scope, $http, $location) {
     if (resetPage) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
-    const searchQuery = $scope.formData.milktastename;
+    const searchQuery = $scope.formDatas.milktastename;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification("Vui lòng nhập tên vị sữa để tìm kiếm.", "error");
       $scope.getMilktastes();

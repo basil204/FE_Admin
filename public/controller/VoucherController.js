@@ -177,7 +177,7 @@ app.controller("VoucherController", function ($scope, $http, $location) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
 
-    const searchQuery = $scope.formData.vouchercode;
+    const searchQuery = $scope.formDatas.vouchercode;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
         "Vui lòng nhập voucher dùng để tìm kiếm.",

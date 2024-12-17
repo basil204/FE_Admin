@@ -205,7 +205,7 @@ app.controller("MilktypeController", function ($scope, $http, $location) {
     if (resetPage) {
       $scope.currentPage = 0; // Đặt lại trang hiện tại về 0 nếu có yêu cầu
     }
-    const searchQuery = $scope.formData.milkTypename;
+    const searchQuery = $scope.formDatas.milkTypename;
     if (!searchQuery || searchQuery.trim() === "") {
       $scope.showNotification(
         "Vui lòng nhập tên loại sữa để tìm kiếm.",
