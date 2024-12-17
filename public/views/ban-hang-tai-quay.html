@@ -20,22 +20,12 @@
           <div class="form-row mb-3">
             <div class="col-md-4">
               <div class="form-group">
-                <label for="productSearch">Nhập mã sản phẩm :</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="productSearch"
-                  placeholder="Nhập mã sản phẩm hoặc tên sản phẩm"
-                  ng-model="filters.productSearch" />
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
                 <label for="productType">Hương vị</label>
                 <select class="form-control" id="productType"
                   ng-change="searchMilkDetail()"
                   ng-model="filters.milkTasteId"
                   ng-options="taste.id as taste.milktastename for taste in milktastes">
+                  <option value="">Chọn Hương vị</option>
                 </select>
               </div>
             </div>
@@ -45,6 +35,19 @@
                 <select class="form-control" id="brand" ng-change="searchMilkDetail()"
                   ng-model="filters.milkBrandId"
                   ng-options="brand.id as brand.milkbrandname for brand in Milkbrands">
+                  <option value="">Chọn Thương hiệu</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="warehouse">Độ Tuổi</label>
+                <select class="form-control" id="warehouse" ng-change="searchMilkDetail()"
+                  ng-model="filters.targetUserId"
+                  ng-options="user.id as user.targetuser for user in Targetusers">
+                  <option value="">Chọn Độ Tuổi</option>
+
                 </select>
               </div>
             </div>
@@ -52,39 +55,37 @@
       
           <!-- 3 ô select dưới -->
           <div class="form-row mb-3">
-            <div class="col-md-3">
-              <div class="form-group">
-                <label for="warehouse">Độ Tuổi</label>
-                <select class="form-control" id="warehouse" ng-change="searchMilkDetail()"
-                  ng-model="filters.targetUserId"
-                  ng-options="user.id as user.targetuser for user in Targetusers">
-                </select>
-              </div>
-            </div>
-            <div class="col-md-3">
+          
+            <div class="col-md-4">
               <div class="form-group">
                 <label for="color">Chọn Loại Sữa</label>
                 <select class="form-control" id="color" ng-change="searchMilkDetail()"
                   ng-model="filters.milkTypeId"
                   ng-options="type.id as type.milkTypename for type in Milktypes">
+                  <option value="">Chọn Loại Sữa</option>
+
                 </select>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <div class="form-group">
                 <label for="size">Chọn Dung Tích</label>
                 <select class="form-control" id="size" ng-change="searchMilkDetail()"
                   ng-model="filters.usageCapacityId"
                   ng-options="capacity.id as (capacity.capacity + ' ' + capacity.unit) for capacity in usagecapacitys">
+                  <option value="">Chọn Dung Tích</option>
+
                 </select>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <div class="form-group">
                 <label for="size">Chọn đóng gói</label>
                 <select class="form-control" id="size" ng-change="searchMilkDetail()"
                   ng-model="filters.packagingUnitId"
                   ng-options="unit.id as unit.packagingunitname for unit in packagingunits">
+                  <option value="">Chọn đóng gói</option>
+
                 </select>
               </div>
             </div>
