@@ -1,298 +1,289 @@
-<div class="app app-ban-hang">
+<div ng-controller="OrderController">
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb side">
+        <li class="breadcrumb-item active">
+          <a href="#" ng-click="handleClick()">
+            <b>{{invoiceCode || 'POS Bán Hàng'}}</b>
+          </a>                  </li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+
     <div class="row">
-        <div class="col-md-12">
-            <div class="app-title">
-                <ul class="app-breadcrumb breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/home" class="back-icon"><i class="fa fa-home"></i> <b>POS bán hàng</b></a>
-                    </li>
-                </ul>
-                <div id="clock"></div>
+      <!-- Bảng Tìm Kiếm Sản Phẩm -->
+      <div class="col-md-8">
+        <div class="tile">
+          <h5>Tìm kiếm sản phẩm</h5>
+      
+          <!-- Tìm kiếm sản phẩm -->
+          <div class="form-row mb-3">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="productSearch">Nhập mã sản phẩm :</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="productSearch"
+                  placeholder="Nhập mã sản phẩm hoặc tên sản phẩm"
+                  ng-model="filters.productSearch" />
+              </div>
             </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="productType">Hương vị</label>
+                <select class="form-control" id="productType"
+                  ng-change="searchMilkDetail()"
+                  ng-model="filters.milkTasteId"
+                  ng-options="taste.id as taste.milktastename for taste in milktastes">
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="brand">Thương hiệu</label>
+                <select class="form-control" id="brand" ng-change="searchMilkDetail()"
+                  ng-model="filters.milkBrandId"
+                  ng-options="brand.id as brand.milkbrandname for brand in Milkbrands">
+                </select>
+              </div>
+            </div>
+          </div>
+      
+          <!-- 3 ô select dưới -->
+          <div class="form-row mb-3">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="warehouse">Độ Tuổi</label>
+                <select class="form-control" id="warehouse" ng-change="searchMilkDetail()"
+                  ng-model="filters.targetUserId"
+                  ng-options="user.id as user.targetuser for user in Targetusers">
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="color">Chọn Loại Sữa</label>
+                <select class="form-control" id="color" ng-change="searchMilkDetail()"
+                  ng-model="filters.milkTypeId"
+                  ng-options="type.id as type.milkTypename for type in Milktypes">
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="size">Chọn Dung Tích</label>
+                <select class="form-control" id="size" ng-change="searchMilkDetail()"
+                  ng-model="filters.usageCapacityId"
+                  ng-options="capacity.id as (capacity.capacity + ' ' + capacity.unit) for capacity in usagecapacitys">
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="size">Chọn đóng gói</label>
+                <select class="form-control" id="size" ng-change="searchMilkDetail()"
+                  ng-model="filters.packagingUnitId"
+                  ng-options="unit.id as unit.packagingunitname for unit in packagingunits">
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-secondary" ng-click="resetFilters()">Reset</button>
+
+          </div>
+      
+          <!-- Bảng hiển thị sản phẩm -->
+          <div class="table-responsive mt-3">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Mã sản phẩm</th>
+                  <th>Tên sản phẩm</th>
+                  <th>Hãng</th>
+                  <th>Hương Vị</th>
+                  <th>Loại</th>
+                  <th>Giá Tiền</th>
+                  <th>Dung tích</th>
+                  <th>Số lượng</th>
+                  <th>Chức Năng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="item in Milkdetails">
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ item.milkdetailcode }}</td>
+                  <td>{{ item.product.productname }}</td>
+                  <td>{{ item.product.milkBrand.milkbrandname }}</td>
+                  <td>{{ item.milkTaste.milktastename }}</td>
+                  <td>{{ item.packagingunit.packagingunitname }}</td>
+                  <td>{{ item.price | number:'' }} VNĐ</td>
+                  <td>{{ item.usageCapacity.capacity + " " + item.usageCapacity.unit }}</td>
+                  <td>{{ item.stockquantity > 0 ? item.stockquantity : 'Hết hàng' }}</td>
+                  <td>
+                    <button
+                      class="btn btn-success btn-sm"
+                      ng-click="addItem(item)"
+                      ng-disabled="item.stockquantity === 0" 
+                    >
+                      <i class="fas fa-plus"></i> Thêm
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      
+          <!-- Pagination controls -->
+          <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPages()">First</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPages()">Previous</button>
+            <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPages()">Next</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPages()">Last</button>
+          </div>
+      
+          <!-- Reset button -->
         </div>
+      </div>
+      
+      
+      
+      
+      
 
-    </div>
-    <div class="row">
-        <!-- Sản phẩm -->
-        <div class="col-md-8">
-            <div class="tile">
-                <h3 class="tile-title">Danh sách sản phẩm</h3>
-                <div class="row">
-                    <!-- 3 ô select box trên cùng -->
-                    <div class="col-md-4">
-                        <label class="control-label">Tìm kiếm nâng cao</label>
-                        <input type="text" id="myInput" onkeyup="myFunction()" class="form-control" placeholder="Nhập mã sản phẩm hoặc tên sản phẩm để tìm kiếm...">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="control-label">Loại </label>
-                        <select class="form-control">
-                            <option>Loại SP</option>
-                            <option>Loại 1</option>
-                            <option>Loại 2</option>
-                            <option>Loại 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="control-label">Hãng</label>
-                        <select class="form-control">
-                            <option>Thương hiệu</option>
-                            <option>Thương hiệu A</option>
-                            <option>Thương hiệu B</option>
-                            <option>Thương hiệu C</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="control-label">Đối Tượng</label>
-                        <select class="form-control">
-                            <option>Kho</option>
-                            <option>Kho 1</option>
-                            <option>Kho 2</option>
-                            <option>Kho 3</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <!-- 4 ô select box dưới cùng -->
-                    <div class="col-md-3">
-                        <label class="control-label">Sản Phẩm</label>
-                        <select class="form-control">
-                            <option>Giá trị</option>
-                            <option>Giá trị 1</option>
-                            <option>Giá trị 2</option>
-                            <option>Giá trị 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="control-label">Vị</label>
-                        <select class="form-control">
-                            <option>Nhóm SP</option>
-                            <option>Nhóm 1</option>
-                            <option>Nhóm 2</option>
-                            <option>Nhóm 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="control-label">Dung Tích</label>
-                        <select class="form-control">
-                            <option>Màu sắc</option>
-                            <option>Đỏ</option>
-                            <option>Xanh</option>
-                            <option>Vàng</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="control-label">Đóng Gói</label>
-                        <select class="form-control">
-                            <option>Chất liệu</option>
-                            <option>Gỗ</option>
-                            <option>Kim loại</option>
-                            <option>Nhựa</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="du--lieu-san-pham mt-4">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                        <tr>
-                            <th class="so--luong">Mã hàng</th>
-                            <th class="so--luong">Tên sản phẩm</th>
-                            <th class="so--luong">Ảnh</th>
-                            <th class="so--luong" width="10">Số lượng</th>
-                            <th class="so--luong">Giá bán</th>
-                            <th class="so--luong text-center" style="text-align: center; vertical-align: middle;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>71309005</td>
-                            <td>Bàn ăn gỗ Theresa</td>
-                            <td><img src="/img-sanpham/reno.jpg" alt="" width="50px;"></td>
-                            <td><input class="so--luong1" type="number" value="2"></td>
-                            <td>5.600.000 VNĐ</td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <button class="btn btn-primary btn-sm trash" type="button" title="Xóa">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Thêm các sản phẩm khác nếu cần -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="alert">
-                    <i class="fas fa-exclamation-triangle"></i> Gõ mã hoặc tên sản phẩm vào thanh tìm kiếm để thêm hàng vào đơn hàng
-                </div>
+      <!-- Bảng Thông Tin Thanh Toán và Sản Phẩm Khách Hàng Mua -->
+      <div class="col-md-4" style="max-height: 750px; overflow-y: auto">
+        <div class="tile">
+         
+          <form>
+
+
+            <!-- Sản phẩm đã mua -->
+            <h5>Sản phẩm đã mua:</h5>
+            <div
+              class="table-responsive"
+              style="max-height: 300px; overflow-y: auto"
+            >
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Tổng</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in items">
+                    <td>{{ item.milkTasteName }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price | number:'' }} VNĐ</td>
+                    <td>{{ item.totalAmount | number:'' }} VNĐ</td>
+                    <td>
+                      <button
+                        class="btn btn-danger btn-sm"
+                        ng-click="removeProduct(product)"
+                      >
+                        <i class="fas fa-trash-alt"></i> Xóa
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h5>Thông tin thanh toán</h5>
+            <div class="form-group">
+              <label for="customerName">Họ tên khách hàng</label>
+              <input
+                type="text"
+                class="form-control"
+                id="customerName"
+                placeholder="Tìm kiếm khách hàng"
+                ng-model="fullname"
+              />
+            </div>
+            <div class="form-group">
+              <label for="customerName">Số điện thoại</label>
+              <input
+                type="text"
+                class="form-control"
+                id="customerName"
+                placeholder="Tìm kiếm khách hàng"
+                ng-model="phoneNumber"
+              />
+            </div>
+            <!-- Thêm trường chọn thành phố, quận, phường -->
+            <div class="form-group">
+              <label for="city">Thành phố</label>
+              <select class="form-control" id="city" ng-model="city" ng-change="getDistricts()">
+                <option value="">Chọn thành phố</option>
+                <option ng-repeat="city in cities" value="{{city.code}}">{{city.name}}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="district">Quận</label>
+              <select class="form-control" id="district" ng-model="district" ng-change="getWards()">
+                <option value="">Chọn quận</option>
+                <option ng-repeat="district in districts" value="{{district.code}}">{{district.name}}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="ward">Phường</label>
+              <select class="form-control" id="ward" ng-model="ward">
+                <option value="">Chọn phường</option>
+                <option ng-repeat="ward in wards" value="{{ward.code}}">{{ward.name}}</option>
+              </select>
+            </div>
+            
+
+            <div class="form-group">
+              <label for="detailedAddress">Địa chỉ chi tiết</label>
+              <textarea
+                class="form-control"
+                id="detailedAddress"
+                rows="3"
+              ></textarea>
             </div>
 
-            <div class="tile">
-                <h3 class="tile-title">Danh sách giỏ hành</h3>
-                <input type="text" id="myInput" onkeyup="myFunction()"
-                       placeholder="Nhập mã sản phẩm hoặc tên sản phẩm để tìm kiếm...">
-                <div class="du--lieu-san-pham">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                        <tr>
-                            <th class="so--luong">Mã hàng</th>
-                            <th class="so--luong">Tên sản phẩm</th>
-                            <th class="so--luong">Ảnh</th>
-                            <th class="so--luong" width="10">Số lượng</th>
-                            <th class="so--luong">Giá bán</th>
-                            <th class="so--luong text-center" style="text-align: center; vertical-align: middle;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>71309005</td>
-                            <td>Bàn ăn gỗ Theresa</td>
-                            <td><img src="/img-sanpham/reno.jpg" alt="" width="50px;"></td>
-                            <td><input class="so--luong1" type="number" value="2"></td>
-                            <td>5.600.000 VNĐ</td>
-                            <td style="text-align: center; vertical-align: middle;">
-                                <button class="btn btn-primary btn-sm trash" type="button" title="Xóa">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Thêm các sản phẩm khác nếu cần -->
-                        </tbody>
-                    </table>
-                </div>
-
+            <div class="form-group">
+              <label for="shippingFee">Phí ship</label>
+              <input
+                type="text"
+                class="form-control"
+                id="shippingFee"
+                ng-model="shippingfee"
+                value="0"
+              />
             </div>
+
+            <div class="form-group">
+              <label for="totalAmount">Tạm tính tiền hàng</label>
+              <input
+                type="text"
+                class="form-control"
+                id="totalAmount"
+                value="{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ"
+                disabled
+              />
+            </div>
+
+            <div class="form-group text-right">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Đóng
+                  </button>
+                <button type="submit" class="btn btn-success">
+                  Lưu đơn hàng
+                </button>
+               
+              </div>
+              
+            </div>
+          </form>
         </div>
-
-        <!-- Giỏ hàng / Thông tin thanh toán -->
-        <div class="col-md-4">
-            <div class="tile">
-                <h3 class="tile-title">Thông tin thanh toán</h3>
-                <div class="row">
-                    <div class="form-group col-md-10">
-                        <label class="control-label">Họ tên khách hàng</label>
-                        <input class="form-control" type="text" placeholder="Tìm kiếm khách hàng">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label style="text-align: center;" class="control-label">Tạo mới</label>
-                        <button class="btn btn-primary btn-them" data-toggle="modal" data-target="#exampleModalCenter">
-                            <i class="fas fa-user-plus"></i>
-                        </button>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="control-label">Nhân viên bán hàng</label>
-                        <select class="form-control" id="exampleSelect1">
-                            <option>--- Chọn nhân viên bán hàng ---</option>
-                            <option>Võ Trường</option>
-                            <option>Nhật Kim Anh</option>
-                            <option>Đào Thanh Tuấn</option>
-                            <option>Phạm Phong Phú</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="control-label">Ghi chú đơn hàng</label>
-                        <textarea class="form-control" rows="4" placeholder="Ghi chú thêm đơn hàng"></textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label class="control-label">Hình thức thanh toán</label>
-                        <select class="form-control" id="exampleSelect2" required>
-                            <option>Thanh toán chuyển khoản</option>
-                            <option>Trả tiền mặt tại quầy</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Tạm tính tiền hàng: </label>
-                        <p class="control-all-money-tamtinh">= 129.397.213 VNĐ</p>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Giảm giá (F7): </label>
-                        <input class="form-control" type="number" value="0">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Tổng cộng thanh toán: </label>
-                        <p class="control-all-money-total">= 129.397.213 VNĐ</p>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Khách hàng đưa tiền (F8): </label>
-                        <input class="form-control" type="number" value="290000">
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="control-label">Khách hàng còn nợ: </label>
-                        <p class="control-all-money"> - 129.397.213 VNĐ</p>
-                    </div>
-                    <div class="tile-footer col-md-12">
-                        <button class="btn btn-primary luu-san-pham" type="button"> Lưu đơn hàng (F9)</button>
-                        <button class="btn btn-primary luu-va-in" type="button">Lưu và in hóa đơn (F10)</button>
-                        <a class="btn btn-secondary luu-va-in" href="/home">Quay về</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!--
-MODAL
--->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-     data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-
-            <div class="modal-body">
-                <div class="row">
-                    <div class="form-group  col-md-12">
-          <span class="thong-tin-thanh-toan">
-            <h5>Tạo mới khách hàng</h5>
-          </span>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class="control-label">Họ và tên</label>
-                        <input class="form-control" type="text" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Địa chỉ</label>
-                        <input class="form-control" type="text" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Email</label>
-                        <input class="form-control" type="text" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Ngày sinh</label>
-                        <input class="form-control" type="date" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label">Số điện thoại</label>
-                        <input class="form-control" type="number" required>
-                    </div>
-                </div>
-                <BR>
-                <button class="btn btn-save" type="button">Lưu lại</button>
-                <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
-                <BR>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div>
-<!--
-MODAL
--->
-
-
-<!-- The Modal -->
-<div id="myModal" class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-        <div class="modal-header">
-            <span class="close">X</span>
-        </div>
-
-
-    </div>
-
+      </div>
 </div>

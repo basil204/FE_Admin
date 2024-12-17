@@ -80,7 +80,6 @@
                       ng-model="formData.productname"
                       required
                     />
-                 
                   </div>
 
                   <div class="form-group">
@@ -191,7 +190,6 @@
                 </div>
 
                 <!-- Textarea with Bootstrap styling -->
-                
               </form>
               <div class="row mb-2">
                 <div class="col-md-6">
@@ -205,6 +203,7 @@
                   />
                 </div>
                 <div class="col-md-2">
+                  <label for="productname">Lọc hãng:</label>
                   <select
                     class="form-control"
                     ng-change="searchProduct()"
@@ -215,6 +214,7 @@
                   </select>
                 </div>
                 <div class="col-md-2">
+                  <label for="productname">Lọc độ tuổi:</label>
                   <select
                     class="form-control"
                     ng-change="searchProduct()"
@@ -225,6 +225,7 @@
                   </select>
                 </div>
                 <div class="col-md-2">
+                  <label for="productname">Lọc loại:</label>
                   <select
                     class="form-control"
                     ng-change="searchProduct()"
@@ -262,7 +263,6 @@
                         margin-top: 10px;
                       "
                     >
-                    
                       <table class="table table-bordered">
                         <thead>
                           <tr>
@@ -407,13 +407,13 @@
                         </button>
                       </div>
                     </div>
-                    <Label class="control-label">Nhập mô tả thương hiệu</Label>
+                    <label class="control-label">Nhập mô tả thương hiệu</label>
                     <input
-                        class="form-control"
-                        type="text"
-                        ng-model="formData.description"
-                        required
-                      />
+                      class="form-control"
+                      type="text"
+                      ng-model="formData.description"
+                      required
+                    />
                   </div>
 
                   <!-- Tab Navigation -->
@@ -490,41 +490,41 @@
                         </table>
                       </div>
                       <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                    >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="goToFirstPage()"
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
                       >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -676,41 +676,41 @@
                         </table>
                       </div>
                       <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                    >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="goToFirstPage()"
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
                       >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -874,41 +874,41 @@
                         </table>
                       </div>
                       <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                    >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="goToFirstPage()"
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
                       >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -1063,41 +1063,41 @@
                       </div>
                     </div>
                     <div
-                    class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                  >
-                    <button
-                      class="btn btn-primary mx-2"
-                      ng-disabled="currentPage === 0"
-                      ng-click="goToFirstPage()"
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
                     >
-                      First
-                    </button>
-                    <button
-                      class="btn btn-primary mx-2"
-                      ng-disabled="currentPage === 0"
-                      ng-click="previousPage()"
-                    >
-                      Previous
-                    </button>
-                    <span class="mx-2"
-                      >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                      }}</span
-                    >
-                    <button
-                      class="btn btn-primary mx-2"
-                      ng-disabled="currentPage === pageInfo.totalPages - 1"
-                      ng-click="nextPage()"
-                    >
-                      Next
-                    </button>
-                    <button
-                      class="btn btn-primary mx-2"
-                      ng-disabled="currentPage === pageInfo.totalPages - 1"
-                      ng-click="goToLastPage()"
-                    >
-                      Last
-                    </button>
-                  </div>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
+                      >
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                   </div>
 
                   <br />
@@ -1261,41 +1261,41 @@
                         </table>
                       </div>
                       <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                    >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="goToFirstPage()"
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
                       >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -1460,41 +1460,41 @@
                         </table>
                       </div>
                       <div
-                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
-                    >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="goToFirstPage()"
+                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
                       >
-                        First
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === 0"
-                        ng-click="previousPage()"
-                      >
-                        Previous
-                      </button>
-                      <span class="mx-2"
-                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                        }}</span
-                      >
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="nextPage()"
-                      >
-                        Next
-                      </button>
-                      <button
-                        class="btn btn-primary mx-2"
-                        ng-disabled="currentPage === pageInfo.totalPages - 1"
-                        ng-click="goToLastPage()"
-                      >
-                        Last
-                      </button>
-                    </div>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="goToFirstPage()"
+                        >
+                          First
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === 0"
+                          ng-click="previousPage()"
+                        >
+                          Previous
+                        </button>
+                        <span class="mx-2"
+                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                          }}</span
+                        >
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="nextPage()"
+                        >
+                          Next
+                        </button>
+                        <button
+                          class="btn btn-primary mx-2"
+                          ng-disabled="currentPage === pageInfo.totalPages - 1"
+                          ng-click="goToLastPage()"
+                        >
+                          Last
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -1533,7 +1533,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">

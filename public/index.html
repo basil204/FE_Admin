@@ -82,22 +82,15 @@
           </li>
         </ul>
       </header>
-      <header
-        ng-if="isLoggedIn && !isBanHangTaiQuayPage"
-        ng-include="'/layout/header.html'"
-      ></header>
+      <header ng-if="isLoggedIn " ng-include="'/layout/header.html'"></header>
       <div ng-view></div>
-      <footer
-        ng-if="isLoggedIn && !isBanHangTaiQuayPage"
-        ng-include="'/layout/footer.html'"
-      ></footer>
+      <footer ng-if="isLoggedIn " ng-include="'/layout/footer.html'"></footer>
     </div>
 
     <!--Javascript-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/controller/app.js"></script>
     <script src="/controller/LoginController.js"></script>
-    <script src="/controller/BanHangTaiQuayController.js"></script>
     <script src="/controller/BrandController.js"></script>
     <script src="/controller/ProductController.js"></script>
     <script src="/controller/MilktasteController.js"></script>

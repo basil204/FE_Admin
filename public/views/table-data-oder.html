@@ -20,7 +20,7 @@
                 <label for="invoiceCode">Tìm kiếm theo Mã hóa đơn:</label>
                 <input
                   type="text"
-                  ng-model="search.productname"
+                  ng-model="search.invoiceCode"
                   class="form-control"
                   placeholder="Mã hóa đơn"
                   ng-change="searchInvoices()"
@@ -178,9 +178,7 @@
                         class="btn btn-primary btn-sm edit"
                         type="button"
                         title="Sửa"
-                        data-toggle="modal"
-                        data-target="#ModalUP"
-                        ng-click="getInvoiceDetailById(invoice.id)"
+                        ng-click="navigateToInvoiceDetail(invoice.id)"
                       >
                         <i class="fas fa-edit"></i>
                       </button>
@@ -259,13 +257,6 @@
           <form id="updateForm">
             <div class="form-group">
               <label for="invoiceCode">Mã hóa đơn</label>
-              <input
-                type="hidden"
-                class="form-control"
-                id="id"
-                ng-model="id"
-                disabled
-              />
               <input
                 type="text"
                 class="form-control"

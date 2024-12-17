@@ -1,6 +1,6 @@
 app.controller("UsagecapacityController", function ($scope, $http, $location) {
   const token = localStorage.getItem("authToken");
-  const API_BASE_URL = "http://160.30.21.47:1234/api/Usagecapacity";
+  const API_BASE_URL = "http://localhost:1234/api/Usagecapacity";
 
   $scope.usages = [];
   $scope.formData = {};
@@ -29,6 +29,13 @@ app.controller("UsagecapacityController", function ($scope, $http, $location) {
   };
 
   $scope.addOrUpdateItem = function () {
+    if (
+      !Number.isInteger($scope.formData.capacity) ||
+      $scope.formData.capacity <= 0
+    ) {
+      $scope.showNotification("Sức chứa phải là một số nguyên dương.", "error");
+      return; // Dừng thực hiện nếu giá trị không hợp lệ
+    }
     // Hiển thị hộp thoại xác nhận bằng SweetAlert2
     Swal.fire({
       title: "Xác nhận",
