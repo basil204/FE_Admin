@@ -3,7 +3,7 @@ app.controller(
   function ($scope, $http, $routeParams, $location) {
     const token = localStorage.getItem("authToken");
     const invoiceId = $routeParams.id;
-    const baseUrl = "http://localhost:1234/api";
+    const baseUrl = "http://160.30.21.47:1234/api";
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
