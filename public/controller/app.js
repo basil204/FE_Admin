@@ -58,6 +58,7 @@ app.run(function ($rootScope, $location) {
         "/invicedetail/:id",
         "/settings",
         "/duyen-don",
+        "/Settingbanner",
       ];
 
       const staffRoutes = [
@@ -71,6 +72,7 @@ app.run(function ($rootScope, $location) {
         "/invicedetail/:id",
         "/settings",
         "/duyen-don",
+        "/Settingbanner",
       ];
 
       const userRoutes =
@@ -161,6 +163,10 @@ app.config(function ($routeProvider, $locationProvider) {
     })
     .when("/settings", {
       templateUrl: "/views/setting.html",
+      resolve: { auth: requireAuth },
+    })
+    .when("/Settingbanner", {
+      templateUrl: "/views/Settingbanner.html",
       resolve: { auth: requireAuth },
     })
     .otherwise({

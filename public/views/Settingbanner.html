@@ -121,7 +121,10 @@
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.url}}</td>
-                    <td>{{item.banner}}</td>
+                    <td>
+                      {{ item.banner == 1 ? "Banner to" : (item.banner == 2 ?
+                      "Banner nhỏ" : "Không xác định") }}
+                    </td>
                     <td class="table-td-center">
                       <button
                         ng-click="deleteItem(item.id)"
