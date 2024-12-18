@@ -278,7 +278,34 @@ app.controller("StaffController", function ($scope, $http, $location) {
     $http.get(`${API_BASE_URL}/user/lst/${id}`, config).then(
       function (response) {
         $scope.formData = response.data;
-        console.log($scope.formData);
+        console.log(response.data.address);
+
+        // Tách địa chỉ thành các phần tử riêng biệt
+        const addressParts = response.data.address
+          .split(",")
+          .map((part) => part.trim());
+
+        // Kiểm tra và gán thành phố, quận, phường
+        if (addressParts.length >= 3) {
+          // Assuming the address format is City, District, Ward
+          const city = addressParts[0];
+          const district = addressParts[1];
+          const ward = addressParts[2];
+
+          console.log("Thành phố:", city);
+          console.log("Quận:", district);
+          console.log("Phường:", ward);
+
+          // Gán các giá trị vào formData nếu cần
+          $scope.formData.city = city;
+          $scope.formData.district = district;
+          $scope.formData.ward = ward;
+        }
+
+        // Gán lại địa chỉ đã tách vào formData
+        $scope.formData.address = addressParts;
+
+        // Đảm bảo là gán đúng role ID
         $scope.formData.role = response.data.role.id;
       },
       function (error) {
@@ -290,6 +317,7 @@ app.controller("StaffController", function ($scope, $http, $location) {
       }
     );
   };
+
   $scope.resetForm = function () {
     $scope.formData = {};
   };

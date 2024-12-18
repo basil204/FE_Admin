@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "banner giáng sinh",
+    "banner": "1",
+    "url": "https://i.ibb.co/hFFs5Qt/www-reallygreatsite-com-1.png"
+  },
+  {
+    "id": 2,
+    "name": "banner black",
+    "banner": "1",
+    "url": "https://i.ibb.co/DQ1GnYx/www-reallygreatsite-com.png"
+  },
+  {
+    "id": 3,
+    "name": "siêu sale",
+    "banner": "1",
+    "url": "https://i.ibb.co/56cFCqv/Thi-t-k-ch-a-c-t-n.png"
+  },
+  {
+    "id": 4,
+    "name": "banner giang sinh",
+    "banner": "2",
+    "url": "https://i.ibb.co/hBzCx9P/Thi-t-k-ch-a-c-t-n-2.png"
+  },
+  {
+    "id": 5,
+    "name": "banner sale",
+    "banner": "2",
+    "url": "https://i.ibb.co/BKvCB6m/Thi-t-k-ch-a-c-t-n-3.png"
+  }
+]

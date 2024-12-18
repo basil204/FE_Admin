@@ -1,0 +1,148 @@
+<div ng-controller="ContentController">
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb side">
+        <li class="breadcrumb-item active">
+          <a href="#"><b>Danh sách Nội Dung</b></a>
+        </li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <div class="tile-body">
+            <div style="overflow-x: auto; margin-top: 10px">
+              <div ng-if="notification.message" class="form-group col-md-12">
+                <div
+                  class="alert"
+                  ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}"
+                >
+                  {{ notification.message }}
+                </div>
+              </div>
+
+              <!-- Form tìm kiếm -->
+
+              <!-- Form nhập thông tin -->
+              <div class="row element-button mt-2">
+                <div class="col-md-4 mb-2">
+                  <label for="name">Tên:</label>
+                  <input
+                    type="text"
+                    ng-model="formData.name"
+                    class="form-control"
+                    placeholder="Nhập tên"
+                  />
+                </div>
+                <div class="col-md-4 mb-2">
+                  <label for="upload">Upload file:</label>
+                  <input
+                    type="file"
+                    id="upload"
+                    class="form-control"
+                    ng-model="formData.upload"
+                    onchange="angular.element(this).scope().uploadImage(this.files)"
+                    accept="image/*"
+                  />
+                  <small class="text-muted">
+                    Chỉ chấp nhận kích thước 1590x200px hoặc 1590x482px.
+                  </small>
+                </div>
+
+                <input type="hidden" ng-model="formData.imgUrl" />
+                <div class="col-md-4 mb-2">
+                  <label for="selectBox2">Kiểu banner:</label>
+                  <select
+                    class="form-control"
+                    id="selectBox2"
+                    ng-model="formData.selectBox2"
+                  >
+                    <option value="1">Banner to</option>
+                    <option value="2">Banner nhỏ</option>
+                  </select>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <button
+                    class="btn btn-success mt-4"
+                    ng-click="addOrUpdateItem()"
+                  >
+                    Lưu lại
+                  </button>
+                </div>
+              </div>
+              <div class="row element-button mb-3">
+                <div class="col-md-4">
+                  <label for="searchName">Tìm kiếm theo tên:</label>
+                  <input
+                    type="text"
+                    ng-model="search.name"
+                    class="form-control"
+                    placeholder="Nhập tên để tìm kiếm"
+                    ng-change="filterItems()"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <label for="searchBanner">Tìm kiếm theo kiểu banner:</label>
+                  <select
+                    class="form-control"
+                    id="searchBanner"
+                    ng-model="search.banner"
+                    ng-change="filterItems()"
+                  >
+                    <option value="">Chọn kiểu banner</option>
+                    <option value="1">Banner to</option>
+                    <option value="2">Banner nhỏ</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Bảng hiển thị danh sách -->
+              <table
+                class="table table-hover table-bordered"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                id="contentTable"
+                style="width: 100%"
+              >
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>URL</th>
+                    <th>Banner</th>
+                    <th width="100">Tính năng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in contents track by $index">
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.url}}</td>
+                    <td>{{item.banner}}</td>
+                    <td class="table-td-center">
+                      <button
+                        ng-click="deleteItem(item.id)"
+                        class="btn btn-danger btn-sm"
+                      >
+                        Xóa
+                      </button>
+                      <button
+                        ng-click="editItem(item)"
+                        class="btn btn-primary btn-sm"
+                      >
+                        Sửa
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
