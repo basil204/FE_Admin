@@ -24,7 +24,7 @@ app.run(function ($rootScope, $location) {
   $rootScope.logout = function () {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userInfo");
-
+    $rootScope.stompClient.disconnect();
     $rootScope.isLoggedIn = false;
     $location.path("/login");
   };

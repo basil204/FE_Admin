@@ -15,7 +15,13 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
     },
   };
   const baseUrl = "http://160.30.21.47:1234/api";
-
+  function getInvoiceCod() {
+    if ($rootScope.stompClient && $rootScope.stompClient.connected) {
+      $scope.sendMessage("/app/cod", "a");
+    } else {
+      console.error("WebSocket is not connected.");
+    }
+  }
   $scope.decreaseQuantity = function (item) {
     if (item.quantity > 0) {
       // Check the current stock before decreasing
@@ -430,4 +436,5 @@ app.controller("DonHangController", function ($scope, $http, $rootScope) {
       console.error("WebSocket is not connected.");
     }
   };
+  getInvoiceCod();
 });
