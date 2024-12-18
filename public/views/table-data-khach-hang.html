@@ -36,9 +36,7 @@
                   />
                 </div>
                 <div class="col-sm-6 col-md-3 mb-2">
-                  <label for="fullname"
-                    >Tìm kiếm theo Họ và tên:</label
-                  >
+                  <label for="fullname">Tìm kiếm theo Họ và tên:</label>
                   <input
                     type="text"
                     ng-model="search.fullname"
@@ -48,9 +46,7 @@
                   />
                 </div>
                 <div class="col-sm-6 col-md-3 mb-2">
-                  <label for="email"
-                    >Tìm kiếm theo Email:</label
-                  >
+                  <label for="email">Tìm kiếm theo Email:</label>
                   <input
                     type="text"
                     ng-model="search.email"
@@ -60,9 +56,7 @@
                   />
                 </div>
                 <div class="col-sm-6 col-md-3 mb-2">
-                  <label for="address"
-                    >Tìm kiếm theo Địa chỉ:</label
-                  >
+                  <label for="address">Tìm kiếm theo Địa chỉ:</label>
                   <input
                     type="text"
                     ng-model="search.address"
@@ -235,6 +229,48 @@
                 ng-model="formData.fullname"
                 required
               />
+            </div>
+            <div class="form-group col-md-6">
+              <label for="city">Thành phố</label>
+              <select
+                class="form-control"
+                id="city"
+                ng-model="city"
+                ng-change="getDistricts()"
+              >
+                <option value="">Chọn thành phố</option>
+                <option ng-repeat="city in cities" value="{{city.code}}">
+                  {{city.name}}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="district">Quận</label>
+              <select
+                class="form-control"
+                id="district"
+                ng-model="district"
+                ng-change="getWards()"
+              >
+                <option value="">Chọn quận</option>
+                <option
+                  ng-repeat="district in districts"
+                  value="{{district.code}}"
+                >
+                  {{district.name}}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="ward">Phường</label>
+              <select class="form-control" id="ward" ng-model="ward">
+                <option value="">Chọn phường</option>
+                <option ng-repeat="ward in wards" value="{{ward.code}}">
+                  {{ward.name}}
+                </option>
+              </select>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Số điện thoại</label>

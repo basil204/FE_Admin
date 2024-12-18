@@ -104,25 +104,11 @@ app.controller("MilkDetailController", function ($scope, $http, $location) {
   };
   $scope.updateStock = function (id) {
     // Hiển thị thông báo xác nhận trước khi mở modal
-    Swal.fire({
-      title: "Bạn có chắc chắn muốn cập nhật số lượng tồn kho?",
-      text: "Hành động này sẽ thay đổi số lượng tồn kho của sản phẩm.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Có, cập nhật!",
-      cancelButtonText: "Hủy",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Nếu người dùng xác nhận, tiếp tục mở modal
-        $scope.formData = { newStockQuantity: null, productId: id };
-        console.log($scope.formData);
-        $("#ModalStockUpdate").modal("show");
-      } else {
-        // Nếu người dùng hủy bỏ, không làm gì cả
-        console.log("Cập nhật tồn kho bị hủy");
-      }
-    });
+
+    // Nếu người dùng xác nhận, tiếp tục mở modal
+    $scope.formData = { newStockQuantity: null, productId: id };
+    console.log($scope.formData);
+    $("#ModalStockUpdate").modal("show");
   };
 
   $scope.saveStockUpdate = function (formData) {

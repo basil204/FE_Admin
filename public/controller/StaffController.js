@@ -8,9 +8,57 @@ app.controller("StaffController", function ($scope, $http, $location) {
       Authorization: `Bearer ${token}`,
     },
   };
+  const configs = {
+    headers: {
+      Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE4YzU0OGZkYzk1ZjI5MDIzZjU1NWRlYjI5NWExYWNkZTViNDkzYjUyNTYzZTk5ZGY5ODliNjRkYmY2Zjc0Mjg5NzdjYWE2ODJiNWZkZTJlIn0.eyJhdWQiOiIxNjQiLCJqdGkiOiJhOGM1NDhmZGM5NWYyOTAyM2Y1NTVkZWIyOTVhMWFjZGU1YjQ5M2I1MjU2M2U5OWRmOTg5YjY0ZGJmNmY3NDI4OTc3Y2FhNjgyYjVmZGUyZSIsImlhdCI6MTczNDQyMjMyNiwibmJmIjoxNzM0NDIyMzI2LCJleHAiOjE3NjU5NTgzMjYsInN1YiI6IjM3ODAiLCJzY29wZXMiOltdfQ.hsWCVA6F3ucFnnRixAIk5nip_Le4gzLPh5QTPUEUj85v0mQ_ULeZXXbsUNDk54Y75uvED5Dq1nw-t2fzfHJez9yTwE4qF7bqnZuUrKItpfO2KQ-fultA4DYuIOSOe932rBd8IpTOu6BXQwTQ1lNvoe3lotNgApE-RUUA_on0qgU8WMcLrAhY3S0gZG4Ut12ptfkH5umnhhDZ2h1ZI41dSPt5hj4ZkugnGLVys_SXJ1Ik4JN2iKlGbyYdWz-qevw1zFgKaLC1_M-tpLZkHl2HI2UhEa7SeKIM7N3WeI-PksdcXaKqCJxNGBqixDrEo11x2ypleM4dm0MaH9jMcLsgU-J98-TGKcfxIdyiYCdwXXSv8m8sLA9WQvir6DTRu3GeYNI9P4562wyBbNk2zNAR7LbIg5g7Aeg3lmLmCvq6swZEAEkFFwD0Yi8wy-MYERaDkLCgbwBsZ4lLt_X4Lf3Yle453LI2IbmvWAm9ByCihKonU1Rir4n9qzGLjiY1fjdZMd9Au4KZXtAW4qtHh34K_5aKPIQh4tojv8qEsDyNUukDIbXzunvyul0iZ2wEfEaqOYjIt2uP-35DU7criR2hQFnS0ObMp9yKso7hGIvyTdE20YxUpuVwmj1L8Oumjl6mNvUIS89nJZwUC7-EsHHdtt442j96rSAg_T0LPYuDYkw`,
+    },
+  };
   $scope.currentPage = 0;
   $scope.pageSize = 5;
   $scope.formData = {};
+
+  $scope.cities = [];
+  $scope.districts = [];
+  $scope.wards = [];
+  $http
+    .get("https://api.goship.io/api/v1/cities?limit=-1&sort=name:1", configs)
+    .then(function (response) {
+      if (response.data.status === "success") {
+        $scope.cities = response.data.data;
+      }
+    });
+
+  // Lấy danh sách quận khi chọn thành phố
+  $scope.getDistricts = function () {
+    if ($scope.city) {
+      $http
+        .get(
+          `https://api.goship.io/api/v1/districts?city_code=${$scope.city}&limit=-1&sort=name:1`,
+          configs
+        )
+        .then(function (response) {
+          if (response.data.status === "success") {
+            $scope.districts = response.data.data;
+          }
+        });
+    }
+  };
+
+  // Lấy danh sách phường khi chọn quận
+  $scope.getWards = function () {
+    if ($scope.district) {
+      $http
+        .get(
+          `https://api.goship.io/api/v1/wards?district_code=${$scope.district}&limit=-1&sort=name:1`,
+          configs
+        )
+        .then(function (response) {
+          if (response.data.status === "success") {
+            $scope.wards = response.data.data;
+          }
+        });
+    }
+  };
   // Fetch staff list
   $scope.GetStaffs = function () {
     $http
