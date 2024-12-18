@@ -7,7 +7,7 @@ app.use(cors());
 
 // File path to store data
 const dataFilePath = path.join(__dirname, "data.json");
-
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json()); // To parse JSON requests
 app.post("/api/data", (req, res) => {
   const { name, banner, url } = req.body;
@@ -66,35 +66,31 @@ app.delete("/api/data/:id", (req, res) => {
   writeDataToFile(data);
   res.status(204).send();
 });
-// Helper function to read data from the JSON file
 function readDataFromFile() {
   try {
     const data = fs.readFileSync(dataFilePath, "utf-8");
     return JSON.parse(data);
   } catch (err) {
-    return []; // Return an empty array if the file does not exist or is empty
+    return [];
   }
 }
 
-// Helper function to write data to the JSON file
 function writeDataToFile(data) {
   fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2), "utf-8");
 }
-// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Redirect all other routes to index.html
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Allow all origins
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"); // Allow specific HTTP methods
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow specific headers
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 // Start the server
 const PORT = process.env.PORT || 3004;
 app.listen(PORT, () => {
-  console.log(`Server running on port http://160.30.21.47:${PORT}`);
+  console.log(`Server running on port http://localhost:${PORT}`);
 });

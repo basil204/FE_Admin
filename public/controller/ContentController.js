@@ -4,7 +4,7 @@ app.controller("ContentController", function ($scope, $http) {
   $scope.search = {}; // Dữ liệu tìm kiếm
   $scope.notification = {}; // Thông báo
 
-  const apiBaseUrl = "http://localhost:3004/api/data"; // Đường dẫn API CRUD
+  const apiBaseUrl = "http://160.30.21.47:3004/api/data"; // Đường dẫn API CRUD
   const imgbbApiKey = "588779c93c7187148b4fa9b7e9815da9"; // API Key của imgBB
 
   // Hàm hiển thị thông báo
