@@ -35,7 +35,11 @@ app.controller("ContentController", function ($scope, $http) {
           .map((user) => user.phonenumber)
           .filter((phone) => phone !== null); // Loại bỏ số điện thoại null
 
-        $scope.info = validPhoneNumbers;
+        // Loại bỏ số điện thoại trùng lặp
+        const uniquePhoneNumbers = [...new Set(validPhoneNumbers)];
+
+        $scope.info = uniquePhoneNumbers;
+        $scope.customerCount = uniquePhoneNumbers.length; // Đếm số khách hàng
       },
       function (error) {
         $scope.showNotification("Không thể tải danh sách nhân viên", "error");

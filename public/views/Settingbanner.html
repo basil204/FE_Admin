@@ -32,6 +32,13 @@
               >
                 Gửi Chương Trình Quảng Cáo
               </button>
+              <button
+                class="btn btn-info"
+                data-toggle="modal"
+                data-target="#settingsModal"
+              >
+                Cài đặt
+              </button>
             </div>
 
             <!-- Table Section -->
@@ -169,7 +176,180 @@
       </div>
     </div>
 
-    <!-- Modal for Advertise Program -->
+    <!-- Settings Modal -->
+    <div
+      class="modal fade"
+      id="settingsModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="settingsModalLabel"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog"
+        role="document"
+        ng-controller="settingsController"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="settingsModalLabel">Cài đặt</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form name="settingsForm" ng-submit="saveSettings()">
+              <!-- Upload Logo Section -->
+              <!-- Image Preview Section -->
+              <div class="form-group">
+                <div class="preview-container" ng-if="settings.imgUrl">
+                  <div class="text-center">
+                    <img
+                      ng-src="{{settings.imgUrl}}"
+                      alt="Logo Preview"
+                      class="logo-preview"
+                      style="width: 50px; height: 50px"
+                    />
+                    <br />
+                    <button
+                      class="btn btn-danger btn-sm mt-2"
+                      ng-click="removeImage()"
+                    >
+                      Xóa Hình
+                    </button>
+                  </div>
+                </div>
+                <label for="logo">Upload Logo:</label>
+                <input
+                  type="file"
+                  id="logo"
+                  name="logo"
+                  class="form-control"
+                  onchange="angular.element(this).scope().uploadImage(this.files)"
+                />
+              </div>
+
+              <!-- Other Fields (Shop Name, API Key, etc.) -->
+              <div class="form-group">
+                <label for="nameshop">Tên cửa hàng:</label>
+                <input
+                  type="text"
+                  id="nameshop"
+                  ng-model="settings.nameshop"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="apikey">API Key:</label>
+                <input
+                  type="text"
+                  id="apikey"
+                  ng-model="settings.apikey"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Value Bank Field -->
+              <div class="form-group">
+                <label for="bank">Ngân hàng:</label>
+                <select
+                  id="bank"
+                  ng-model="settings.valuebank"
+                  ng-options="bank.code as bank.name for bank in availableBanks"
+                  class="form-control"
+                  required
+                ></select>
+              </div>
+
+              <!-- STK Field -->
+              <div class="form-group">
+                <label for="stk">Số tài khoản (STK):</label>
+                <input
+                  type="text"
+                  id="stk"
+                  ng-model="settings.stk"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Hotline Field -->
+              <div class="form-group">
+                <label for="hotline">Hotline:</label>
+                <input
+                  type="text"
+                  id="hotline"
+                  ng-model="settings.hotline"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Full Name Field -->
+              <div class="form-group">
+                <label for="fullname">Tên đầy đủ:</label>
+                <input
+                  type="text"
+                  id="fullname"
+                  ng-model="settings.fullname"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Email Field -->
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  ng-model="settings.email"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Address Field -->
+              <div class="form-group">
+                <label for="address">Địa chỉ:</label>
+                <input
+                  type="text"
+                  id="address"
+                  ng-model="settings.address"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- Save Button -->
+              <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                ng-click="resetForm()"
+              >
+                Làm mới
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Đóng
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
     <div
       class="modal fade"
       id="advertiseProgramModal"
@@ -243,3 +423,9 @@
     </div>
   </main>
 </div>
+
+<style>
+  .modal-title {
+    color: black;
+  }
+</style>

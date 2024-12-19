@@ -26,12 +26,6 @@
         <span class="app-menu__label">Quản lý người dùng</span></a
       >
     </li>
-    <li ng-if="userRole === 'Admin'">
-      <a class="app-menu__item" href="/Settingbanner"
-        ><i class="app-menu__icon bx bx-id-card"></i>
-        <span class="app-menu__label">Settingbanner</span></a
-      >
-    </li>
     <li ng-if="userRole === 'Staff'">
       <a class="app-menu__item" href="/table-data-khach-hang"
         ><i class="app-menu__icon bx bx-user-voice"></i
@@ -63,7 +57,7 @@
       >
     </li>
     <li ng-if="userRole === 'Admin'">
-      <a class="app-menu__item" href="/settings">
+      <a class="app-menu__item" href="/Settingbanner">
         <i class="app-menu__icon bx bx-cog"></i>
         <span class="app-menu__label">Cài Đặt</span>
       </a>
