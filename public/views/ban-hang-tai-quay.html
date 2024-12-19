@@ -174,7 +174,14 @@
                   <tr ng-repeat="item in invoiceDetails">
                     <td>{{item.packagingunitname}} {{item.milkTypename}} {{ item.milkbrandname}} {{ item.milktastename}}
                     </td>
-                    <td>{{ item.quantity }}</td>
+                    <td><input
+                      type="number"
+                      class="form-control form-control-sm"
+                      ng-model="item.quantity"
+                      min="0"
+                      style="width: 50px"
+                      required
+                    /></td>
                     <td>{{ item.capacity}} {{ item.unit}}</td>
                     <td>{{ item.price | number:'' }} VNĐ</td>
                     <td>{{ item.totalAmount | number:'' }} VNĐ</td>
