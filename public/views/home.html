@@ -1,15 +1,5 @@
 <div ng-controller="indexController">
   <main class="app-content">
-    <!-- Cảnh báo -->
-    <div class="popup-alert" ng-if="showWarning" role="alert">
-      <strong>Cảnh báo!</strong> Đây là một thông báo cảnh báo quan trọng.
-      <p>
-        Thông tin chi tiết: Vui lòng kiểm tra lại các sản phẩm trong kho và cập
-        nhật ngay khi có thay đổi.
-      </p>
-      <button class="btn-close" ng-click="closeWarning()">Đóng</button>
-    </div>
-
     <div class="row">
       <div class="col-md-12">
         <div class="app-title">
@@ -167,7 +157,182 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="tile">
+              <div>
+                <h3 class="tile-title">SẢN PHẨM ĐÃ HẾT</h3>
+              </div>
+              <div class="tile-body">
+                <table
+                  class="table table-hover table-bordered"
+                  id="sampleTable"
+                >
+                  <thead>
+                    <tr>
+                      <th>Mã sản phẩm</th>
+                      <th>Tên sản phẩm</th>
+                      <th>Loại Sản Phẩm</th>
+                      <th>Hãng</th>
+                      <th>Độ Tuổi</th>
+                      <th>Hương Vị</th>
+                      <th>Loại</th>
+                      <th>Giá Tiền</th>
+                      <th>Dung tích</th>
+
+                      <th>Hình ảnh</th>
+                      <th>Chức Năng</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="milkdetail in milks">
+                      <td>{{milkdetail.milkdetailcode}}</td>
+                      <td>{{milkdetail.product.productname}}</td>
+                      <td>{{milkdetail.product.milkType.milkTypename}}</td>
+                      <td>{{milkdetail.product.milkBrand.milkbrandname}}</td>
+                      <td>{{milkdetail.product.targetUser.targetuser}}</td>
+                      <td>{{milkdetail.milkTaste.milktastename}}</td>
+                      <td>{{milkdetail.packagingunit.packagingunitname}}</td>
+                      <td>{{milkdetail.price | currency:"VNĐ "}}</td>
+                      <td>
+                        {{milkdetail.usageCapacity.capacity + " " +
+                        milkdetail.usageCapacity.unit}}
+                      </td>
+
+                      <td>
+                        <img
+                          ng-src="{{milkdetail.imgUrl}}"
+                          alt="Milk Image"
+                          style="width: 50px; height: 50px"
+                        />
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-info"
+                          type="button"
+                          data-toggle="modal"
+                          data-target="#ModalStockUpdate"
+                          ng-click="updateStock(milkdetail.id)"
+                        >
+                          <i class="fas fa-pen"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="tile">
+              <div>
+                <h3 class="tile-title">Lịch sử giao dịch</h3>
+              </div>
+              <div class="tile-body">
+                <!-- Input tìm kiếm -->
+                <div class="form-group">
+                  <label for="searchInput">Tìm kiếm:</label>
+                  <input
+                    type="text"
+                    id="searchInput"
+                    class="form-control"
+                    ng-model="searchText"
+                    placeholder="Nhập nội dung hoặc mã giao dịch..."
+                  />
+                </div>
+                <!-- Wrapper cho bảng -->
+                <div
+                  class="table-responsive"
+                  style="max-height: 300px; overflow-y: auto"
+                >
+                  <table
+                    class="table table-hover table-bordered"
+                    id="transactionTable"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Ngày giao dịch</th>
+                        <th>Số tài khoản</th>
+                        <th>Số tiền ghi có</th>
+                        <th>Tiền tệ</th>
+                        <th>Nội Dung</th>
+                        <th>Mã giao dịch</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Thêm filter vào ng-repeat -->
+                      <tr
+                        ng-repeat="transaction in transactionHistoryList | filter:customFilter"
+                      >
+                        <td>{{ transaction.transactionDate }}</td>
+                        <td>{{ transaction.accountNo }}</td>
+                        <td>{{ transaction.creditAmount }}</td>
+                        <td>{{ transaction.currency }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td>{{ transaction.refNo }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
+
+  <div
+    class="modal fade"
+    id="ModalStockUpdate"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+    data-backdrop="static"
+    data-keyboard="false"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <h5>Cập nhật số lượng sản phẩm</h5>
+            </div>
+          </div>
+          <!-- Stock Quantity -->
+          <div class="form-group col-md-12">
+            <label class="control-label">Số lượng mới</label>
+            <input
+              class="form-control"
+              type="number"
+              ng-model="formData.newStockQuantity"
+              required
+            />
+          </div>
+
+          <!-- Save Button for Updating Stock -->
+          <button
+            class="btn btn-save"
+            type="button"
+            ng-click="saveStockUpdate(formData)"
+          >
+            Cập nhật số lượng
+          </button>
+          <button class="btn btn-save" type="button" ng-click="resetForm()">
+            Làm mới
+          </button>
+          <a
+            class="btn btn-cancel"
+            data-dismiss="modal"
+            href="#"
+            ng-click="resetForm()"
+            >Hủy bỏ</a
+          >
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
 </div>

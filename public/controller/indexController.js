@@ -89,15 +89,31 @@ app.controller("indexController", [
         .get("http://160.30.21.47:1234/api/payment/historyBank", config)
         .then((response) => {
           // Assuming the transaction history is inside `data.transactionHistoryList`
-          $scope.transactionHistoryList = response.data.transactionHistoryList;
+          const allTransactions = response.data.transactionHistoryList;
 
-          // Loop through the transactionHistoryList using a for loop
-          for (let i = 0; i < $scope.transactionHistoryList.length; i++) {
-            let transaction = $scope.transactionHistoryList[i];
-            console.log(transaction); // or any logic to process each transaction
-          }
+          // Filter transactions to only include those with creditAmount > 0
+          $scope.transactionHistoryList = allTransactions.filter(
+            (transaction) => transaction.creditAmount > 0
+          );
+
+          // Log the filtered transactions (optional)
+          console.log($scope.transactionHistoryList);
         })
         .catch(handleForbiddenError);
+    };
+    $scope.searchText = ""; // Lưu trữ giá trị input
+
+    // Hàm filter tùy chỉnh
+    $scope.customFilter = function (transaction) {
+      if (!$scope.searchText) return true; // Nếu không có tìm kiếm, hiển thị tất cả
+
+      const lowerSearchText = $scope.searchText.toLowerCase();
+      return (
+        (transaction.description &&
+          transaction.description.toLowerCase().includes(lowerSearchText)) ||
+        (transaction.refNo &&
+          transaction.refNo.toLowerCase().includes(lowerSearchText))
+      );
     };
 
     // Fetch the online users count and transaction history on page load

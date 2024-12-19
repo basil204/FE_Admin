@@ -1,5 +1,6 @@
 <div ng-controller="ContentController">
   <main class="app-content">
+    <!-- Header Section -->
     <div class="app-title">
       <ul class="app-breadcrumb breadcrumb side">
         <li class="breadcrumb-item active">
@@ -10,110 +11,43 @@
     </div>
 
     <div class="row">
+      <!-- Main Content Section -->
       <div class="col-md-12">
         <div class="tile">
+          <h3 class="tile-title">Quản lý nội dung</h3>
           <div class="tile-body">
-            <div style="overflow-x: auto; margin-top: 10px">
-              <div ng-if="notification.message" class="form-group col-md-12">
-                <div
-                  class="alert"
-                  ng-class="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}"
-                >
-                  {{ notification.message }}
-                </div>
-              </div>
+            <!-- Modal Triggers -->
+            <div class="text-right mb-3">
+              <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#setBannerModal"
+              >
+                Set Banner
+              </button>
+              <button
+                class="btn btn-secondary"
+                data-toggle="modal"
+                data-target="#advertiseProgramModal"
+              >
+                Gửi Chương Trình Quảng Cáo
+              </button>
+            </div>
 
-              <!-- Form tìm kiếm -->
-
-              <!-- Form nhập thông tin -->
-              <div class="row element-button mt-2">
-                <div class="col-md-4 mb-2">
-                  <label for="name">Tên:</label>
-                  <input
-                    type="text"
-                    ng-model="formData.name"
-                    class="form-control"
-                    placeholder="Nhập tên"
-                  />
-                </div>
-                <div class="col-md-4 mb-2">
-                  <label for="upload">Upload file:</label>
-                  <input
-                    type="file"
-                    id="upload"
-                    class="form-control"
-                    ng-model="formData.upload"
-                    onchange="angular.element(this).scope().uploadImage(this.files)"
-                    accept="image/*"
-                  />
-                  <small class="text-muted">
-                    Chỉ chấp nhận kích thước 1590x200px hoặc 1590x482px.
-                  </small>
-                </div>
-
-                <input type="hidden" ng-model="formData.imgUrl" />
-                <div class="col-md-4 mb-2">
-                  <label for="selectBox2">Kiểu banner:</label>
-                  <select
-                    class="form-control"
-                    id="selectBox2"
-                    ng-model="formData.selectBox2"
-                  >
-                    <option value="1">Banner to</option>
-                    <option value="2">Banner nhỏ</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-2">
-                  <button
-                    class="btn btn-success mt-4"
-                    ng-click="addOrUpdateItem()"
-                  >
-                    Lưu lại
-                  </button>
-                </div>
-              </div>
-              <div class="row element-button mb-3">
-                <div class="col-md-4">
-                  <label for="searchName">Tìm kiếm theo tên:</label>
-                  <input
-                    type="text"
-                    ng-model="search.name"
-                    class="form-control"
-                    placeholder="Nhập tên để tìm kiếm"
-                    ng-change="filterItems()"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <label for="searchBanner">Tìm kiếm theo kiểu banner:</label>
-                  <select
-                    class="form-control"
-                    id="searchBanner"
-                    ng-model="search.banner"
-                    ng-change="filterItems()"
-                  >
-                    <option value="">Chọn kiểu banner</option>
-                    <option value="1">Banner to</option>
-                    <option value="2">Banner nhỏ</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Bảng hiển thị danh sách -->
+            <!-- Table Section -->
+            <div style="overflow-x: auto; margin-top: 20px">
               <table
-                class="table table-hover table-bordered"
-                cellpadding="0"
-                cellspacing="0"
-                border="0"
+                class="table table-hover table-bordered text-center"
                 id="contentTable"
                 style="width: 100%"
               >
-                <thead>
+                <thead class="thead-dark">
                   <tr>
                     <th>ID</th>
                     <th>Tên</th>
                     <th>URL</th>
                     <th>Banner</th>
-                    <th width="100">Tính năng</th>
+                    <th width="150">Tính năng</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -125,16 +59,16 @@
                       {{ item.banner == 1 ? "Banner to" : (item.banner == 2 ?
                       "Banner nhỏ" : "Không xác định") }}
                     </td>
-                    <td class="table-td-center">
+                    <td>
                       <button
                         ng-click="deleteItem(item.id)"
-                        class="btn btn-danger btn-sm"
+                        class="btn btn-danger btn-sm mx-1"
                       >
                         Xóa
                       </button>
                       <button
                         ng-click="editItem(item)"
-                        class="btn btn-primary btn-sm"
+                        class="btn btn-primary btn-sm mx-1"
                       >
                         Sửa
                       </button>
@@ -143,6 +77,155 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Set Banner -->
+    <div
+      class="modal fade"
+      id="setBannerModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="setBannerModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="setBannerModalLabel">Set Banner</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="name">Tên:</label>
+              <input
+                type="text"
+                ng-model="formData.name"
+                class="form-control"
+                placeholder="Nhập tên"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="upload">Upload file:</label>
+              <input
+                type="file"
+                id="upload"
+                class="form-control"
+                ng-model="formData.upload"
+                onchange="angular.element(this).scope().uploadImage(this.files)"
+                accept="image/*"
+              />
+              <small class="text-muted">
+                Chỉ chấp nhận kích thước 1590x200px hoặc 1590x482px.
+              </small>
+            </div>
+            <input type="hidden" ng-model="formData.imgUrl" />
+
+            <div class="form-group">
+              <label for="selectBox2">Kiểu banner:</label>
+              <select
+                class="form-control"
+                id="selectBox2"
+                ng-model="formData.selectBox2"
+              >
+                <option value="1">Banner to</option>
+                <option value="2">Banner nhỏ</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Đóng
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              ng-click="addOrUpdateItem()"
+            >
+              Lưu lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Advertise Program -->
+    <div
+      class="modal fade"
+      id="advertiseProgramModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="advertiseProgramModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="advertiseProgramModalLabel">
+              Gửi Chương Trình Quảng Cáo
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="msg">Tin nhắn:</label>
+              <textarea
+                ng-model="formData.msg"
+                class="form-control"
+                placeholder="Nhập tin nhắn"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="uploadMsg">Upload file:</label>
+              <input
+                type="file"
+                id="uploadMsg"
+                class="form-control"
+                ng-model="formData.uploadMsg"
+                onchange="angular.element(this).scope().uploadImage(this.files)"
+                accept="image/*"
+              />
+              <small class="text-muted"> Chỉ chấp nhận định dạng ảnh. </small>
+            </div>
+            <input type="hidden" ng-model="formData.imgUrl" />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Đóng
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              ng-click="saveImageData()"
+            >
+              Gửi Dữ Liệu
+            </button>
           </div>
         </div>
       </div>

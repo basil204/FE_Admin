@@ -1,23 +1,99 @@
 app.controller("ContentController", function ($scope, $http) {
+  const token = localStorage.getItem("authToken");
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   $scope.contents = []; // Danh sách nội dung
   $scope.formData = {}; // Dữ liệu form
   $scope.search = {}; // Dữ liệu tìm kiếm
   $scope.notification = {}; // Thông báo
 
   const apiBaseUrl = "http://160.30.21.47:3000/api/data"; // Đường dẫn API CRUD
+  const saveImgApiUrl = "http://160.30.21.47:3030/api/saveimg"; // Đường dẫn API lưu ảnh
+  const API_BASE_URL = "http://160.30.21.47:1234/api";
   const imgbbApiKey = "588779c93c7187148b4fa9b7e9815da9"; // API Key của imgBB
 
   // Hàm hiển thị thông báo
   $scope.showNotification = function (message, type) {
-    $scope.notification.message = message;
-    $scope.notification.type = type;
-    setTimeout(() => {
-      $scope.notification.message = null;
-      $scope.$apply(); // Đảm bảo cập nhật giao diện
-    }, 3000);
+    Swal.fire({
+      title: type === "success" ? "Thành công!" : "Lỗi!",
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
   };
 
-  // Lấy danh sách nội dung từ API
+  $scope.GetCustomers = function () {
+    $http.get(`${API_BASE_URL}/user/lst`, config).then(
+      function (response) {
+        const validPhoneNumbers = response.data
+          .filter((user) => user.role !== 3 && user.role !== 1) // Loại bỏ role = 3 và 1
+          .map((user) => user.phonenumber)
+          .filter((phone) => phone !== null); // Loại bỏ số điện thoại null
+
+        $scope.info = validPhoneNumbers;
+      },
+      function (error) {
+        $scope.showNotification("Không thể tải danh sách nhân viên", "error");
+      }
+    );
+  };
+
+  $scope.GetCustomers();
+
+  $scope.saveImageData = function () {
+    if (!$scope.formData.imgUrl || !$scope.formData.msg) {
+      $scope.showNotification(
+        "Vui lòng điền đầy đủ thông tin để lưu dữ liệu ảnh",
+        "error"
+      );
+      return;
+    }
+
+    if (!$scope.info || $scope.info.length === 0) {
+      $scope.showNotification(
+        "Không có số điện thoại hợp lệ để lưu dữ liệu ảnh",
+        "error"
+      );
+      return;
+    }
+
+    const sendImageDataWithDelay = function (index) {
+      if (index >= $scope.info.length) {
+        $scope.showNotification("Đã lưu dữ liệu ảnh thành công", "success");
+        $scope.formData.msg = "";
+        return;
+      }
+
+      const payload = {
+        imagePath: $scope.formData.imgUrl,
+        phone: $scope.info[index],
+        msg: $scope.formData.msg,
+      };
+
+      $http
+        .post(saveImgApiUrl, payload)
+        .then(() => {
+          $scope.showNotification(
+            `Chương Trình Đã Gửi cho số điện thoại: ${$scope.info[index]}`,
+            "success"
+          );
+        })
+        .catch(() => {})
+        .finally(() => {
+          setTimeout(() => {
+            sendImageDataWithDelay(index + 1);
+          }, 5000);
+        });
+    };
+
+    sendImageDataWithDelay(0);
+  };
+
   $scope.loadContents = function () {
     $http
       .get(apiBaseUrl)
@@ -25,75 +101,69 @@ app.controller("ContentController", function ($scope, $http) {
         $scope.contents = response.data;
       })
       .catch(() => {
-        $scope.showNotification("Failed to load contents", "error");
+        $scope.showNotification("Không thể tải nội dung", "error");
       });
   };
 
-  // Thêm hoặc cập nhật nội dung
   $scope.addOrUpdateItem = function () {
     if (
       !$scope.formData.name ||
       !$scope.formData.imgUrl ||
       !$scope.formData.selectBox2
     ) {
-      $scope.showNotification("Please fill in all required fields", "error");
+      $scope.showNotification("Vui lòng điền đầy đủ thông tin", "error");
       return;
     }
 
     const payload = {
       name: $scope.formData.name,
-      banner: $scope.formData.selectBox2, // Kiểu banner
-      url: $scope.formData.imgUrl, // URL ảnh từ Imgur
+      banner: $scope.formData.selectBox2,
+      url: $scope.formData.imgUrl,
     };
 
     if ($scope.formData.id) {
-      // Cập nhật
       $http
         .put(`${apiBaseUrl}/${$scope.formData.id}`, payload)
         .then(() => {
-          $scope.showNotification("Content updated successfully", "success");
+          $scope.showNotification("Cập nhật nội dung thành công", "success");
           $scope.loadContents();
           $scope.formData = {};
         })
         .catch(() => {
-          $scope.showNotification("Failed to update content", "error");
+          $scope.showNotification("Không thể cập nhật nội dung", "error");
         });
     } else {
-      // Thêm mới
       $http
         .post(apiBaseUrl, payload)
         .then(() => {
-          $scope.showNotification("Content added successfully", "success");
+          $scope.showNotification("Thêm nội dung thành công", "success");
           $scope.loadContents();
           $scope.formData = {};
         })
         .catch(() => {
-          $scope.showNotification("Failed to add content", "error");
+          $scope.showNotification("Không thể thêm nội dung", "error");
         });
     }
   };
 
-  // Xóa nội dung
   $scope.deleteItem = function (id) {
     if (confirm("Bạn có chắc muốn xóa nội dung này?")) {
       $http
         .delete(`${apiBaseUrl}/${id}`)
         .then(() => {
-          $scope.showNotification("Content deleted successfully", "success");
+          $scope.showNotification("Xóa nội dung thành công", "success");
           $scope.loadContents();
         })
         .catch(() => {
-          $scope.showNotification("Failed to delete content", "error");
+          $scope.showNotification("Không thể xóa nội dung", "error");
         });
     }
   };
 
-  // Sửa nội dung
   $scope.editItem = function (item) {
     $scope.formData = angular.copy(item);
   };
 
-  // Tìm kiếm nội dung
   $scope.filterItems = function () {
     const filteredContents = $scope.contents.filter((item) => {
       const matchesName = $scope.search.name
@@ -107,17 +177,13 @@ app.controller("ContentController", function ($scope, $http) {
     $scope.filteredContents = filteredContents;
   };
 
-  // Upload ảnh lên Imgur
   $scope.uploadImage = function (files) {
     if (!files || !files.length) {
-      $scope.showNotification("No file selected", "error");
+      $scope.showNotification("Chưa chọn file ảnh", "error");
       return;
     }
 
     const selectedFile = files[0];
-    const formData = new FormData();
-    formData.append("image", selectedFile);
-
     const img = new Image();
     img.onload = function () {
       const validSizes = [
@@ -132,7 +198,7 @@ app.controller("ContentController", function ($scope, $http) {
       if (!isValidSize) {
         $scope.$apply(() =>
           $scope.showNotification(
-            "Invalid image dimensions. Only 1590x200px or 1590x482px are allowed.",
+            "Kích thước ảnh không hợp lệ. Chỉ chấp nhận 1590x200px hoặc 1590x428px.",
             "error"
           )
         );
@@ -151,32 +217,30 @@ app.controller("ContentController", function ($scope, $http) {
         .then((response) => {
           const imageUrl = response.data?.data?.url;
           if (imageUrl) {
-            $scope.formData.imgUrl = imageUrl; // Cập nhật URL ảnh vào formData
-            $scope.showNotification("Image uploaded successfully", "success");
+            $scope.formData.imgUrl = imageUrl;
+            $scope.showNotification("Tải ảnh lên thành công", "success");
           } else {
-            $scope.showNotification("Failed to upload image", "error");
+            $scope.showNotification("Không thể tải ảnh lên", "error");
           }
         })
-        .catch((error) => {
-          $scope.showNotification("Failed to upload image", "error");
+        .catch(() => {
+          $scope.showNotification("Không thể tải ảnh lên", "error");
         });
     };
 
     img.onerror = function () {
       $scope.$apply(() =>
-        $scope.showNotification("Invalid image file.", "error")
+        $scope.showNotification("Tệp ảnh không hợp lệ.", "error")
       );
     };
 
     img.src = URL.createObjectURL(selectedFile);
   };
 
-  // Xóa ảnh
   $scope.removeImage = function () {
     $scope.formData.imgUrl = "";
-    $scope.showNotification("Image removed successfully", "success");
+    $scope.showNotification("Xóa ảnh thành công", "success");
   };
 
-  // Tải danh sách nội dung khi khởi tạo
   $scope.loadContents();
 });
