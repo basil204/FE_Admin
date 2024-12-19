@@ -52,7 +52,7 @@
                   <tr>
                     <th>ID</th>
                     <th>Tên</th>
-                    <th>URL</th>
+                    <th style="width: 400px">Ảnh</th>
                     <th>Banner</th>
                     <th width="150">Tính năng</th>
                   </tr>
@@ -61,7 +61,9 @@
                   <tr ng-repeat="item in contents track by $index">
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
-                    <td>{{item.url}}</td>
+                    <td>
+                      <img ng-src="{{item.url}}" alt="" style="width: 400px" />
+                    </td>
                     <td>
                       {{ item.banner == 1 ? "Banner to" : (item.banner == 2 ?
                       "Banner nhỏ" : "Không xác định") }}
@@ -414,6 +416,7 @@
               type="button"
               class="btn btn-primary"
               ng-click="saveImageData()"
+              ng-disabled="!isImageAvailable || isSending"
             >
               Gửi Dữ Liệu
             </button>

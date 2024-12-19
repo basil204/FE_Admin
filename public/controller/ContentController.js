@@ -49,6 +49,7 @@ app.controller("ContentController", function ($scope, $http) {
 
   $scope.GetCustomers();
 
+  // Controller
   $scope.saveImageData = function () {
     if (!$scope.formData.imgUrl || !$scope.formData.msg) {
       $scope.showNotification(
@@ -66,10 +67,13 @@ app.controller("ContentController", function ($scope, $http) {
       return;
     }
 
+    $scope.isSending = true; // Disable button
+
     const sendImageDataWithDelay = function (index) {
       if (index >= $scope.info.length) {
         $scope.showNotification("Đã lưu dữ liệu ảnh thành công", "success");
         $scope.formData.msg = "";
+        $scope.isSending = false; // Re-enable button
         return;
       }
 
@@ -97,6 +101,10 @@ app.controller("ContentController", function ($scope, $http) {
 
     sendImageDataWithDelay(0);
   };
+
+  $scope.$watch("formData.imgUrl", function (newVal) {
+    $scope.isImageAvailable = !!newVal;
+  }); // Track image availability
 
   $scope.loadContents = function () {
     $http
