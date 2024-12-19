@@ -5,7 +5,8 @@
         <li class="breadcrumb-item active">
           <a href="#" ng-click="handleClick()">
             <b>{{invoiceCode || 'POS Bán Hàng'}}</b>
-          </a>                  </li>
+          </a>
+        </li>
       </ul>
       <div id="clock"></div>
     </div>
@@ -15,16 +16,14 @@
       <div class="col-md-8">
         <div class="tile">
           <h5>Tìm kiếm sản phẩm</h5>
-      
+
           <!-- Tìm kiếm sản phẩm -->
           <div class="form-row mb-3">
             <div class="col-md-4">
               <div class="form-group">
                 <label for="productType">Hương vị</label>
-                <select class="form-control" id="productType"
-                  ng-change="searchMilkDetail()"
-                  ng-model="filters.milkTasteId"
-                  ng-options="taste.id as taste.milktastename for taste in milktastes">
+                <select class="form-control" id="productType" ng-change="searchMilkDetail()"
+                  ng-model="filters.milkTasteId" ng-options="taste.id as taste.milktastename for taste in milktastes">
                   <option value="">Chọn Hương vị</option>
                 </select>
               </div>
@@ -32,8 +31,7 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="brand">Thương hiệu</label>
-                <select class="form-control" id="brand" ng-change="searchMilkDetail()"
-                  ng-model="filters.milkBrandId"
+                <select class="form-control" id="brand" ng-change="searchMilkDetail()" ng-model="filters.milkBrandId"
                   ng-options="brand.id as brand.milkbrandname for brand in Milkbrands">
                   <option value="">Chọn Thương hiệu</option>
 
@@ -44,23 +42,21 @@
               <div class="form-group">
                 <label for="warehouse">Độ Tuổi</label>
                 <select class="form-control" id="warehouse" ng-change="searchMilkDetail()"
-                  ng-model="filters.targetUserId"
-                  ng-options="user.id as user.targetuser for user in Targetusers">
+                  ng-model="filters.targetUserId" ng-options="user.id as user.targetuser for user in Targetusers">
                   <option value="">Chọn Độ Tuổi</option>
 
                 </select>
               </div>
             </div>
           </div>
-      
+
           <!-- 3 ô select dưới -->
           <div class="form-row mb-3">
-          
+
             <div class="col-md-4">
               <div class="form-group">
                 <label for="color">Chọn Loại Sữa</label>
-                <select class="form-control" id="color" ng-change="searchMilkDetail()"
-                  ng-model="filters.milkTypeId"
+                <select class="form-control" id="color" ng-change="searchMilkDetail()" ng-model="filters.milkTypeId"
                   ng-options="type.id as type.milkTypename for type in Milktypes">
                   <option value="">Chọn Loại Sữa</option>
 
@@ -70,8 +66,7 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="size">Chọn Dung Tích</label>
-                <select class="form-control" id="size" ng-change="searchMilkDetail()"
-                  ng-model="filters.usageCapacityId"
+                <select class="form-control" id="size" ng-change="searchMilkDetail()" ng-model="filters.usageCapacityId"
                   ng-options="capacity.id as (capacity.capacity + ' ' + capacity.unit) for capacity in usagecapacitys">
                   <option value="">Chọn Dung Tích</option>
 
@@ -81,8 +76,7 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="size">Chọn đóng gói</label>
-                <select class="form-control" id="size" ng-change="searchMilkDetail()"
-                  ng-model="filters.packagingUnitId"
+                <select class="form-control" id="size" ng-change="searchMilkDetail()" ng-model="filters.packagingUnitId"
                   ng-options="unit.id as unit.packagingunitname for unit in packagingunits">
                   <option value="">Chọn đóng gói</option>
 
@@ -92,7 +86,7 @@
             <button class="btn btn-secondary" ng-click="resetFilters()">Reset</button>
 
           </div>
-      
+
           <!-- Bảng hiển thị sản phẩm -->
           <div class="table-responsive mt-3">
             <table class="table table-bordered table-hover">
@@ -122,11 +116,8 @@
                   <td>{{ item.usageCapacity.capacity + " " + item.usageCapacity.unit }}</td>
                   <td>{{ item.stockquantity > 0 ? item.stockquantity : 'Hết hàng' }}</td>
                   <td>
-                    <button
-                      class="btn btn-success btn-sm"
-                      ng-click="addItem(item)"
-                      ng-disabled="item.stockquantity === 0" 
-                    >
+                    <button class="btn btn-success btn-sm" ng-click="addItem(item)"
+                      ng-disabled="item.stockquantity < 1">
                       <i class="fas fa-plus"></i> Thêm
                     </button>
                   </td>
@@ -134,60 +125,61 @@
               </tbody>
             </table>
           </div>
-      
+
           <!-- Pagination controls -->
           <div class="pagination-controls d-flex justify-content-center align-items-center my-3">
-            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="goToFirstPages()">First</button>
-            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0" ng-click="previousPages()">Previous</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0"
+              ng-click="goToFirstPages()">First</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === 0"
+              ng-click="previousPages()">Previous</button>
             <span class="mx-2">Page {{ currentPage + 1 }} of {{ pageInfo.totalPages }}</span>
-            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="nextPages()">Next</button>
-            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1" ng-click="goToLastPages()">Last</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+              ng-click="nextPages()">Next</button>
+            <button class="btn btn-primary mx-2" ng-disabled="currentPage === pageInfo.totalPages - 1"
+              ng-click="goToLastPages()">Last</button>
           </div>
-      
+
           <!-- Reset button -->
         </div>
       </div>
-      
-      
-      
-      
-      
+
+
+
+
+
 
 
       <!-- Bảng Thông Tin Thanh Toán và Sản Phẩm Khách Hàng Mua -->
       <div class="col-md-4" style="max-height: 750px; overflow-y: auto">
         <div class="tile">
-         
+
           <form>
 
 
             <!-- Sản phẩm đã mua -->
             <h5>Sản phẩm đã mua:</h5>
-            <div
-              class="table-responsive"
-              style="max-height: 300px; overflow-y: auto"
-            >
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto">
               <table class="table table-bordered">
                 <thead>
                   <tr>
                     <th>Tên sản phẩm</th>
                     <th>Số lượng</th>
+                    <th>Dung tích</th>
                     <th>Giá</th>
                     <th>Tổng</th>
                     <th>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="item in items">
-                    <td>{{ item.milkTasteName }}</td>
+                  <tr ng-repeat="item in invoiceDetails">
+                    <td>{{item.packagingunitname}} {{item.milkTypename}} {{ item.milkbrandname}} {{ item.milktastename}}
+                    </td>
                     <td>{{ item.quantity }}</td>
+                    <td>{{ item.capacity}} {{ item.unit}}</td>
                     <td>{{ item.price | number:'' }} VNĐ</td>
                     <td>{{ item.totalAmount | number:'' }} VNĐ</td>
                     <td>
-                      <button
-                        class="btn btn-danger btn-sm"
-                        ng-click="removeProduct(product)"
-                      >
+                      <button class="btn btn-danger btn-sm" ng-click="removeProduct(product)">
                         <i class="fas fa-trash-alt"></i> Xóa
                       </button>
                     </td>
@@ -198,93 +190,72 @@
             <h5>Thông tin thanh toán</h5>
             <div class="form-group">
               <label for="customerName">Họ tên khách hàng</label>
-              <input
-                type="text"
-                class="form-control"
-                id="customerName"
-                placeholder="Tìm kiếm khách hàng"
-                ng-model="fullname"
-              />
+              <input type="text" class="form-control" id="customerName" placeholder="Tìm kiếm khách hàng"
+                ng-model="fullname" />
             </div>
             <div class="form-group">
               <label for="customerName">Số điện thoại</label>
-              <input
-                type="text"
-                class="form-control"
-                id="customerName"
-                placeholder="Tìm kiếm khách hàng"
-                ng-model="phoneNumber"
-              />
+              <input type="text" class="form-control" id="customerName" placeholder="Tìm kiếm khách hàng"
+                ng-model="phoneNumber" />
             </div>
             <!-- Thêm trường chọn thành phố, quận, phường -->
             <div class="form-group">
-              <label for="city">Thành phố</label>
-              <select class="form-control" id="city" ng-model="city" ng-change="getDistricts()">
-                <option value="">Chọn thành phố</option>
-                <option ng-repeat="city in cities" value="{{city.code}}">{{city.name}}</option>
+              <label for="tinhSelect">Tỉnh Thành</label>
+              <select id="tinhSelect" class="form-control css_select" ng-model="selectedTinh"
+                ng-change="loadQuan(); getTinhName()" ng-options="tinh.id as tinh.name for tinh in tinhs">
+                <option value="">Chọn Tỉnh Thành</option>
               </select>
             </div>
-            
-            <div class="form-group">
-              <label for="district">Quận</label>
-              <select class="form-control" id="district" ng-model="district" ng-change="getWards()">
-                <option value="">Chọn quận</option>
-                <option ng-repeat="district in districts" value="{{district.code}}">{{district.name}}</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label for="ward">Phường</label>
-              <select class="form-control" id="ward" ng-model="ward">
-                <option value="">Chọn phường</option>
-                <option ng-repeat="ward in wards" value="{{ward.code}}">{{ward.name}}</option>
-              </select>
-            </div>
-            
 
             <div class="form-group">
-              <label for="detailedAddress">Địa chỉ chi tiết</label>
-              <textarea
-                class="form-control"
-                id="detailedAddress"
-                rows="3"
-              ></textarea>
+              <label for="quanSelect">Quận Huyện</label>
+              <select id="quanSelect" class="form-control css_select" ng-model="selectedQuan"
+                ng-change="loadPhuong(); getQuanName(); " ng-options="quan.id as quan.name for quan in quans">
+                <option value="">Chọn Quận Huyện</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="phuongSelect">Phường Xã</label>
+              <select id="phuongSelect" class="form-control css_select" ng-model="selectedPhuong"
+                ng-change="getPhuongName(); amountShip()" ng-options="phuong.id as phuong.name for phuong in phuongs">
+                <option value="">Chọn Phường Xã</option>
+              </select>
+            </div>
+
+
+            <div class="form-group">
+              <form>
+                <div class="form-floating mb-4 theme-form-floating">
+                  <label for="detailAddress">Địa Chỉ Chi Tiết</label>
+                  <input type="text" class="form-control" id="detailAddress" ng-model="detailAddress" placeholder=" " />
+                </div>
+              </form>
             </div>
 
             <div class="form-group">
               <label for="shippingFee">Phí ship</label>
-              <input
-                type="text"
-                class="form-control"
-                id="shippingFee"
-                ng-model="shippingfee"
-                value="0"
-              />
+              <input type="text" class="form-control" id="shippingFee" ng-model="shippingfee" value="0" />
             </div>
 
             <div class="form-group">
               <label for="totalAmount">Tạm tính tiền hàng</label>
-              <input
-                type="text"
-                class="form-control"
-                id="totalAmount"
-                value="{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ"
-                disabled
-              />
+              <input type="text" class="form-control" id="totalAmount"
+                value="{{ calculateTotalInvoiceAmount() | number:'' }} VNĐ" disabled />
             </div>
 
             <div class="form-group text-right">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    Đóng
-                  </button>
-                <button type="submit" class="btn btn-success">
-                  Lưu đơn hàng
-                </button>
-               
-              </div>
-              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Đóng
+              </button>
+              <button type="submit" class="btn btn-success">
+                Lưu đơn hàng
+              </button>
+
             </div>
-          </form>
+
         </div>
+        </form>
       </div>
+    </div>
 </div>

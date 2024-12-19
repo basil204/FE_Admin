@@ -1,61 +1,144 @@
 app.controller(
   "OrderController",
-  function ($scope, $http, $routeParams, $location) {
+  function ($scope, $http, $routeParams, $location, AddressService, LocationService) {
     const token = localStorage.getItem("authToken");
     const invoiceId = $routeParams.id;
     const baseUrl = "http://160.30.21.47:1234/api";
+    const apiUser = "http://160.30.21.47:1234/api/user/";
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const apiInvoiceDetailByInvoiceID =
+      "http://160.30.21.47:1234/api/Invoicedetail/getInvoiceDetailByUser/";
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const configs = {
-      headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImE4YzU0OGZkYzk1ZjI5MDIzZjU1NWRlYjI5NWExYWNkZTViNDkzYjUyNTYzZTk5ZGY5ODliNjRkYmY2Zjc0Mjg5NzdjYWE2ODJiNWZkZTJlIn0.eyJhdWQiOiIxNjQiLCJqdGkiOiJhOGM1NDhmZGM5NWYyOTAyM2Y1NTVkZWIyOTVhMWFjZGU1YjQ5M2I1MjU2M2U5OWRmOTg5YjY0ZGJmNmY3NDI4OTc3Y2FhNjgyYjVmZGUyZSIsImlhdCI6MTczNDQyMjMyNiwibmJmIjoxNzM0NDIyMzI2LCJleHAiOjE3NjU5NTgzMjYsInN1YiI6IjM3ODAiLCJzY29wZXMiOltdfQ.hsWCVA6F3ucFnnRixAIk5nip_Le4gzLPh5QTPUEUj85v0mQ_ULeZXXbsUNDk54Y75uvED5Dq1nw-t2fzfHJez9yTwE4qF7bqnZuUrKItpfO2KQ-fultA4DYuIOSOe932rBd8IpTOu6BXQwTQ1lNvoe3lotNgApE-RUUA_on0qgU8WMcLrAhY3S0gZG4Ut12ptfkH5umnhhDZ2h1ZI41dSPt5hj4ZkugnGLVys_SXJ1Ik4JN2iKlGbyYdWz-qevw1zFgKaLC1_M-tpLZkHl2HI2UhEa7SeKIM7N3WeI-PksdcXaKqCJxNGBqixDrEo11x2ypleM4dm0MaH9jMcLsgU-J98-TGKcfxIdyiYCdwXXSv8m8sLA9WQvir6DTRu3GeYNI9P4562wyBbNk2zNAR7LbIg5g7Aeg3lmLmCvq6swZEAEkFFwD0Yi8wy-MYERaDkLCgbwBsZ4lLt_X4Lf3Yle453LI2IbmvWAm9ByCihKonU1Rir4n9qzGLjiY1fjdZMd9Au4KZXtAW4qtHh34K_5aKPIQh4tojv8qEsDyNUukDIbXzunvyul0iZ2wEfEaqOYjIt2uP-35DU7criR2hQFnS0ObMp9yKso7hGIvyTdE20YxUpuVwmj1L8Oumjl6mNvUIS89nJZwUC7-EsHHdtt442j96rSAg_T0LPYuDYkw`,
-      },
-    };
     $scope.currentPage = 0;
     $scope.pageSize = 5;
+    $scope.addItem = function (item) {  
+      const data = {
+        id: item.id,
+        capacity: item.usageCapacity.capacity,
+        milkTypename: item.product.milkType.milkTypename,
+        milkbrandname: item.product.milkBrand.milkbrandname,
+        milktastename: item.milkTaste.milktastename,
+        packagingunitname: item.packagingunit.packagingunitname,
+        price: item.price,
+        quantity: 1,
+        totalprice: item.price * 1,
+        unit: item.usageCapacity.unit
+      };
 
-    $scope.cities = [];
-    $scope.districts = [];
-    $scope.wards = [];
-    $http
-      .get("https://api.goship.io/api/v1/cities?limit=-1&sort=name:1", configs)
-      .then(function (response) {
-        if (response.data.status === "success") {
-          $scope.cities = response.data.data;
-        }
+      // Kiểm tra xem trong mảng invoiceDetails đã có item với id này chưa
+      let existingItem = $scope.invoiceDetails.find(function (invoice) {
+        return invoice.id === data.id;
       });
 
-    // Lấy danh sách quận khi chọn thành phố
-    $scope.getDistricts = function () {
-      if ($scope.city) {
+      if (existingItem) {
+        // Nếu có, cập nhật số lượng và tổng giá
+        existingItem.quantity += 1;  // Tăng số lượng lên 1
+        existingItem.totalprice = existingItem.price * existingItem.quantity;  // Cập nhật tổng giá
+      } else {
+        // Nếu không có, thêm item mới vào mảng
+        $scope.invoiceDetails.push(data);
+      }
+
+
+    }
+    $scope.amountShip = function () {
+      // const data = {
+      //   shipment: {
+      //     address_from: {
+      //       district: "181810", // ngo quyen
+      //       city: "180000", //hai phong
+      //     },
+      //     address_to: {
+      //       district: $scope.selectedQuan,
+      //       city: $scope.selectedTinh,
+      //     },
+      //     parcel: {
+      //       cod: $scope.calculateTotal(),
+      //       amount: $scope.calculateTotal(),
+      //       width: 20,
+      //       height: 20,
+      //       length: 20,
+      //       weight: 500,
+      //     },
+      //   },
+      // };
+      // ShipService.calculateShipping(data)
+      //   .then(function (response) {
+      //     $scope.ships = response.data.data;
+      //   })
+      //   .catch(function (error) {
+      //     console.error("API Error:", error);
+      //   });
+    };
+    $scope.user = function () {
+      if (userInfo && userInfo.id) {
+        // Kiểm tra userInfo và userInfo.id tồn tại
         $http
-          .get(
-            `https://api.goship.io/api/v1/districts?city_code=${$scope.city}&limit=-1&sort=name:1`,
-            configs
-          )
+          .get(apiUser + "profile/" + userInfo.id, config)
           .then(function (response) {
-            if (response.data.status === "success") {
-              $scope.districts = response.data.data;
+            $scope.userData = response.data; // Lưu dữ liệu vào $scope.userData
+            addresssplit = AddressService.splitAddress($scope.userData.address);
+            $scope.selectedTinh = $scope.tinhs.find(
+              (tinh) => tinh.name === addresssplit[0]
+            ).id;
+            $scope.loadQuan();
+          })
+          .catch(function (error) {
+            console.error("Error fetching user data:", error);
+          });
+      } else {
+        console.warn("User info is not available."); // Thông báo khi $scope.userInfo chưa có
+      }
+    };
+    $scope.loadTinh = function () {
+      LocationService.getCities()
+        .then(function (response) {
+          $scope.tinhs = response.data.data;
+          $scope.user();
+        })
+        .catch(function (error) {
+          console.error("Error loading cities:", error);
+        });
+    };
+    // Hàm xử lý địa chỉ
+    $scope.loadQuan = function () {
+      var idTinh = $scope.selectedTinh;
+      if (idTinh) {
+        LocationService.getDistricts(idTinh)
+          .then(function (response) {
+            $scope.quans = response.data.data;
+            if (addresssplit) {
+              $scope.selectedQuan = $scope.quans.find(
+                (quan) => quan.name === addresssplit[1]
+              ).id;
+              $scope.loadPhuong();
             }
+          })
+          .catch(function (error) {
+            console.error("Error loading districts:", error);
           });
       }
     };
-
-    // Lấy danh sách phường khi chọn quận
-    $scope.getWards = function () {
-      if ($scope.district) {
-        $http
-          .get(
-            `https://api.goship.io/api/v1/wards?district_code=${$scope.district}&limit=-1&sort=name:1`,
-            configs
-          )
+    $scope.loadPhuong = function () {
+      var idQuan = $scope.selectedQuan;
+      if (idQuan) {
+        LocationService.getWards(idQuan)
           .then(function (response) {
-            if (response.data.status === "success") {
-              $scope.wards = response.data.data;
+            $scope.phuongs = response.data.data;
+            if (addresssplit) {
+              $scope.selectedPhuong = $scope.phuongs.find(
+                (phuong) => phuong.name === addresssplit[2]
+              ).id;
+              $scope.detailAddress = addresssplit[3];
+              $scope.amountShip();
             }
+          })
+          .catch(function (error) {
+            console.error("Error loading wards:", error);
           });
       }
     };
@@ -237,8 +320,7 @@ app.controller(
         // Check the current stock before decreasing
         $http
           .get(
-            `${baseUrl}/Milkdetail/checkcount/${item.milkdetailid}?quantity=${
-              item.quantity - 1
+            `${baseUrl}/Milkdetail/checkcount/${item.milkdetailid}?quantity=${item.quantity - 1
             }`,
             config
           )
@@ -271,8 +353,7 @@ app.controller(
       let currentQuantity = item.quantity;
       $http
         .get(
-          `${baseUrl}/Milkdetail/checkcount/${item.milkdetailid}?quantity=${
-            currentQuantity + 1
+          `${baseUrl}/Milkdetail/checkcount/${item.milkdetailid}?quantity=${currentQuantity + 1
           }`,
           config
         )
@@ -317,7 +398,7 @@ app.controller(
           } else if (response.status === 404) {
             $scope.showNotification(
               "Số lượng yêu cầu vượt quá số lượng tồn kho. Số lượng tồn kho hiện tại là: " +
-                response.data.currentStock,
+              response.data.currentStock,
               "error"
             );
             item.quantity = response.data.currentStock; // Gán lại số lượng bằng tồn kho hiện tại
@@ -354,17 +435,14 @@ app.controller(
 
     $scope.calculateTotalInvoiceAmount = function () {
       let total = 0;
-
-      // Kiểm tra nếu $scope.items là một mảng hợp lệ
-      if (Array.isArray($scope.items)) {
+      if (Array.isArray($scope.invoiceDetails)) {
         // Duyệt qua các phần tử trong mảng để tính tổng totalAmount
-        $scope.items.forEach(function (item) {
-          // Cộng dồn giá trị totalAmount của mỗi item, đảm bảo có giá trị hợp lệ
-          total += item.totalAmount || 0; // Nếu totalAmount không có, mặc định là 0
+        $scope.invoiceDetails.forEach(function (item) {
+          total += item.totalprice || 0;
+          console.log("total", total)
         });
       } else {
-        // Nếu $scope.items không phải là mảng, bạn có thể log ra lỗi hoặc khởi tạo lại mảng
-        $scope.items = []; // Khởi tạo lại $scope.items thành mảng rỗng nếu không phải mảng
+        $scope.invoiceDetails = [];
       }
 
       return total;
@@ -725,141 +803,20 @@ app.controller(
     $scope.navigateToInvoiceDetail = function (invoiceId) {
       $location.path("/invicedetail/" + invoiceId);
     };
-    $scope.updateAllItemQuantities = function () {
-      const promises = [];
-
-      if (!$scope.items || $scope.items.length === 0) {
-        $scope.showNotification(
-          "Chưa có thông tin hóa đơn để cập nhật số lượng.",
-          "error"
-        );
-        return [];
-      }
-
-      // Tạo mảng các món hàng cần cập nhật số lượng
-      const itemsToUpdate = $scope.items.map((item) => ({
-        id: item.id, // Gán id của món hàng
-        quantity: item.quantity, // Số lượng món hàng cần cập nhật
-      }));
-
-      // Cập nhật số lượng cho từng món hàng
-      itemsToUpdate.forEach((item) => {
-        const updatePromise = $http({
-          method: "PUT",
-          url: `${baseUrl}/Invoicedetail/updateCount/${item.id}`, // Sử dụng item.id
-          headers: { Authorization: `Bearer ${token}` },
-          data: { quantity: item.quantity },
-        })
-          .then(function (response) {
-            console.log(
-              `Quantity for item ID ${item.id} updated successfully!`
-            );
-          })
-          .catch(function (error) {
-            console.error(
-              `Error updating quantity for item ID ${item.id}:`,
-              error
-            );
-            $scope.showNotification("Có lỗi khi cập nhật số lượng!", "error");
-          });
-
-        promises.push(updatePromise);
-      });
-
-      return promises; // Trả về mảng các promise để Promise.all có thể xử lý
-    };
-    $scope.updateInvoiceTotalAmount = function (invoiceId) {
-      const totalAmount = $scope.calculateTotalInvoiceAmount(); // Get the total amount
-
-      // Make PUT request to update the invoice total amount
-      $http({
-        method: "PUT",
-        url: `${baseUrl}/Invoice/updatequantity/${invoiceId}`,
-        headers: { Authorization: `Bearer ${token}` },
-        data: {
-          totalamount: totalAmount, // Send the updated total amount
-        },
-      }).then(
-        function (response) {
-          // Successfully updated the total amount
-          $scope.showNotification(
-            "Cập nhật tổng tiền hóa đơn thành công!",
-            "success"
-          );
-        },
-        function (error) {
-          // Handle error
-          $scope.showNotification(
-            "Có lỗi khi cập nhật tổng tiền hóa đơn!",
-            "error"
-          );
-        }
-      );
-    };
-
     // Fetch invoice details by ID and load items
     if (invoiceId) {
-      // Hàm để lấy chi tiết hóa đơn
       $scope.getInvoiceDetailById = function () {
-        $http({
-          method: "GET",
-          url: `${baseUrl}/Invoicedetail/${invoiceId}/details`,
-          headers: { Authorization: `Bearer ${token}` },
-        }).then(
-          function (response) {
-            console.log("response:", response);
-
-            $scope.invoiceDetails = response.data;
-            if ($scope.invoiceDetails && $scope.invoiceDetails.length > 0) {
-              const invoiceDetail = $scope.invoiceDetails[0];
-              $scope.invoicestatus = invoiceDetail.status;
-              $scope.invoiceCode = invoiceDetail.invoiceCode;
-              $scope.id = invoiceDetail.id;
-              $scope.deliveryAddress = invoiceDetail.deliveryAddress;
-              $scope.phoneNumber = invoiceDetail.phoneNumber;
-              $scope.fullname = invoiceDetail.fullname;
-              $scope.shippingfee = invoiceDetail.shippingfee + " VNĐ";
-
-              console.log("invoiceDetail:", $scope.invoicestatus);
-
-              // Lưu danh sách món hàng vào $scope.items
-              $scope.items = invoiceDetail.items.map((item) => {
-                return {
-                  id: item.ida,
-                  milkdetailid: item.milkdetailid,
-                  milkTasteName: item.milkTasteName,
-                  milkDetailDescription: item.milkDetailDescription,
-                  quantity: item.quantity,
-                  price: item.price,
-                  totalAmount: item.totalAmount,
-                  unit: item.unit,
-                  capacity: item.capacity,
-                  status: item.status,
-                };
-              });
-
-              // Kiểm tra trạng thái để xác định nếu có thể chỉnh sửa
-              if ($scope.invoicestatus === 301) {
-                $scope.isEditable = true; // Enable các trường nhập liệu
-              } else {
-                $scope.isEditable = false; // Disable các trường nhập liệu
-              }
-            } else {
-              console.error("Không tìm thấy dữ liệu chi tiết hóa đơn.");
-              $scope.showNotification(
-                "Không tìm thấy chi tiết hóa đơn.",
-                "error"
-              );
-            }
-          },
-          function (error) {
-            console.error("Có lỗi khi lấy chi tiết hóa đơn:", error);
-            $scope.showNotification(
-              "Có lỗi khi lấy chi tiết hóa đơn. Vui lòng thử lại!",
-              "error"
-            );
-          }
-        );
+        if (invoiceId != null) {
+          $http
+            .get(apiInvoiceDetailByInvoiceID + invoiceId, config)
+            .then(function (response) {
+              $scope.invoiceDetails = response.data.message;
+              console.log($scope.invoiceDetails)
+            })
+            .catch(function (error) {
+              console.error("Error fetching invoice details:", error);
+            });
+        }
       };
 
       // Gọi hàm khi controller được khởi tạo
@@ -895,5 +852,6 @@ app.controller(
     $scope.getMilktypes();
     $scope.searchInvoices();
     $scope.searchMilkDetail();
+    $scope.loadTinh()
   }
 );
