@@ -236,7 +236,46 @@ app.controller("ContentController", function ($scope, $http) {
 
     img.src = URL.createObjectURL(selectedFile);
   };
+  $scope.uploadImages = function (files) {
+    if (!files || !files.length) {
+      $scope.showNotification("Chưa chọn file ảnh", "error");
+      return;
+    }
 
+    const selectedFile = files[0];
+    const img = new Image();
+    img.onload = function () {
+      const uploadFormData = new FormData();
+      uploadFormData.append("key", imgbbApiKey);
+      uploadFormData.append("image", selectedFile);
+
+      $http
+        .post("https://api.imgbb.com/1/upload", uploadFormData, {
+          headers: { "Content-Type": undefined },
+          transformRequest: angular.identity,
+        })
+        .then((response) => {
+          const imageUrl = response.data?.data?.url;
+          if (imageUrl) {
+            $scope.formData.imgUrl = imageUrl;
+            $scope.showNotification("Tải ảnh lên thành công", "success");
+          } else {
+            $scope.showNotification("Không thể tải ảnh lên", "error");
+          }
+        })
+        .catch(() => {
+          $scope.showNotification("Không thể tải ảnh lên", "error");
+        });
+    };
+
+    img.onerror = function () {
+      $scope.$apply(() =>
+        $scope.showNotification("Tệp ảnh không hợp lệ.", "error")
+      );
+    };
+
+    img.src = URL.createObjectURL(selectedFile);
+  };
   $scope.removeImage = function () {
     $scope.formData.imgUrl = "";
     $scope.showNotification("Xóa ảnh thành công", "success");
