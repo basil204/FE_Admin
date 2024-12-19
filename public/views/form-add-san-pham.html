@@ -61,13 +61,14 @@
                     ><i class="fas fa-folder-plus"></i> Thêm đơn vị đóng gói</a
                   >
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2" ng-if="userRole === 'Admin' ">
                   <a
                     class="btn btn-add btn-sm"
                     data-toggle="modal"
                     data-target="#addVoucher"
-                    ><i class="fas fa-folder-plus"></i> Thêm Voucher</a
                   >
+                    <i class="fas fa-folder-plus"></i> Thêm Voucher
+                  </a>
                 </div>
               </div>
               <form class="row">
@@ -363,7 +364,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title">Thêm mới thương hiệu</h5>
@@ -396,7 +400,6 @@
                         ng-model="formData.milkbrandname"
                         required
                       />
-                    
                     </div>
                     <label class="control-label">Nhập mô tả thương hiệu</label>
                     <input
@@ -431,7 +434,9 @@
                     </button>
                   </div>
 
-                  <label class="control-label">Nhập tên thương hiệu để tìm kiếm</label>
+                  <label class="control-label"
+                    >Nhập tên thương hiệu để tìm kiếm</label
+                  >
                   <div class="input-group">
                     <input
                       class="form-control"
@@ -441,7 +446,6 @@
                       ng-change="resetFormBrand()"
                       required
                     />
-                  
                   </div>
                   <!-- Tab Panes -->
                   <div class="tab-content">
@@ -539,8 +543,6 @@
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
           </div>
@@ -555,7 +557,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -575,7 +580,7 @@
                         {{ notification.message }}
                       </div>
                     </div>
-                    
+
                     <div class="form-group col-md-12">
                       <label class="control-label">Nhập tên vị sữa</label>
                       <input
@@ -587,30 +592,32 @@
                     </div>
                   </div>
 
-              <div class="modal-footer">
-                <br />
-                <button
-                  class="btn btn-success"
-                  type="button"
-                  ng-click="addOrUpdateItem('Milktaste')"
-                >
-                  Lưu lại
-                </button>
-                
-                <button
-                  class="btn btn-warning"
-                  type="button"
-                  ng-click="resetForm()"
-                >
-                  Reset Form
-                </button>
-                <a class="btn btn-secondary" data-dismiss="modal" href="#"
-                  >Hủy bỏ</a
-                >
-                <br />
-              </div>
+                  <div class="modal-footer">
+                    <br />
+                    <button
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('Milktaste')"
+                    >
+                      Lưu lại
+                    </button>
+
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a class="btn btn-secondary" data-dismiss="modal" href="#"
+                      >Hủy bỏ</a
+                    >
+                    <br />
+                  </div>
                   <div class="form-group col-md-12">
-                    <label class="control-label">Nhập tên vị sữa để tìm kiếm</label>
+                    <label class="control-label"
+                      >Nhập tên vị sữa để tìm kiếm</label
+                    >
                     <input
                       class="form-control"
                       type="text"
@@ -622,90 +629,88 @@
                   </div>
                   <!-- Tab panes -->
                   <div class="tab-content">
-                      <div
-                        style="
-                          max-height: 300px;
-                          overflow-y: auto;
-                          margin-top: 10px;
-                        "
-                      >
-                        <table class="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th>STT</th>
-                              <th>Tên vị sữa</th>
-                              <th>Trạng thái</th>
-                              <th>Chức Năng</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr ng-repeat="taste in milktastes track by $index">
-                              <td>{{ $index + 1 }}</td>
-                              <td>{{ taste.milktastename }}</td>
-                              <td
-                                ng-class="{'text-success': taste.status === 1, 'text-danger': taste.status === 0}"
+                    <div
+                      style="
+                        max-height: 300px;
+                        overflow-y: auto;
+                        margin-top: 10px;
+                      "
+                    >
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>STT</th>
+                            <th>Tên vị sữa</th>
+                            <th>Trạng thái</th>
+                            <th>Chức Năng</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="taste in milktastes track by $index">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ taste.milktastename }}</td>
+                            <td
+                              ng-class="{'text-success': taste.status === 1, 'text-danger': taste.status === 0}"
+                            >
+                              {{ taste.status === 1 ? 'Hoạt động' : 'Không hoạt
+                              động' }}
+                            </td>
+                            <td>
+                              <button
+                                ng-click="taste.status === 1 ? deleteItem(taste.id) : deleteItem(taste.id)"
+                                ng-class="{'btn-danger': taste.status === 1, 'btn-success': taste.status === 0}"
+                                class="btn btn-sm"
                               >
-                                {{ taste.status === 1 ? 'Hoạt động' : 'Không
-                                hoạt động' }}
-                              </td>
-                              <td>
-                                <button
-                                  ng-click="taste.status === 1 ? deleteItem(taste.id) : deleteItem(taste.id)"
-                                  ng-class="{'btn-danger': taste.status === 1, 'btn-success': taste.status === 0}"
-                                  class="btn btn-sm"
-                                >
-                                  {{ taste.status === 1 ? 'Xóa' : 'Khôi phục' }}
-                                </button>
-                                <button
-                                  ng-click="getItemById(taste.id)"
-                                  class="btn btn-primary btn-sm"
-                                >
-                                  Chỉnh sửa
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div
-                        class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                                {{ taste.status === 1 ? 'Xóa' : 'Khôi phục' }}
+                              </button>
+                              <button
+                                ng-click="getItemById(taste.id)"
+                                class="btn btn-primary btn-sm"
+                              >
+                                Chỉnh sửa
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div
+                      class="pagination-controls d-flex justify-content-center align-items-center my-3"
+                    >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="goToFirstPage()"
                       >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="goToFirstPage()"
-                        >
-                          First
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === 0"
-                          ng-click="previousPage()"
-                        >
-                          Previous
-                        </button>
-                        <span class="mx-2"
-                          >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
-                          }}</span
-                        >
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === pageInfo.totalPages - 1"
-                          ng-click="nextPage()"
-                        >
-                          Next
-                        </button>
-                        <button
-                          class="btn btn-primary mx-2"
-                          ng-disabled="currentPage === pageInfo.totalPages - 1"
-                          ng-click="goToLastPage()"
-                        >
-                          Last
-                        </button>
-                      </div>
+                        First
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === 0"
+                        ng-click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span class="mx-2"
+                        >Page {{ currentPage + 1 }} of {{ pageInfo.totalPages
+                        }}</span
+                      >
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="nextPage()"
+                      >
+                        Next
+                      </button>
+                      <button
+                        class="btn btn-primary mx-2"
+                        ng-disabled="currentPage === pageInfo.totalPages - 1"
+                        ng-click="goToLastPage()"
+                      >
+                        Last
+                      </button>
+                    </div>
                   </div>
-
-                
                 </div>
                 <div class="modal-footer"></div>
               </div>
@@ -722,7 +727,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -768,37 +776,41 @@
 
                   <div class="modal-footer">
                     <button
-                    class="btn btn-success"
-                    type="button"
-                    ng-click="addOrUpdateItem('milkType')"
-                  >
-                    Lưu lại
-                  </button>
-                  <button
-                    class="btn btn-warning"
-                    type="button"
-                    ng-click="resetForm()"
-                  >
-                    Reset Form
-                  </button>
-                  <a class="btn btn-secondary"  ng-click="resetForm()" data-dismiss="modal" href="#"
-                  >Hủy bỏ</a
-                >
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('milkType')"
+                    >
+                      Lưu lại
+                    </button>
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a
+                      class="btn btn-secondary"
+                      ng-click="resetForm()"
+                      data-dismiss="modal"
+                      href="#"
+                      >Hủy bỏ</a
+                    >
                   </div>
 
-                      <div class="form-group col-md-12">
-                        <label class="control-label"
-                          >Nhập tên loại sữa để tìm kiếm</label
-                        >
-                        <input
-                          class="form-control"
-                          type="text"
-                          placeholder="Nhập tên loại sữa để tìm kiếm"
-                          ng-model="formDatas.milkTypename"
-                          ng-change="resetFormType()"
-                          required
-                        />
-                      </div>
+                  <div class="form-group col-md-12">
+                    <label class="control-label"
+                      >Nhập tên loại sữa để tìm kiếm</label
+                    >
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Nhập tên loại sữa để tìm kiếm"
+                      ng-model="formDatas.milkTypename"
+                      ng-change="resetFormType()"
+                      required
+                    />
+                  </div>
                   <!-- Tab panes -->
                   <div class="tab-content">
                     <!-- Active Tastes Tab -->
@@ -911,7 +923,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -932,7 +947,6 @@
                       </div>
                     </div>
                     <div class="form-group col-md-12">
-                   
                       <label class="control-label"
                         >Nhập tên loại đóng gói mới</label
                       >
@@ -947,36 +961,38 @@
 
                   <div class="modal-footer">
                     <button
-                    class="btn btn-success"
-                    type="button"
-                    ng-click="addOrUpdateItem('packagingunit')"
-                  >
-                    Lưu lại
-                  </button>
-                
-                  <button
-                    class="btn btn-warning"
-                    type="button"
-                    ng-click="resetForm()"
-                  >
-                    Reset Form
-                  </button>
-                  <a class="btn btn-secondary" ng-click="resetForm()" data-dismiss="modal"
-                  >Hủy bỏ</a
-                >
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('packagingunit')"
+                    >
+                      Lưu lại
+                    </button>
+
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a
+                      class="btn btn-secondary"
+                      ng-click="resetForm()"
+                      data-dismiss="modal"
+                      >Hủy bỏ</a
+                    >
                   </div>
                   <label class="control-label"
-                  >Nhập tên loại đóng gói để tìm kiếm</label
-                >
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="Nhập loại đóng gói để tìm kiếm"
-                  ng-model="formDatas.packagingunitname"
-                  ng-change="resetFormPacka()"
-                  required
-                />
-
+                    >Nhập tên loại đóng gói để tìm kiếm</label
+                  >
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Nhập loại đóng gói để tìm kiếm"
+                    ng-model="formDatas.packagingunitname"
+                    ng-change="resetFormPacka()"
+                    required
+                  />
 
                   <!-- Tab panes -->
                   <div class="tab-content">
@@ -1074,7 +1090,7 @@
                   </div>
 
                   <br />
-                
+
                   <br />
                 </div>
                 <div class="modal-footer"></div>
@@ -1092,7 +1108,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -1113,7 +1132,6 @@
                       </div>
                     </div>
                     <div class="form-group col-md-12">
-                    
                       <label class="control-label"
                         >Nhập tên loại người dùng mới</label
                       >
@@ -1136,37 +1154,39 @@
                   </div>
                   <div class="modal-footer">
                     <button
-                    class="btn btn-success"
-                    type="button"
-                    ng-click="addOrUpdateItem('packagingunit')"
-                  >
-                    Lưu lại
-                  </button>
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('packagingunit')"
+                    >
+                      Lưu lại
+                    </button>
 
-                  <button
-                    class="btn btn-warning"
-                    type="button"
-                    ng-click="resetForm()"
-                  >
-                    Reset Form
-                  </button>
-                  <a class="btn btn-secondary" data-dismiss="modal" ng-click="resetForm()"
-                    >Hủy bỏ</a
-                  >
-                  
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      ng-click="resetForm()"
+                      >Hủy bỏ</a
+                    >
                   </div>
-               
+
                   <label class="control-label"
-                  >Nhập tên loại người dùng để tìm kiếm</label
-                >
-                <input
-                  class="form-control"
-                  type="text"
-                  placeholder="Nhập tên loại người dùng để tìm kiếm"
-                  ng-model="formDatas.targetuser"
-                  ng-change="resetFormTaget()"
-                  required
-                />
+                    >Nhập tên loại người dùng để tìm kiếm</label
+                  >
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Nhập tên loại người dùng để tìm kiếm"
+                    ng-model="formDatas.targetuser"
+                    ng-change="resetFormTaget()"
+                    required
+                  />
 
                   <!-- Tab panes -->
                   <div class="tab-content">
@@ -1266,7 +1286,7 @@
                   </div>
 
                   <br />
-                 
+
                   <br />
                 </div>
                 <div class="modal-footer"></div>
@@ -1284,7 +1304,10 @@
             data-backdrop="static"
             data-keyboard="false"
           >
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div
+              class="modal-dialog modal-dialog-centered modal-lg"
+              role="document"
+            >
               <div class="modal-content">
                 <div class="modal-body">
                   <div class="row">
@@ -1305,16 +1328,15 @@
                       </div>
                     </div>
                     <div class="form-group col-md-12">
-                      
                       <label class="control-label"
-                      >Nhập công suất sử dụng</label
-                    >
-                    <input
-                      class="form-control"
-                      type="text"
-                      ng-model="formData.capacity"
-                      required
-                    />
+                        >Nhập công suất sử dụng</label
+                      >
+                      <input
+                        class="form-control"
+                        type="text"
+                        ng-model="formData.capacity"
+                        required
+                      />
                     </div>
                     <div class="form-group col-md-12">
                       <label class="control-label">Thêm đơn vị công suất</label>
@@ -1328,36 +1350,39 @@
                   </div>
                   <div class="modal-footer">
                     <button
-                    class="btn btn-success"
-                    type="button"
-                    ng-click="addOrUpdateItem('usagecapacity')"
-                  >
-                    Lưu lại
-                  </button>
-                 
-                  <button
-                    class="btn btn-warning"
-                    type="button"
-                    ng-click="resetForm()"
-                  >
-                    Reset Form
-                  </button>
-                  <a class="btn btn-secondary" ng-click="resetForm()" data-dismiss="modal"
-                  >Hủy bỏ</a
-                >
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('usagecapacity')"
+                    >
+                      Lưu lại
+                    </button>
+
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a
+                      class="btn btn-secondary"
+                      ng-click="resetForm()"
+                      data-dismiss="modal"
+                      >Hủy bỏ</a
+                    >
                   </div>
-                
+
                   <label class="control-label"
-                        >Nhập công suất sử dụng để tìm kiếm</label
-                      >
-                      <input
-                        class="form-control"
-                        type="text"
-                        placeholder="Nhập công suất sử dụng để tìm kiếm"
-                        ng-model="formDatas.capacity"
-                        ng-change="resetFormUsage()"
-                        required
-                      />
+                    >Nhập công suất sử dụng để tìm kiếm</label
+                  >
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Nhập công suất sử dụng để tìm kiếm"
+                    ng-model="formDatas.capacity"
+                    ng-change="resetFormUsage()"
+                    required
+                  />
 
                   <!-- Tab panes -->
                   <div class="tab-content">
@@ -1457,7 +1482,7 @@
                   </div>
 
                   <br />
-                 
+
                   <br />
                 </div>
                 <div class="modal-footer"></div>
@@ -1499,7 +1524,6 @@
                       </div>
                     </div>
                     <div class="form-group col-md-12">
-                      
                       <label class="control-label">Nhập mã Voucher </label>
                       <input
                         class="form-control"
@@ -1508,7 +1532,6 @@
                         required
                         ng-disabled="formData.id"
                       />
-
                     </div>
                     <div class="form-group col-md-12">
                       <label class="control-label">Chọn ngày bắt đầu</label>
@@ -1599,31 +1622,33 @@
                     </div>
                   </div>
 
-                
-                  
                   <div class="modal-footer">
                     <button
-                    class="btn btn-success"
-                    type="button"
-                    ng-click="addOrUpdateItem('voucher')"
-                  >
-                    Lưu lại
-                  </button>
-                  
-                  <button
-                    class="btn btn-warning"
-                    type="button"
-                    ng-click="resetForm()"
-                  >
-                    Reset Form
-                  </button>
-                  <a class="btn btn-secondary" ng-click="resetForm()" data-dismiss="modal" 
-                    >Hủy bỏ</a
-                  >
-                  </div>
-            
+                      class="btn btn-success"
+                      type="button"
+                      ng-click="addOrUpdateItem('voucher')"
+                    >
+                      Lưu lại
+                    </button>
 
-                  <label class="control-label">Nhập mã Voucher để tìm kiếm </label>
+                    <button
+                      class="btn btn-warning"
+                      type="button"
+                      ng-click="resetForm()"
+                    >
+                      Reset Form
+                    </button>
+                    <a
+                      class="btn btn-secondary"
+                      ng-click="resetForm()"
+                      data-dismiss="modal"
+                      >Hủy bỏ</a
+                    >
+                  </div>
+
+                  <label class="control-label"
+                    >Nhập mã Voucher để tìm kiếm
+                  </label>
                   <input
                     class="form-control"
                     type="text"
@@ -1631,7 +1656,6 @@
                     ng-model="formDatas.vouchercode"
                     ng-change="resetFormVoucher()"
                     required
-                   
                   />
 
                   <!-- Tab panes -->
@@ -1738,7 +1762,7 @@
                   </div>
 
                   <br />
-              
+
                   <br />
                 </div>
                 <div class="modal-footer"></div>
