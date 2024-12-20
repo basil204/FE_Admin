@@ -82,7 +82,6 @@ app.controller("VoucherController", function ($scope, $http, $location) {
             function (error) {
               $scope.showNotification(error.data.error, "error");
               $scope.getVouchers();
-              $scope.resetForm();
             }
           );
         } catch (exception) {
