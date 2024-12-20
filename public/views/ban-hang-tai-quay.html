@@ -174,19 +174,13 @@
                   <tr ng-repeat="item in invoiceDetails">
                     <td>{{item.packagingunitname}} {{item.milkTypename}} {{ item.milkbrandname}} {{ item.milktastename}}
                     </td>
-                    <td><input
-                      type="number"
-                      class="form-control form-control-sm"
-                      ng-model="item.quantity"
-                      min="0"
-                      style="width: 50px"
-                      required
-                    /></td>
+                    <td><input type="number" class="form-control form-control-sm" ng-model="item.quantity" min="1"
+                        style="width: 50px" required ng-keyup="updateTotal(item)" /></td>
                     <td>{{ item.capacity}} {{ item.unit}}</td>
                     <td>{{ item.price | number:'' }} VNĐ</td>
                     <td>{{ item.totalAmount | number:'' }} VNĐ</td>
                     <td>
-                      <button class="btn btn-danger btn-sm" ng-click="removeProduct(product)">
+                      <button class="btn btn-danger btn-sm" ng-click="removeProduct(item)">
                         <i class="fas fa-trash-alt"></i> Xóa
                       </button>
                     </td>
@@ -239,10 +233,16 @@
                 </div>
               </form>
             </div>
-
+            <div class="form-group">
+              <label for="phuongSelect">Đơn Vị Vận Chuyển</label>
+              <select class="form-control css_select" ng-model="selectedShip" ng-change="selectedShipping(selectedShip)"
+                ng-options="x as (x.carrier_name + ' - Giao Hàng ' + x.service + ' - ' + x.expected) for x in ships">
+                <option value="" disabled selected>Chọn Đơn Vị Vận Chuyển</option>
+              </select>
+            </div>
             <div class="form-group">
               <label for="shippingFee">Phí ship</label>
-              <input type="text" class="form-control" id="shippingFee" ng-model="shippingfee" value="0" />
+              <input type="text" class="form-control" id="shippingFee" ng-model="selectedShip.total_fee" value="0" />
             </div>
 
             <div class="form-group">
@@ -255,7 +255,7 @@
               <button type="button" class="btn btn-secondary" data-dismiss="modal">
                 Đóng
               </button>
-              <button type="submit" class="btn btn-success">
+              <button type="submit" class="btn btn-success" ng-click="updateInvoiceAndDetail()">
                 Lưu đơn hàng
               </button>
 

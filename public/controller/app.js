@@ -55,7 +55,7 @@ app.run(function ($rootScope, $location) {
         "/table-data-product",
         "/table-data-table",
         "/check-log-he-thong",
-        "/invicedetail/:id",
+        "/invicedetail/:invoiceCode",
         "/settings",
         "/duyen-don",
         "/Settingbanner",
@@ -69,7 +69,7 @@ app.run(function ($rootScope, $location) {
         "/table-data-khach-hang",
         "/table-data-oder",
         "/table-data-product",
-        "/invicedetail/:id",
+        "/invicedetail/:invoiceCode",
         "/settings",
         "/duyen-don",
         "/Settingbanner",
@@ -117,7 +117,7 @@ app.config(function ($routeProvider, $locationProvider) {
       templateUrl: "/views/home.html",
       resolve: { auth: requireAuth },
     })
-    .when("/invicedetail/:id", {
+    .when("/invicedetail/:invoiceCode", {
       templateUrl: "/views/ban-hang-tai-quay.html",
       resolve: { auth: requireAuth },
     })
