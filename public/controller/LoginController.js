@@ -9,6 +9,7 @@ app.controller(
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       return JSON.parse(atob(base64));
     }
+
     $scope.login = function () {
       if (!$scope.user.username || !$scope.user.password) {
         Swal.fire({
@@ -38,14 +39,19 @@ app.controller(
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
                 $rootScope.isLoggedIn = true;
                 $rootScope.userRole = userInfo.role;
+
                 Swal.fire({
                   icon: "success",
                   title: "Thành công!",
                   text: "Đăng nhập thành công!",
                   confirmButtonText: "OK",
-                  timer: 3000,
                 }).then(() => {
-                  window.location.href = "/home";
+                  // Lấy URL lưu trước đó hoặc mặc định là "/home"
+                  const redirectUrl =
+                    localStorage.getItem("redirectUrl") || "/home";
+                  localStorage.removeItem("redirectUrl"); // Xóa redirectUrl sau khi sử dụng
+                  $location.path(redirectUrl);
+                  $scope.$apply(); // Cập nhật $scope sau khi thay đổi URL
                 });
               } else {
                 Swal.fire({

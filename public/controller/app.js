@@ -31,19 +31,22 @@ app.run(function ($rootScope, $location) {
 
   // Route access control
   $rootScope.$on("$routeChangeStart", function (event, next) {
+    const currentPath = $location.path();
+
     if (next.originalPath === "/login") {
-      // Clear localStorage if route is login
+      // Xóa thông tin đăng nhập nếu vào trang login
       localStorage.removeItem("authToken");
       localStorage.removeItem("userInfo");
       $rootScope.isLoggedIn = false;
       $location.path("/login");
-    } else if (next.originalPath === "/" || next.originalPath === "") {
-      // If the URL is empty or root ("/"), redirect to /home
-      $location.path("/home");
-    } else if (next.resolve && !localStorage.getItem("authToken")) {
+    } else if (!localStorage.getItem("authToken")) {
+      if (currentPath !== "/login") {
+        // Lưu lại URL trước khi chuyển hướng đến login
+        localStorage.setItem("redirectUrl", currentPath);
+      }
       $location.path("/login");
     } else if ($rootScope.isLoggedIn) {
-      // Define allowed routes for each role
+      // Định nghĩa các route được phép truy cập cho từng vai trò
       const adminRoutes = [
         "/home",
         "/form-add-don-hang",
@@ -85,9 +88,8 @@ app.run(function ($rootScope, $location) {
           text: "Bạn không có quyền truy cập vào trang này.",
           confirmButtonText: "OK",
         }).then(() => {
-          $rootScope.$apply(() => {
-            $location.path("/home");
-          });
+          $location.path("/home");
+          $scope.$apply();
         });
         event.preventDefault();
       }
